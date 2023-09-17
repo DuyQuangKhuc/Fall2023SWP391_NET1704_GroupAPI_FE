@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import "~react-image-gallery/styles/css/image-gallery.css";
+
+.image-gallery-swipe {
+  height: 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.image-gallery-image{
+    max-height: 400px!important;
+}
+.image-gallery-thumbnail-image{
+  height: 80px;
+
+}
