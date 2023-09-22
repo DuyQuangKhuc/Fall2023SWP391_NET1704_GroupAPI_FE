@@ -7,6 +7,7 @@ import { v4 } from "uuid";
 import { isEmpty, isNaN } from "lodash";
 import { FieldError } from "../FieldError/FieldError";
 import BigNumber from "bignumber.js";
+import TextArea from "antd/es/input/TextArea";
 
 const checkValidType = (str, value) => {
   return value.split('').every((item) => str.split('').includes(item));
@@ -47,7 +48,7 @@ const toBigDecimal = (value, length) => {
   return myNumber.toFixed(length);
 };
 
-const ComInput = React.forwardRef(
+const ComTextArea = React.forwardRef(
   (
     {
       label,
@@ -142,7 +143,7 @@ const ComInput = React.forwardRef(
               }
             />
           ) : (
-            <Input
+            <TextArea
               prefix={
                 search ? (
                   <SearchOutlined className="text-h3 text-grey" />
@@ -185,4 +186,4 @@ const ComInput = React.forwardRef(
   }
 );
 
-export default ComInput;
+export default ComTextArea;

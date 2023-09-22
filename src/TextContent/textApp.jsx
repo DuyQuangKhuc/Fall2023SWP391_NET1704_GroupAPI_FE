@@ -21,7 +21,7 @@ export const textApp = {
         message: {
             username: "Login ID is required item",
             password: "Password is required item",
-            error:"Tài khoản hoặc mật khẩu sai"
+            error: "Tài khoản hoặc mật khẩu sai"
         }
     },
     Reissue: {
@@ -39,7 +39,9 @@ export const textApp = {
         message: {
             username: "Login User is required item",
             phone: "Phone is required item",
-            password: "Password is required item"
+            password: "Password is required item",
+            success: "Tài khoản đã tạo thành công, quay lại login để đăng nhập",
+            fail: "Tài khoản đã tồn tại"
         }
     },
     CreateProduct: {
@@ -54,7 +56,7 @@ export const textApp = {
             accessory: "accessory",
             sold: "sold",
             image: 'Img',
-            describe: "Describe",
+            description: "Describe",
         },
         placeholder: {
             name: "Please enter Product Name",
@@ -66,7 +68,41 @@ export const textApp = {
             accessory: "Please enter accessory",
             sold: "Please enter sold",
             image: "Please enter Img",
-            describe: "Please enter Describe",
+            description: "Please enter Describe",
+        },
+        message: {
+            name: "name is required item",
+            price: "price is required item",
+            priceMin: "phải lớn hơn hoặc bằng 1",
+            quantity: "quantity is required item",
+            quantityMin: "phải lớn hơn hoặc bằng 1",
+            detail: "detail is required item",
+            models: "models is required item",
+            material: "material is required item",
+            accessory: "accessory is required item",
+            sold: "sold is required item",
+            image: "image is required item",
+            description: "description is required item",
+        }
+    },
+    TableProduct: {
+        title:{
+            change:"Chỉnh sửa",
+            delete:'Xóa sản phẩm'
+        },
+        modal: {
+            cancel: "Hủy",
+            submitChange: "Thay đổi",
+            submitDelete: "Xóa"
+        }
+    },
+    Product:{
+        title:{
+            
+        },
+        page:{
+            quantity:"Số lượng",
+
         },
         message: {
             name: "name is required item",
@@ -78,7 +114,7 @@ export const textApp = {
             accessory: "accessory is required item",
             sold: "sold is required item",
             image: "image is required item",
-            describe: "describe is required item",
+            description: "description is required item",
         }
     }
 

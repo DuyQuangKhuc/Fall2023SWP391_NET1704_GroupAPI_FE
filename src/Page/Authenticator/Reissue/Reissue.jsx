@@ -12,6 +12,7 @@ import { useStorage } from "../../../hooks/useLocalStorage";
 import { useEffect, useState } from "react";
 import { postData } from "../../../api/api";
 import ComHeader from "../../Components/ComHeader/ComHeader";
+import { FieldError } from "../../Components/FieldError/FieldError";
 
 
 
@@ -51,7 +52,7 @@ export default function Reissue() {
     const { handleSubmit, register, setFocus, watch, setValue } = methods
     const onSubmit = (data) => {
         setDisabled(true)
-        postData('/reg', data, {})
+        postData(`/LoginAndRegister/Add_Account?email=${data.username}&phone_number=${data.phone}&password=${data.password}`)
             .then((data) => {
                 console.log(data);
                 setDisabled(false)
@@ -106,6 +107,7 @@ export default function Reissue() {
                                 {...register("password")}
                                 required
                             />
+                        
                             <ComButton
 
                                 disabled={disabled}

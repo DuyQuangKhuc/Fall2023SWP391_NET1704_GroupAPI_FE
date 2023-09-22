@@ -50,12 +50,17 @@ export default function Login() {
     const onSubmit = (data) => {
         setLogin(false)
         setDisabled(true)
-        postData('/login', data, {})
+        postData(`/LoginAndRegister/Check_Login/?email=${data.username}&password=${data.password}`)
             .then((data) => {
                 console.log(data);
                 setToken(data)
                 setDisabled(false)
-                navigate('/')
+                // navigate('/')
+                if (data.role !== 4 ) {
+                    navigate('/createProduct')
+                } else {
+                    navigate('/')
+                }
             })
             .catch((error) => {
                 console.error("Error fetching items:", error);
@@ -69,7 +74,7 @@ export default function Login() {
     // }, [disableds]);
     return (
         <>
-        <ComHeader/>
+            <ComHeader />
             <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
                 <div className="sm:mx-auto sm:w-full sm:max-w-sm">
 
@@ -81,46 +86,7 @@ export default function Login() {
                 <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
                     <FormProvider {...methods} >
                         <form className="flex flex-col gap-6" onSubmit={handleSubmit(onSubmit)}>
-                            {/* 
-                            <ComInput
-                                placeholder={textApp.Login.label.username}
-                                label={textApp.Login.pageTitle}
-                                type="numbers"
-                                search
-                                maxLength={5}
-                                // minLength={4}
-                                {...register("code")}
-                                required
-                            />
-
-                            <ComInput
-                                placeholder='question'
-                                label='qưe'
-                                type="text"
-                                // search
-                                maxLength={5}
-                                {...register("username")}
-                                required
-                            />
-
-                            <ComInput
-                                placeholder='email'
-                                label='email'
-                                type="emails"
-                                // search
-                                {...register("email")}
-                                required
-                            />
-
-                            <ComInput
-                                placeholder='question'
-                                label='qưe'
-                                type="password"
-                                maxLength={16}
-                                {...register("password")}
-                                required
-                            /> */}
-
+                            
                             <ComInput
                                 placeholder={textApp.Login.placeholder.username}
                                 label={textApp.Login.label.username}
@@ -139,17 +105,17 @@ export default function Login() {
                                 {...register("password")}
                                 required
                             />
-                            
-                            <FieldError className="text-red-500 text-center">{Login?textApp.Login.message.error:''}</FieldError>
+
+                            <FieldError className="text-red-500 text-center">{Login ? textApp.Login.message.error : ''}</FieldError>
                             <ComButton
 
                                 disabled={disabled}
                                 htmlType="submit"
                                 type="primary"
                             >
-                               {textApp.Login.pageTitle}
+                                {textApp.Login.pageTitle}
                             </ComButton>
-                            
+
                             {/* <ComButton
                                 htmlType="submit"
                                 type="primary"
