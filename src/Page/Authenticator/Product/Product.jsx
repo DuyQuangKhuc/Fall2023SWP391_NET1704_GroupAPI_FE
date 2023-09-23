@@ -69,7 +69,8 @@ export default function Product() {
         console.log(data);
     }
     useEffect(() => {
-        getData(`/product/${slug}`)
+         getData(`/product/${slug}`)
+
             .then(product =>
                 setProduct(product.data))
             .catch((error) => {

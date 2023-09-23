@@ -56,10 +56,13 @@ export default function Login() {
                 setToken(data)
                 setDisabled(false)
                 // navigate('/')
-                if (data.role !== 4 ) {
+                if (data.role === 4 ) {
                     navigate('/createProduct')
-                } else {
-                    navigate('/')
+                }else if (data.role === 1)  {
+                    navigate('/')   
+                }else{
+                    setDisabled(false)
+                    setLogin(true)
                 }
             })
             .catch((error) => {

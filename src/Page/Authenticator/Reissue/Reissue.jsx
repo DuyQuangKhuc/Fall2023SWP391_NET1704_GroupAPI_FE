@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import { postData } from "../../../api/api";
 import ComHeader from "../../Components/ComHeader/ComHeader";
 import { FieldError } from "../../Components/FieldError/FieldError";
+import { Navigate } from "react-router-dom";
 
 
 
@@ -56,6 +57,7 @@ export default function Reissue() {
             .then((data) => {
                 console.log(data);
                 setDisabled(false)
+                Navigate('/login')
             })
             .catch((error) => {
                 console.error("Error fetching items:", error);
