@@ -22,7 +22,8 @@ export default function Reissue() {
     const [data, setData] = useState({});
     const [disabled, setDisabled] = useState(false);
 
-
+    const [showSuccess, setShowSuccess] = useState(false);
+    const [showFailure, setShowFailure] = useState(false);
 
     const loginMessenger = yup.object({
         // code: yup.string().required(textApp.Reissue.message.username).min(5, "Username must be at least 5 characters"),
@@ -57,11 +58,19 @@ export default function Reissue() {
             .then((data) => {
                 console.log(data);
                 setDisabled(false)
-                Navigate('/login')
+                setShowSuccess(true);
+                setTimeout(() => {
+                    setShowSuccess(false);
+                    Navigate('/login');
+                }, 3000);
             })
             .catch((error) => {
                 console.error("Error fetching items:", error);
                 setDisabled(false)
+                setShowFailure(true);
+                setTimeout(() => {
+                    setShowFailure(false);
+                }, 3000);
             });
     }
     // console.log(disableds);
@@ -82,7 +91,7 @@ export default function Reissue() {
                 <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
                     <FormProvider {...methods} >
                         <form className="flex flex-col gap-6" onSubmit={handleSubmit(onSubmit)}>
-                       
+
                             <ComInput
                                 placeholder={textApp.Reissue.placeholder.username}
                                 label={textApp.Reissue.label.username}
@@ -109,7 +118,7 @@ export default function Reissue() {
                                 {...register("password")}
                                 required
                             />
-                        
+
                             <ComButton
 
                                 disabled={disabled}
@@ -138,6 +147,21 @@ export default function Reissue() {
                 </div>
             </div>
 
+            {showSuccess && (
+                <div className="fixed inset-0 flex items-center justify-center">
+                    <div className="bg-white p-4 rounded-lg shadow-lg">
+                        <p className="text-green-500 font-bold">Account created successfully!</p>
+                    </div>
+                </div>
+            )}
+
+            {showFailure && (
+                <div className="fixed inset-0 flex items-center justify-center">
+                    <div className="bg-white p-4 rounded-lg shadow-lg">
+                        <p className="text-red-500 font-bold">Failed to create account. Please try again.</p>
+                    </div>
+                </div>
+            )}
         </>
     )
 
