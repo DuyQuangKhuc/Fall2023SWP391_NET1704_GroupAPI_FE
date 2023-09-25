@@ -59,7 +59,7 @@ export default function Login() {
                 if (data.role === 4 ) {
                     navigate('/createProduct')
                 }else if (data.role === 1)  {
-                    navigate('')   
+                    navigate('/')   
                 }else{
                     setDisabled(false)
                     setLogin(true)
