@@ -12,9 +12,31 @@ import ComButton from '../Components/ComButton/ComButton'
 import ComHeaderAdmin from '../Components/ComHeaderAdmin/ComHeaderAdmin'
 import ComTextArea from '../Components/ComInput/ComTextArea'
 import ComNumber from '../Components/ComInput/ComNumber'
-import { notification } from 'antd'
+import { Select, notification } from 'antd'
 
-
+const options = [
+    {
+        label: "gỗ",
+        value: "1"
+    },
+    {
+        label: "nhựa",
+        value: "2"
+    },
+    {
+        label: "Kim Loại",
+        value: "3"
+    },
+];
+// for (let i = 10; i < 36; i++) {
+//     options.push({
+//         value: i.toString(36) + i,
+//         label: i.toString(36) + i,
+//     });
+// }
+const handleChange = (value) => {
+    console.log(`selected ${value}`);
+};
 export default function CreateProduct() {
     const [disabled, setDisabled] = useState(false);
     const [image, setImages] = useState([]);
@@ -25,7 +47,7 @@ export default function CreateProduct() {
 
         name: yup.string().required(textApp.CreateProduct.message.name),
         price: yup.number().min(1, textApp.CreateProduct.message.priceMin).typeError(textApp.CreateProduct.message.price),
-        price1: yup.string().required(textApp.CreateProduct.message.price).min(1, textApp.CreateProduct.message.priceMin),
+        price1: yup.string().required(textApp.CreateProduct.message.price).min(1, textApp.CreateProduct.message.priceMin).test('no-dots', textApp.CreateProduct.message.priceDecimal, value => !value.includes('.')),
         quantity: yup.number().min(1, textApp.CreateProduct.message.quantityMin).typeError(textApp.CreateProduct.message.quantity),
         detail: yup.string().required(textApp.CreateProduct.message.detail),
         models: yup.string().required(textApp.CreateProduct.message.models),
@@ -56,20 +78,20 @@ export default function CreateProduct() {
 
     function isInteger(number) {
         return typeof number === 'number' && isFinite(number) && Math.floor(number) === number;
-      }
+    }
     const onSubmit = (data) => {
         console.log(data);
 
-      
+
         if (!isInteger(data.price)) {
 
             api["error"]({
                 message: 'Notification Title',
                 description:
-                  'Giá tiền phải là số nguyên',
-              });
-            return 
-          } 
+                    'Giá tiền phải là số nguyên',
+            });
+            return
+        }
         setDisabled(true)
         firebaseImgs(image)
             .then((dataImg) => {
@@ -108,10 +130,10 @@ export default function CreateProduct() {
         console.log(image);
         // setFileList(data);
     }
-    const handleValueChange = (e,value) => {
+    const handleValueChange = (e, value) => {
         console.log(value);
         setValue("price", value, { shouldValidate: true });
-      };
+    };
     return (
         <>
             {contextHolder}
@@ -124,7 +146,7 @@ export default function CreateProduct() {
 
                 </div>
                 <FormProvider {...methods} >
-                    <form onSubmit={handleSubmit(onSubmit)} className="mx-auto mt-16 max-w-xl sm:mt-20">
+                    <form onSubmit={handleSubmit(onSubmit)} className="mx-auto mt-4 max-w-xl sm:mt-8">
                         <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
 
                             <div className="sm:col-span-2">
@@ -173,6 +195,19 @@ export default function CreateProduct() {
                                 />
                             </div>
                             <div className="sm:col-span-2">
+                                <Select
+
+                                    size={"large"}
+                                    style={{
+                                        width: '100%',
+                                    }}
+                                    mode="multiple"
+                                    placeholder="Tags Mode"
+                                    onChange={handleChange}
+                                    options={options}
+                                />
+                            </div>
+                            <div className="sm:col-span-2">
                                 <ComInput
                                     label={textApp.CreateProduct.label.models}
                                     placeholder={textApp.CreateProduct.placeholder.models}
@@ -205,12 +240,13 @@ export default function CreateProduct() {
 
                                 <div className="mt-2.5">
 
-
                                     <ComTextArea
                                         label={textApp.CreateProduct.label.description}
                                         placeholder={textApp.CreateProduct.placeholder.description}
                                         rows={4}
                                         defaultValue={''}
+                                        required
+                                        maxLength={1000}
                                         {...register("description")}
                                     />
                                 </div>
