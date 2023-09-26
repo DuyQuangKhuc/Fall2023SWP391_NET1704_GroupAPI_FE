@@ -1,6 +1,6 @@
-/* eslint-disable react/jsx-no-undef */
-/* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable jsx-a11y/no-redundant-roles */
+/* eslint-disable jsx-a11y/anchor-is-valid */
+
 import { Fragment, useEffect, useState } from "react";
 import { Dialog, Popover, Tab, Transition } from "@headlessui/react";
 import {
@@ -13,7 +13,7 @@ import ShoppingCart from "../../Authenticator/ShoppingCart/ShoppingCart";
 import { routs } from "../../../constants/ROUT";
 import { ComLink } from "../ComLink/ComLink";
 import { Affix } from "antd";
-import { FormProvider } from "react-hook-form";
+import images from "../../../img";
 
 const navigation = {
   categories: [
@@ -355,8 +355,8 @@ export default function ComHeader() {
                     <ComLink to={routs["/"].link}>
                       <span className="sr-only">Your Company</span>
                       <img
-                        className="h-8 w-auto"
-                        src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+                        className="h-16 w-auto "
+                        src={images.logo}
                         alt=""
                       />
                     </ComLink>
@@ -486,26 +486,6 @@ export default function ComHeader() {
                     </div>
                   </Popover.Group>
 
-                  {/* Search */}
-                  
-
-                  {/* <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-                    <form className="flex flex-col gap-6" >
-                      <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                        <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
-                        </svg>
-                      </div>
-                      <input
-                        placeholder="search"
-                        type="text"
-                        search
-                        className="block w-full px-4 py-2 mt-2 text-green-700 bg-white border rounded-md focus:border-green-400 focus:ring-green-300 focus:outline-none focus:ring focus:ring-opacity-40"
-                        
-                      />
-                    </form>
-                  </div> */}
-
                   <div className="ml-auto flex items-center">
                     <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6">
                       <ComLink
@@ -523,9 +503,23 @@ export default function ComHeader() {
                       </ComLink>
                     </div>
 
+                    <div className="hidden lg:ml-8 lg:flex">
 
+                    </div>
 
-
+                    {/* Search */}
+                    <div className="flex lg:ml-6">
+                      <a
+                        href="#"
+                        className="p-2 text-gray-400 hover:text-gray-500"
+                      >
+                        <span className="sr-only">Search</span>
+                        <MagnifyingGlassIcon
+                          className="h-6 w-6"
+                          aria-hidden="true"
+                        />
+                      </a>
+                    </div>
 
                     {/* Cart */}
                     <div className="ml-4 flow-root lg:ml-6">
