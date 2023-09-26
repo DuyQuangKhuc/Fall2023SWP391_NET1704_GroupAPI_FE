@@ -3,26 +3,36 @@
 @tailwind utilities;
 @import "~react-image-gallery/styles/css/image-gallery.css";
 
-.image-gallery-swipe {
-  height: 400px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+
+.product .image-gallery-image {
+  max-height: 400px !important;
 }
 
-.image-gallery-image{
-    max-height: 400px!important;
-}
-.image-gallery-thumbnail-image{
+.image-gallery-thumbnail-image {
   height: 80px;
 
 }
 
-.ant-table-container{
+.ant-table-container {
   height: 750px;
 }
 
 
-.ant-modal-footer{
-  display: none!important;
+.ant-modal-footer {
+  display: none !important;
+}
+
+.ant-table-container {
+  height: auto;
+}
+
+.image-gallery-right-nav .image-gallery-svg {
+  height: 60px;
+  width: 60px;
+}
+
+.image-gallery-left-nav .image-gallery-svg {
+  height: 60px;
+  width: 60px;
+
 }

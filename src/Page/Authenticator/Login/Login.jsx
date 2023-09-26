@@ -93,7 +93,6 @@ export default function Login() {
                                 label={textApp.Login.label.username}
                                 type="text"
                                 // search
-                                maxLength={15}
                                 {...register("username")}
                                 required
                             />
@@ -101,8 +100,7 @@ export default function Login() {
                             <ComInput
                                 placeholder={textApp.Login.placeholder.password}
                                 label={textApp.Login.label.password}
-                                type="password"
-                                maxLength={16}
+                                type="password"                           
                                 {...register("password")}
                                 required
                             />
