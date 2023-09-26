@@ -25,23 +25,31 @@ export const textApp = {
         }
     },
     Reissue: {
-        pageTitle: "Reissue",
+        pageTitle: "Tạo tài khoản",
         label: {
-            username: "Login User",
-            password: "Password",
-            phone: "Phone number"
+            username: "Tên đăng nhập",
+            password: "Mật Khẩu",
+            password2: "Xác nhận lại mật khẩu",
+            phone: "Số điện thoại",
+            email: "Email"
         },
         placeholder: {
             username: "Please enter you Login User",
             phone: "Please enter you phone",
+            email: "Please enter you email",
             password: "Please enter you password",
+            password2: "Please enter you password",
         },
         message: {
             username: "Login User is required item",
+            usernameMIn: "Tài khoản phải lớn hơn 6 kí tự",
             phone: "Phone is required item",
             password: "Password is required item",
-            success: "Tài khoản đã tạo thành công, quay lại login để đăng nhập",
-            fail: "Tài khoản đã tồn tại"
+            password2: "Password is required item",
+            passwordMIn: "Mật khẩu phải lớn hơn hoặc bằng 5 kí tự",
+            email: "Email is required item",
+            emailFormat: "Định dạng mail không hợp lệ.",
+            passwordCheck: "Mật khẩu nhập lại không khớp.",
         }
     },
     CreateProduct: {
@@ -56,7 +64,7 @@ export const textApp = {
             accessory: "accessory",
             sold: "sold",
             image: 'Img',
-            description: "Describe",
+            description: "Description",
         },
         placeholder: {
             name: "Please enter Product Name",
@@ -74,6 +82,7 @@ export const textApp = {
             name: "name is required item",
             price: "price is required item",
             priceMin: "phải lớn hơn hoặc bằng 1",
+            priceDecimal: "Số tiền không được là số thập phân ",
             quantity: "quantity is required item",
             quantityMin: "phải lớn hơn hoặc bằng 1",
             detail: "detail is required item",
@@ -86,9 +95,9 @@ export const textApp = {
         }
     },
     TableProduct: {
-        title:{
-            change:"Chỉnh sửa",
-            delete:'Xóa sản phẩm'
+        title: {
+            change: "Chỉnh sửa",
+            delete: 'Xóa sản phẩm'
         },
         modal: {
             cancel: "Hủy",
@@ -96,12 +105,12 @@ export const textApp = {
             submitDelete: "Xóa"
         }
     },
-    Product:{
-        title:{
-            
+    Product: {
+        title: {
+
         },
-        page:{
-            quantity:"Số lượng",
+        page: {
+            quantity: "Số lượng",
 
         },
         message: {
@@ -116,6 +125,15 @@ export const textApp = {
             image: "image is required item",
             description: "description is required item",
         }
+    },
+    Footer: {
+        title: "Thông tin liên hệ",
+        adress: "Địa chỉ: LôE2a Đường D1, Thành phố Thủ Đức",
+        email: "banlongchim@gmail.com",
+        phone: "(0123) 456-7890",
+    },
+    HeaderAdmin: {
+        product: "Sản phẩm",
     }
 
 }
