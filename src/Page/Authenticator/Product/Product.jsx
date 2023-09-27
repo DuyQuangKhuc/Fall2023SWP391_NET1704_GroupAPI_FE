@@ -68,9 +68,13 @@ export default function Product() {
         console.log(data);
     }
     useEffect(() => {
-        getData(`/product/${slug}`)
-            .then(product =>
-                setProduct(product.data))
+        getData(`/Product/Product{id}${slug}`)
+            // .then(product =>
+            //     setProduct(product.data))
+            .then((data) => {
+                setProduct(data.data)
+                console.log(data.data);
+            })
             .catch((error) => {
                 console.log(error);
             })
