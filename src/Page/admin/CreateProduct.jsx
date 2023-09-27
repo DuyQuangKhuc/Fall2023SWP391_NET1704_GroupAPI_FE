@@ -16,16 +16,16 @@ import { Select, notification } from 'antd'
 
 const options = [
     {
-        label: "gỗ",
-        value: "1"
+        label: "Gỗ",
+        value: "Gỗ"
     },
     {
-        label: "nhựa",
-        value: "2"
+        label: "Nhựa",
+        value: "Nhựa"
     },
     {
         label: "Kim Loại",
-        value: "3"
+        value: "Kim loại"
     },
 ];
 // for (let i = 10; i < 36; i++) {
@@ -34,12 +34,11 @@ const options = [
 //         label: i.toString(36) + i,
 //     });
 // }
-const handleChange = (value) => {
-    console.log(`selected ${value}`);
-};
+
 export default function CreateProduct() {
     const [disabled, setDisabled] = useState(false);
     const [image, setImages] = useState([]);
+    const [material, setMaterial] = useState([]);
     const [api, contextHolder] = notification.useNotification();
 
 
@@ -48,15 +47,19 @@ export default function CreateProduct() {
         name: yup.string().required(textApp.CreateProduct.message.name),
         price: yup.number().min(1, textApp.CreateProduct.message.priceMin).typeError(textApp.CreateProduct.message.price),
         price1: yup.string().required(textApp.CreateProduct.message.price).min(1, textApp.CreateProduct.message.priceMin).test('no-dots', textApp.CreateProduct.message.priceDecimal, value => !value.includes('.')),
+        reducedPrice: yup.number().min(1, textApp.CreateProduct.message.priceMin).typeError(textApp.CreateProduct.message.price),
+        reducedPrice1: yup.string().required(textApp.CreateProduct.message.price).min(1, textApp.CreateProduct.message.priceMin).test('no-dots', textApp.CreateProduct.message.priceDecimal, value => !value.includes('.')),
         quantity: yup.number().min(1, textApp.CreateProduct.message.quantityMin).typeError(textApp.CreateProduct.message.quantity),
         detail: yup.string().required(textApp.CreateProduct.message.detail),
+        shape: yup.string().required(textApp.CreateProduct.message.shape),
         models: yup.string().required(textApp.CreateProduct.message.models),
-        material: yup.string().required(textApp.CreateProduct.message.material),
+        // material: yup.string().required(textApp.CreateProduct.message.material),
         accessory: yup.string().required(textApp.CreateProduct.message.accessory),
         description: yup.string().required(textApp.CreateProduct.message.description),
     })
     const createProductRequestDefault = {
         price: 1000,
+        reducedPrice: 1000,
 
     };
 
@@ -67,7 +70,8 @@ export default function CreateProduct() {
             quantity: 1,
             detail: "",
             models: "",
-            material: "",
+            shape: "",
+            material: [],
             accessory: "",
             image: [],
             description: "",
@@ -99,6 +103,7 @@ export default function CreateProduct() {
                 const updatedData = {
                     ...data, // Giữ lại các trường dữ liệu hiện có trong data
                     image: dataImg, // Thêm trường images chứa đường dẫn ảnh
+                    material
                 };
 
                 postData('/product', updatedData, {})
@@ -134,6 +139,18 @@ export default function CreateProduct() {
         console.log(value);
         setValue("price", value, { shouldValidate: true });
     };
+
+    const handleValueChange1 = (e, value) => {
+        console.log(value);
+        setValue("reducedPrice", value, { shouldValidate: true });
+    };
+
+    const handleChange = (value) => {
+
+        setMaterial(value)
+        console.log([value]);
+    };
+
     return (
         <>
             {contextHolder}
@@ -148,7 +165,6 @@ export default function CreateProduct() {
                 <FormProvider {...methods} >
                     <form onSubmit={handleSubmit(onSubmit)} className="mx-auto mt-4 max-w-xl sm:mt-8">
                         <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
-
                             <div className="sm:col-span-2">
                                 <div className="mt-2.5">
                                     <ComInput
@@ -176,6 +192,20 @@ export default function CreateProduct() {
                             </div>
                             <div>
                                 <ComNumber
+                                    label={textApp.CreateProduct.label.reducedPrice}
+                                    placeholder={textApp.CreateProduct.placeholder.reducedPrice}
+                                    // type="money"
+                                    defaultValue={1000}
+                                    min={1000}
+                                    money
+                                    onChangeValue={handleValueChange1}
+                                    {...register("reducedPrice1")}
+                                    required
+                                />
+
+                            </div>
+                            <div>
+                                <ComNumber
                                     label={textApp.CreateProduct.label.quantity}
                                     placeholder={textApp.CreateProduct.placeholder.quantity}
                                     // type="numbers"
@@ -184,6 +214,28 @@ export default function CreateProduct() {
                                     required
                                 />
 
+                            </div>
+
+                            <div className="">
+                                <Select
+                                    size={"large"}
+                                    style={{
+                                        width: '100%',
+                                    }}
+                                    mode="multiple"
+                                    placeholder={textApp.CreateProduct.placeholder.material}
+                                    onChange={handleChange}
+                                    options={options}
+                                />
+                            </div>
+                            <div className="sm:col-span-2">
+                                <ComInput
+                                    label={textApp.CreateProduct.label.shape}
+                                    placeholder={textApp.CreateProduct.placeholder.shape}
+                                    required
+                                    type="text"
+                                    {...register("shape")}
+                                />
                             </div>
                             <div className="sm:col-span-2">
                                 <ComInput
@@ -195,19 +247,6 @@ export default function CreateProduct() {
                                 />
                             </div>
                             <div className="sm:col-span-2">
-                                <Select
-
-                                    size={"large"}
-                                    style={{
-                                        width: '100%',
-                                    }}
-                                    mode="multiple"
-                                    placeholder="Tags Mode"
-                                    onChange={handleChange}
-                                    options={options}
-                                />
-                            </div>
-                            <div className="sm:col-span-2">
                                 <ComInput
                                     label={textApp.CreateProduct.label.models}
                                     placeholder={textApp.CreateProduct.placeholder.models}
@@ -216,15 +255,7 @@ export default function CreateProduct() {
                                     {...register("models")}
                                 />
                             </div>
-                            <div className="sm:col-span-2">
-                                <ComInput
-                                    label={textApp.CreateProduct.label.material}
-                                    placeholder={textApp.CreateProduct.placeholder.material}
-                                    required
-                                    type="text"
-                                    {...register("material")}
-                                />
-                            </div>
+
                             <div className="sm:col-span-2">
                                 <ComInput
                                     label={textApp.CreateProduct.label.accessory}
