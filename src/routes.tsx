@@ -8,7 +8,7 @@ import Reissue from "./Page/Authenticator/Reissue/Reissue";
 import PaymentPage from "./Page/Authenticator/Payment/Payment";
 import TableProduct from "./Page/admin/TableProduct";
 import CreateProduct from "./Page/admin/CreateProduct";
-
+import AccountManage from "./Page/admin/AccountManage";
 export const routers = createBrowserRouter([
   {
     path: "*",
@@ -33,6 +33,10 @@ export const routers = createBrowserRouter([
   {
     path: "/createProduct",
     element: <CreateProduct />,
+  },
+  {
+    path: "/accountManage",
+    element: <AccountManage />,
   },
   {
     path: "/tableProduct",
