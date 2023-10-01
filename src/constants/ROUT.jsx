@@ -5,4 +5,5 @@ export const routs = {
   "/reissue": { link: "/reissue", name: "Tạo tài khoản" },
   "/createProduct": { name: 'Tạo sản phẩm', link: '/createProduct', },
   "/tableProduct": { name: 'Quản lý sản phẩm', link: '/tableProduct', },
+  "/accountManage": { name: 'Quản lý tài khoản', link: '/accountManage', },
 };
