@@ -14,6 +14,7 @@ import { routs } from "../../../constants/ROUT";
 import { ComLink } from "../ComLink/ComLink";
 import { Affix } from "antd";
 import images from "../../../img";
+import { ChevronDownIcon } from "@heroicons/react/20/solid";
 
 const navigation = {
   categories: [
@@ -150,9 +151,23 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
+
+const logout = () => {
+  localStorage.removeItem('user');
+  // Redirect to login page
+  window.location.href = '/login';
+};
+
+const products = [
+  { name: 'Log out', onClick: logout },
+]
+
+
 export default function ComHeader() {
+  const [user] = useState(JSON.parse(localStorage.getItem('user')));
   const [open, setOpen] = useState(false);
   const [shoppingCart, setShoppingCart] = useState(false);
+
   const updateShoppingCartStatus = (newStatus) => {
     setShoppingCart(newStatus);
   };
@@ -307,26 +322,58 @@ export default function ComHeader() {
                       ))}
                     </div>
 
-                    <div className="space-y-6 border-t border-gray-200 px-4 py-6">
-                      <div className="flow-root">
-                        <ComLink
-                          to={routs["/login"].link}
-                          className="-m-2 block p-2 font-medium text-gray-900"
-                        >
-                          {routs["/login"].name}
-                        </ComLink>
-                      </div>
-                      <div className="flow-root">
-                        <ComLink
-                          to={routs["/reissue"].link}
-                          className="-m-2 block p-2 font-medium text-gray-900"
-                        >
-                          {routs["/reissue"].name}
-                        </ComLink>
-                      </div>
+                    <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6">
+                      {user && user.accountId ? (
+                        <Popover className="relative">
+                          <Popover.Button className="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900">
+                            Hello, {user.email}
+                            <ChevronDownIcon className="h-5 w-5 flex-none text-gray-400" aria-hidden="true" />
+                          </Popover.Button>
+                          <Transition
+                            as={Fragment}
+                            enter="transition ease-out duration-200"
+                            enterFrom="opacity-0 translate-y-1"
+                            enterTo="opacity-100 translate-y-0"
+                            leave="transition ease-in duration-150"
+                            leaveFrom="opacity-100 translate-y-0"
+                            leaveTo="opacity-0 translate-y-1"
+                          >
+                            <Popover.Panel className="absolute top-full mt-2 w-56 rounded-md bg-white ring-1 ring-opacity-5 ">
+                              <div className="py-1 ">
+                                {products.map((item) => (
+                                  <div
+                                    key={item.name}
+                                    className="px-4 py-2 "
+                                  >
+                                    <ComLink onClick={item.onClick} to={item.href} className="block font-semibold whitespace-nowrap text-black">
+                                      {item.name}
+                                    </ComLink>
+                                    <p className="mt-1 text-sm text-gray-600">{item.description}</p>
+
+                                  </div>
+                                ))}
+                              </div>
+                            </Popover.Panel>
+                          </Transition>
+                        </Popover>
+                      ) : (
+                        <>
+                          <ComLink
+                            to={routs["/login"].link}
+                            className="text-sm font-medium text-gray-700 hover:text-gray-800"
+                          >
+                            {routs["/login"].name}
+                          </ComLink>
+                          <span className="h-6 w-px bg-gray-200" aria-hidden="true" />
+                          <ComLink
+                            to={routs["/reissue"].link}
+                            className="text-sm font-medium text-gray-700 hover:text-gray-800"
+                          >
+                            {routs["/reissue"].name}
+                          </ComLink>
+                        </>
+                      )}
                     </div>
-
-
                   </Dialog.Panel>
                 </Transition.Child>
               </div>
@@ -353,7 +400,6 @@ export default function ComHeader() {
                   {/* Logo */}
                   <div className="ml-4 flex lg:ml-0">
                     <ComLink to={routs["/"].link}>
-                      <span className="sr-only">Your Company</span>
                       <img
                         className="h-16 w-auto "
                         src={images.logo}
@@ -488,23 +534,56 @@ export default function ComHeader() {
 
                   <div className="ml-auto flex items-center">
                     <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6">
-                      <ComLink
-                        to={routs["/login"].link}
-                        className="text-sm font-medium text-gray-700 hover:text-gray-800"
-                      >
-                        {routs["/login"].name}
-                      </ComLink>
-                      <span className="h-6 w-px bg-gray-200" aria-hidden="true" />
-                      <ComLink
-                        to={routs["/reissue"].link}
-                        className="text-sm font-medium text-gray-700 hover:text-gray-800"
-                      >
-                        {routs["/reissue"].name}
-                      </ComLink>
-                    </div>
+                      {user && user.accountId ? (
+                        <Popover className="relative">
+                          <Popover.Button className="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900">
+                            Hello, {user.email}
+                            <ChevronDownIcon className="h-5 w-5 flex-none text-gray-400" aria-hidden="true" />
+                          </Popover.Button>
+                          <Transition
+                            as={Fragment}
+                            enter="transition ease-out duration-200"
+                            enterFrom="opacity-0 translate-y-1"
+                            enterTo="opacity-100 translate-y-0"
+                            leave="transition ease-in duration-150"
+                            leaveFrom="opacity-100 translate-y-0"
+                            leaveTo="opacity-0 translate-y-1"
+                          >
+                            <Popover.Panel className="absolute top-full mt-2 w-56 rounded-md bg-white ring-1 ring-opacity-5 ">
+                              <div className="py-1 ">
+                                {products.map((item) => (
+                                  <div
+                                    key={item.name}
+                                    className="px-4 py-2 "
+                                  >
+                                    <ComLink onClick={item.onClick} to={item.href} className="block font-semibold whitespace-nowrap text-black">
+                                      {item.name}
+                                    </ComLink>
+                                    <p className="mt-1 text-sm text-gray-600">{item.description}</p>
 
-                    <div className="hidden lg:ml-8 lg:flex">
-
+                                  </div>
+                                ))}
+                              </div>
+                            </Popover.Panel>
+                          </Transition>
+                        </Popover>
+                      ) : (
+                        <>
+                          <ComLink
+                            to={routs["/login"].link}
+                            className="text-sm font-medium text-gray-700 hover:text-gray-800"
+                          >
+                            {routs["/login"].name}
+                          </ComLink>
+                          <span className="h-6 w-px bg-gray-200" aria-hidden="true" />
+                          <ComLink
+                            to={routs["/reissue"].link}
+                            className="text-sm font-medium text-gray-700 hover:text-gray-800"
+                          >
+                            {routs["/reissue"].name}
+                          </ComLink>
+                        </>
+                      )}
                     </div>
 
                     {/* Search */}

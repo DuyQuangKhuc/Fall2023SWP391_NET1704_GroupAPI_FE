@@ -1,6 +1,6 @@
-import { Button } from "antd";
+// import { Button } from "antd";
 import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 
 export const ComLink = ({
   className,
@@ -8,7 +8,7 @@ export const ComLink = ({
   children,
   ...props
 }) => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   return (
     // <Button
     //   type="link"
@@ -19,7 +19,7 @@ export const ComLink = ({
     //     navigate(props.to, { replace: true });
     //   }}
     // >
-      <Link {...props}  className={`font-semibold text-indigo-600 hover:text-indigo-500 ${className}`} style={{ textDecorationSkipInk: "none", textUnderlineOffset: "4px" }}>
+    <Link {...props} className={`font-semibold hover:text-gray-400 text-black ${className}`} style={{ textDecorationSkipInk: "none", textUnderlineOffset: "4px" }}>
         {children}
       </Link>
     // </Button>

@@ -27,7 +27,7 @@ export const routers = createBrowserRouter([
     element: <Reissue />,
   },
   {
-    path: "/product/:slug",
+    path: "/Product/Product/:slug",
     element: <Product />,
   },
   {

@@ -18,7 +18,7 @@ export default function Home() {
             .catch((error) => {
                 console.error("Error fetching items:", error);
             });
-        console.log(products);
+        
     }, []);
 
     return (
@@ -33,7 +33,7 @@ export default function Home() {
 
                     <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
                         {products?.map((product, index) => (
-                            <ComLink key={index} to={`/Product/Product{id}${product.productId}`} className="group ">
+                            <ComLink key={index} to={`/Product/Product/${product.productId}`} className="group ">
                                 <div className="aspect-h-1 aspect-w-1 h-80 overflow-hidden rounded-lg bg-gray-200 xl:aspect-h-8 xl:aspect-w-7 border-solid border-2 border-stone-100">
                                     <img
                                         src={product.imagePath}

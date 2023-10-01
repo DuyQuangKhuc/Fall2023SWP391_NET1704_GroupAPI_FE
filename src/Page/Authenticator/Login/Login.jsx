@@ -55,7 +55,7 @@ export default function Login() {
                 console.log(data);
                 setToken(data)
                 setDisabled(false)
-                // navigate('/')
+                localStorage.setItem('user', JSON.stringify(data));
                 if (data.role !== 4 ) {
                     navigate('/createProduct')
                 }else {
