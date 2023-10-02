@@ -24,12 +24,17 @@ function classNames(...classes) {
 }
 
 export default function ComHeaderAdmin() {
+  const [user] = useState(JSON.parse(localStorage.getItem('user')));
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [cookies, setCookie, removeCookie] = useCookies(['accessToken']);
   const navigate = useNavigate();
 
   const handleDeleteCookie = () => {
-    removeCookie('accessToken');
+    // removeCookie('accessToken');
+
+    localStorage.removeItem('user');
+    // Redirect to login page
+    // window.location.href = '/login';
   };
   useEffect(() => {
     getData('/admin')
@@ -189,6 +194,7 @@ export default function ComHeaderAdmin() {
                   </a>
                 </div>
                 <div className="py-6">
+                  {user && <span>Welcome, {user.name}!</span>}
                   <Link onClick={() => handleDeleteCookie()} to="/login" className="text-sm font-semibold leading-6 text-gray-900">
                     Logout
                   </Link>

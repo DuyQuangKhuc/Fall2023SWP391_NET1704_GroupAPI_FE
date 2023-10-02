@@ -12,6 +12,7 @@ import { FormProvider, useForm } from 'react-hook-form'
 import * as yup from "yup"
 import { yupResolver } from '@hookform/resolvers/yup'
 import ComNumber from '../../Components/ComInput/ComNumber'
+import { MdAdd, MdRemove } from 'react-icons/md';
 
 const product = {
 
@@ -44,11 +45,24 @@ function classNames(...classes) {
 
 export default function Product() {
     const [selectedSize, setSelectedSize] = useState(product.sizes[2])
+    const [quantity, setQuantity] = useState(0);
     const [Product, setProduct] = useState([])
     const [image, setImage] = useState([])
     const { slug } = useParams();
 
+    const decrementQuantity = () => {
+        setQuantity(prevQuantity => prevQuantity > 0 ? prevQuantity - 1 : 0);
+    }
 
+    const incrementQuantity = () => {
+        setQuantity(prevQuantity => {
+            if (prevQuantity + 1 > Product.quantity) {
+                alert(`Số lượng bạn chọn đã đạt mức tối đa của sản phẩm này`);
+                return prevQuantity;
+            }
+            return prevQuantity + 1;
+        });
+    }
 
     const productQuantity = yup.object({
         quantity: yup.number().max(Product.quantity, `Số lượng bạn chọn đã đạt mức tối đa của sản phẩm này`).min(1, "phải lớn hơn hoặc bằng 1").required("Trường số lượng là bắt buộc").typeError("vui lòng chọn nhập vào đây"),
@@ -143,56 +157,43 @@ export default function Product() {
                                 <form className="mt-10" onSubmit={handleSubmit(onSubmit)}>
 
                                     <div>
-                                        <div className='flex gap-4'>
+                                        {/* <div className='flex gap-4'>
                                             <h3 className="text-sm font-medium text-gray-900 mt-2">{textApp.Product.page.quantity}</h3>
-                                            {/* <ComInput
-                                                className=" w-56"
-                                                placeholder={textApp.Product.page.quantity}
-                                                type="number"
-                                                maxLength={10}
-                                                {...register("quantity")}
-
-                                            /> */}
+                                            
                                             <ComNumber
                                                 className="w-56"
                                                 // min={1} 
                                                 defaultValue={1}
                                                 // max={Product.quantity} 
                                                 {...register("quantity")}
-
                                             />
                                             <div className='mt-2'> {Product.quantity} sản phẩm có sẵn</div>
+                                        </div> */}
+                                        <div>
+                                            <div className='flex gap-4'>
+                                                <h3 className="text-sm font-medium text-gray-900 mt-2">{textApp.Product.page.quantity}</h3>
+                                                <div className="relative">
+                                                    <div className="flex items-center justify-center w-full">
+                                                        <button type="button" className="text-gray-500 focus:outline-none focus:text-gray-600" onClick={() => decrementQuantity()}>
+                                                            <span className="sr-only">Decrease quantity</span>
+                                                            <MdRemove className="h-5 w-5" />
+                                                        </button>
+                                                        <input
+                                                            className="mx-2 border text-center w-8"
+                                                            type="text"
+                                                            value={quantity}
+                                                            onChange={e => setQuantity(e.target.value)}
+                                                            
+                                                        />
+                                                        <button type="button" className="text-gray-500 focus:outline-none focus:text-gray-600" onClick={() => incrementQuantity()}>
+                                                            <span className="sr-only">Increase quantity</span>
+                                                            <MdAdd className="h-5 w-5" />
+                                                        </button>
+                                                    </div>
+                                                    <div className='mt-2'> {Product.quantity} sản phẩm có sẵn</div>
+                                                </div>
+                                            </div>
                                         </div>
-                                        {/* <RadioGroup value={selectedColor} onChange={setSelectedColor} className="mt-4">
-                                        <RadioGroup.Label className="sr-only">Choose a color</RadioGroup.Label>
-                                        <div className="flex items-center space-x-3">
-                                            {product.colors.map((color) => (
-                                                <RadioGroup.Option
-                                                    key={color.name}
-                                                    value={color}
-                                                    className={({ active, checked }) =>
-                                                        classNames(
-                                                            color.selectedClass,
-                                                            active && checked ? 'ring ring-offset-1' : '',
-                                                            !active && checked ? 'ring-2' : '',
-                                                            'relative -m-0.5 flex cursor-pointer items-center justify-center rounded-full p-0.5 focus:outline-none'
-                                                        )
-                                                    }
-                                                >
-                                                    <RadioGroup.Label as="span" className="sr-only">
-                                                        {color.name}
-                                                    </RadioGroup.Label>
-                                                    <span
-                                                        aria-hidden="true"
-                                                        className={classNames(
-                                                            color.class,
-                                                            'h-8 w-8 rounded-full border border-black border-opacity-10'
-                                                        )}
-                                                    />
-                                                </RadioGroup.Option>
-                                            ))}
-                                        </div>
-                                    </RadioGroup> */}
 
                                     </div>
 
@@ -260,7 +261,7 @@ export default function Product() {
                                         type="submit"
                                         className="mt-10 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                                     >
-                                        Add to bag
+                                        Buy
                                     </button>
                                 </form>
                             </FormProvider>
