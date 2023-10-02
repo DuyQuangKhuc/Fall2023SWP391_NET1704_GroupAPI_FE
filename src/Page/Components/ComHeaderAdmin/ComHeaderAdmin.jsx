@@ -15,7 +15,7 @@ import { useCookies } from 'react-cookie'
 
 const products = [
   { name: 'Create Product', href: '/createProduct', },
-  { name: 'table Product', href: '/tableProduct', },
+  { name: 'Table Product', href: '/tableProduct', },
 ]
 
 
