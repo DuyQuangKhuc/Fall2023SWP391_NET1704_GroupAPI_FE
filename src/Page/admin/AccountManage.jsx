@@ -24,10 +24,10 @@ export default function AccountManage() {
     };
 
     const handleConfirmDelete = () => {
-        // Xử lý xóa tài khoản với ID được cung cấp
+        // Xóa tài khoản với ID 
         setisOpen(false);
         setDeleteAccount(null);
-        // Hiển thị thông báo xóa thành công
+        // Thông báo xóa thành công
         api.success({
             message: 'Xóa thành công',
             description: 'Tài khoản đã được xóa thành công.',
@@ -47,74 +47,77 @@ export default function AccountManage() {
         <div>
             {contextHolder}
             <ComHeaderAdmin />
-            <div className="mx-auto max-w-2xl text-center">
+            <div className="isolate bg-white px-6 py-10 sm:py-10 lg:px-8">
+                <div className="mx-auto max-w-2xl text-center">
                     <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
                         {textApp.HeaderAdmin.pageTitle}
                     </h2>
 
                 </div>
-            <table className="min-w-full border">
-                <thead>
-                    <tr>
-                        <th className="py-2 px-4 border text-center">ID</th>
-                        <th className="py-2 px-4 border text-center">Tên tài khoản</th>
-                        <th className="py-2 px-4 border text-center">Số điện thoại</th>
-                        <th className="py-2 px-4 border text-center">Hành động</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {accounts.map((account) => (
-                        <tr key={account.id}>
-                            <td className="py-2 px-4 border text-center">{account.id}</td>
-                            <td className="py-2 px-4 border text-center">{account.name}</td>
-                            <td className="py-2 px-4 border text-center">số điện thoại</td>
-                            <td className="py-2 px-4 border text-center">
-                                <button
-                                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 mr-2 rounded"
-                                    onClick={() => handleDelete(account.id)}
-                                >
-                                    Xóa
-                                </button>
-                                <button
-                                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                                    onClick={() => handleUpdate(account.id)}
-                                >
-                                    Cập nhật
-                                </button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-
-            <button
-                className="rounded bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 mt-4"
-                onClick={handleCreate}
-            >
-                Tạo tài khoản mới
-            </button>
-
-            <Modal
-                title="Xác nhận xóa"
-                visible={isOpen}
-            >
-                <p>Bạn có chắc chắn muốn xóa tài khoản này?</p>
-
-                <div className="flex justify-end mt-4">
-                    <button
-                        className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 mr-2 rounded"
-                        onClick={handleConfirmDelete}
-                    >
-                        Xác nhận
-                    </button>
-                    <button
-                        className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
-                        onClick={handleCancel}
-                    >
-                        Hủy bỏ
-                    </button>
+                <div className="mx-auto max-w-screen-lg">
+                    <table className="min-w-full border border w-100">
+                        <thead>
+                            <tr>
+                                <th className="py-2 px-4 border text-center">ID</th>
+                                <th className="py-2 px-4 border text-center">Tên tài khoản</th>
+                                <th className="py-2 px-4 border text-center">Số điện thoại</th>
+                                <th className="py-2 px-4 border text-center">Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {accounts.map((account) => (
+                                <tr key={account.id}>
+                                    <td className="py-2 px-4 border text-center">{account.id}</td>
+                                    <td className="py-2 px-4 border text-center">{account.name}</td>
+                                    <td className="py-2 px-4 border text-center">số điện thoại</td>
+                                    <td className="py-2 px-4 border text-center">
+                                        <button
+                                            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 mr-2 rounded"
+                                            onClick={() => handleDelete(account.id)}
+                                        >
+                                            Xóa
+                                        </button>
+                                        <button
+                                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                                            onClick={() => handleUpdate(account.id)}
+                                        >
+                                            Cập nhật
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
                 </div>
-            </Modal>
+                <button
+                    className="rounded bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 mt-4"
+                    onClick={handleCreate}
+                >
+                    Tạo tài khoản mới
+                </button>
+
+                <Modal
+                    title="Xác nhận xóa"
+                    open={isOpen}
+                >
+                    <p>Bạn có chắc chắn muốn xóa tài khoản này?</p>
+
+                    <div className="flex justify-end mt-4">
+                        <button
+                            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 mr-2 rounded"
+                            onClick={handleConfirmDelete}
+                        >
+                            Xác nhận
+                        </button>
+                        <button
+                            className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
+                            onClick={handleCancel}
+                        >
+                            Hủy bỏ
+                        </button>
+                    </div>
+                </Modal>
+            </div>
         </div>
     );
 }
