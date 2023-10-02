@@ -15,7 +15,11 @@ import { useCookies } from 'react-cookie'
 
 const products = [
   { name: 'Create Product', href: '/createProduct', },
-  { name: 'table Product', href: '/tableProduct', },
+  { name: 'Table Product', href: '/tableProduct', },
+]
+
+const account = [
+  { name: 'Account', href: '/accountManage', }
 ]
 
 
@@ -110,7 +114,12 @@ export default function ComHeaderAdmin() {
             </Popover>
 
             <a href="#" className="text-sm font-semibold leading-6 text-gray-900">
-              Features
+              
+              {account.map((item) => (
+                <ComLink to={item.href} className=" font-semibold text-gray-900 whitespace-nowrap ">
+                  {item.name}
+                </ComLink>
+              ))}
             </a>
             <a href="#" className="text-sm font-semibold leading-6 text-gray-900">
               Marketplace

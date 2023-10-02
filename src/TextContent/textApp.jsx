@@ -133,6 +133,7 @@ export const textApp = {
         phone: "(0123) 456-7890",
     },
     HeaderAdmin: {
+        pageTitle: "Account Management",
         product: "Sản phẩm",
     }
 
