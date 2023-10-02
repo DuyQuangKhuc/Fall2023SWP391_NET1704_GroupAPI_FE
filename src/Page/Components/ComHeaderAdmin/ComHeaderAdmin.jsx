@@ -18,6 +18,10 @@ const products = [
   { name: 'Table Product', href: '/tableProduct', },
 ]
 
+const account = [
+  { name: 'Account', href: '/accountManage', }
+]
+
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -105,7 +109,12 @@ export default function ComHeaderAdmin() {
             </Popover>
 
             <a href="#" className="text-sm font-semibold leading-6 text-gray-900">
-              Features
+              
+              {account.map((item) => (
+                <ComLink to={item.href} className=" font-semibold text-gray-900 whitespace-nowrap ">
+                  {item.name}
+                </ComLink>
+              ))}
             </a>
             <a href="#" className="text-sm font-semibold leading-6 text-gray-900">
               Marketplace
