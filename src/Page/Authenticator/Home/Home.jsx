@@ -53,8 +53,11 @@ export default function Home() {
                                         alt={product.imageAlt}
                                         className="w-full h-full object-cover object-center lg:h-5/6 lg:w-full "
                                     />
-                                    <h3 className="mt-2 text-sm text-gray-700 line-clamp-2 pl-4">{product.name}</h3>
-                                    <p className="mt-1 text-lg font-medium text-red-900 pl-4 pb-12">${product.price}</p>
+                                    <h3 className="mt-2 text-base font-bold text-gray-800 line-clamp-2 pl-4">{product.name}</h3>
+                                    <div className="flex justify-between items-center px-4 pb-12">
+                                        <p className="text-lg font-mono text-red-900">${product.price}</p>
+                                        <p className="text-end font-mono text-gray-500">Hàng còn: {product.quantity}</p>
+                                    </div>
                                 </div>
                                 
                             </ComLink>
