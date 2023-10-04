@@ -1,12 +1,11 @@
 import { SearchOutlined, EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
-import { Input } from "antd";
+import { Input, InputNumber } from "antd";
 import React from "react";
 import { useForm, useFormContext } from "react-hook-form";
 import { v4 } from "uuid";
 import { isEmpty, isNaN } from "lodash";
 import { FieldError } from "../FieldError/FieldError";
 import BigNumber from "bignumber.js";
-import TextArea from "antd/es/input/TextArea";
 
 const checkValidType = (str, value) => {
   return value.split('').every((item) => str.split('').includes(item));
@@ -47,7 +46,7 @@ const toBigDecimal = (value, length) => {
   return myNumber.toFixed(length);
 };
 
-const ComTextArea = React.forwardRef(
+const ComNumber = React.forwardRef(
   (
     {
       label,
@@ -57,10 +56,12 @@ const ComTextArea = React.forwardRef(
       onChange,
       maxLength,
       search,
-      minValue,
-      maxValue,
+      min,
+      max,
+      money,
       subLabel,
       decimalLength,
+      defaultValue,
       ...props
     },
     ref
@@ -71,11 +72,40 @@ const ComTextArea = React.forwardRef(
     const inputId = v4();
 
     const onlyChangeWithCondition = (e) => {
+     
       let value = '';
-      value =
-        e.clipboardData?.getData('text') ??
-        e.target.value;
-      setValue(props.name, value);
+      value =e
+   
+      switch (props.type) {
+        case 'emails':
+          if (!isHalfSize(value) || !value.match(emailRegex)) {
+            return;
+          }
+          break;
+        case 'code':
+          if (!checkValidType(decimalPositiveStr, value)) {
+            return;
+          }
+          break;
+        case 'money':
+          if (!checkValidType(positiveIntegerStr, value)) {
+            return;
+          }
+          break;
+        case 'numbers':
+          // if (!checkValidType(positiveIntegerStr, value)) {
+          //   return;
+          // }
+        if (e==='') {
+          const numericValue = e.toString();
+          value = numericValue.replace(/[^0-9]/g, '')
+        }
+         console.log(value);
+          break;
+        default:
+          break;
+      }
+      setValue(props.name, e);
       onChangeValue?.(props.name, value);
     };
 
@@ -95,24 +125,48 @@ const ComTextArea = React.forwardRef(
               {subLabel && <span className="ml-8">{subLabel}</span>}
             </div>
           )}
+          {
+            money ? (<InputNumber
+              prefix={
+                search ? (
+                  <SearchOutlined className="text-h3 text-grey" />
+                ) : undefined
+              }
+              id={inputId}
+              style={{ width: '100%' }}
+              ref={ref}
+              size="large"
+              {...props}
+              step={1}
+              min={min}
+              max={max}
+              formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+              parser={(value) => value.replace(/\\s?|(,*)/g, '')}
+              defaultValue={defaultValue}
+              status={error && 'error'}
+              onChange={onlyChangeWithCondition}
 
-          <TextArea
-            prefix={
-              search ? (
-                <SearchOutlined className="text-h3 text-grey" />
-              ) : undefined
-            }
-            id={inputId}
-            ref={ref}
-            showCount
-            size="large"
-            {...props}
-            value={props.value ?? valueWatch}
-            status={error && 'error'}
-            onChange={onlyChangeWithCondition}
-            maxLength={maxLength}
+            />) : (<InputNumber
+              prefix={
+                search ? (
+                  <SearchOutlined className="text-h3 text-grey" />
+                ) : undefined
+              }
+              id={inputId}
+              style={{ width: '100%' }}
+              ref={ref}
+              size="large"
+              {...props}
+              min={min}
+              max={max}
+              defaultValue={defaultValue}
+              status={error && 'error'}
+              onChange={onlyChangeWithCondition}
 
-          />
+            />)
+
+          }
+
 
           {error && <FieldError className="text-red-500">{error.message?.toString()}</FieldError>}
         </div>
@@ -121,4 +175,4 @@ const ComTextArea = React.forwardRef(
   }
 );
 
-export default ComTextArea;
+export default ComNumber;

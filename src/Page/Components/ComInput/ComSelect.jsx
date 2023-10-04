@@ -1,5 +1,5 @@
 import { SearchOutlined, EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
-import { Input } from "antd";
+import { Input, InputNumber, Select } from "antd";
 import React from "react";
 import { useForm, useFormContext } from "react-hook-form";
 import { v4 } from "uuid";
@@ -46,7 +46,7 @@ const toBigDecimal = (value, length) => {
   return myNumber.toFixed(length);
 };
 
-const ComInput = React.forwardRef(
+const ComSelect = React.forwardRef(
   (
     {
       label,
@@ -56,10 +56,13 @@ const ComInput = React.forwardRef(
       onChange,
       maxLength,
       search,
-      minValue,
-      maxValue,
+      min,
+      value,
+      max,
+      money,
       subLabel,
       decimalLength,
+      defaultValue,
       ...props
     },
     ref
@@ -70,42 +73,15 @@ const ComInput = React.forwardRef(
     const inputId = v4();
 
     const onlyChangeWithCondition = (e) => {
-      console.log(props.type);
-      let value = '';
-      value =
-        e.clipboardData?.getData('text') ??
-        e.target.value;
-      if (props.type === 'password' && !isHalfSize(value)) {
-        return;
-      }
-      switch (props.type) {
-        case 'emails':
-          if (!isHalfSize(value) || !value.match(emailRegex)) {
-            return;
-          }
-          break;
-        case 'code':
-          if (!checkValidType(decimalPositiveStr, value)) {
-            return;
-          }
-          break;
-        case 'numbers':
-          // if (!checkValidType(positiveIntegerStr, value)) {
-          //   return;
-          // }
-          const numericValue = value.replace(/[^0-9]/g, '');
-          value = numericValue;
-          break;
-        default:
-          break;
-      }
 
-      if (maxLength && value.length > maxLength) {
-        value = value.slice(0, maxLength);
-      }
-
-      setValue(props.name, value);
-      onChangeValue?.(props.name, value);
+    
+    // setValue(props.name, e);
+    if (e.length===0) {
+      setValue(props.name, "");
+      
+    }
+    console.log(e);
+    onChangeValue?.(props.name, e);
     };
 
     return (
@@ -124,60 +100,25 @@ const ComInput = React.forwardRef(
               {subLabel && <span className="ml-8">{subLabel}</span>}
             </div>
           )}
-          {props.type === 'password' ? (
-            <Input.Password
-              id={inputId}
+          {
+            <Select
+            //  status="error"
+              // style={{ width: '100%' }}
               ref={ref}
-              size="large"
-              {...props}
-              value={props.value ?? valueWatch}
+              // size="large"
               status={error && 'error'}
+              mode="multiple"
+              value={value}
               onChange={onlyChangeWithCondition}
-              iconRender={(visible) =>
-                visible ? (
-                  <EyeOutlined tabIndex={0} />
-                ) : (
-                  <EyeInvisibleOutlined tabIndex={0} />
-                )
-              }
-            />
-          ) : (
-            <Input
-              prefix={
-                search ? (
-                  <SearchOutlined className="text-h3 text-grey" />
-                ) : undefined
-              }
-              id={inputId}
-              ref={ref}
-              size="large"
+              // status={error && 'error'}
+              // // onChange={onlyChangeWithCondition}
               {...props}
-              value={props.value ?? valueWatch}
-              status={error && 'error'}
-              onChange={onlyChangeWithCondition}
-              onBlur={(e) => {
-                if (
-                  props.type === 'positiveDecimal' ||
-                  props.type === 'positiveInteger'
-                ) {
-                  let value =
-                    !isEmpty(e.target.value) && !isNaN(Number(e.target.value))
-                      ? e.target.value
-                      : '0';
-                  if (!isNaN(Number(decimalLength))) {
-                    value = toBigDecimal(value, decimalLength ?? 0);
-                  }
-                  if (!isNaN(maxValue) && Number(value) > Number(maxValue)) {
-                    value = (maxValue ?? '').toString();
-                  }
-                  if (!isNaN(minValue) && Number(value) < Number(minValue)) {
-                    value = (minValue ?? '').toString();
-                  }
-                  setValue(props.name, value);
-                }
-              }}
+
             />
-          )}
+
+          }
+
+
           {error && <FieldError className="text-red-500">{error.message?.toString()}</FieldError>}
         </div>
       </>
@@ -185,4 +126,4 @@ const ComInput = React.forwardRef(
   }
 );
 
-export default ComInput;
+export default ComSelect;

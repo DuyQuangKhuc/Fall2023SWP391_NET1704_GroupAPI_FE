@@ -14,13 +14,15 @@ import { postData } from "../../../api/api";
 import ComHeader from "../../Components/ComHeader/ComHeader";
 import { useNavigate } from "react-router-dom";
 import { FieldError } from "../../Components/FieldError/FieldError";
+import { useCookies } from "react-cookie";
+import ComFooter from "../../Components/ComFooter/ComFooter";
 
 
 export default function Login() {
     const [token, setToken] = useStorage("user", null);
     const [disabled, setDisabled] = useState(false);
     const [Login, setLogin] = useState(false);
-
+    const [LoginError, setLoginError] = useState(false);
     const navigate = useNavigate();
 
     const loginMessenger = yup.object({
@@ -48,25 +50,32 @@ export default function Login() {
     })
     const { handleSubmit, register, setFocus, watch, setValue } = methods
     const onSubmit = (data) => {
+        setLoginError(false)
+
         setLogin(false)
         setDisabled(true)
-        postData(`/LoginAndRegister/Check_Login/?email=${data.username}&password=${data.password}`)
+        postData('/login', data, {})
             .then((data) => {
                 console.log(data);
                 setToken(data)
                 setDisabled(false)
-                localStorage.setItem('user', JSON.stringify(data));
-                if (data.role !== 4 ) {
+                // navigate('/')
+                if (data._doc.admin) {
                     navigate('/createProduct')
-                }else {
-                    navigate('/')   
-    
+                } else {
+                    navigate('/')
                 }
             })
             .catch((error) => {
                 console.error("Error fetching items:", error);
                 setDisabled(false)
-                setLogin(true)
+                if (error?.response?.status === 401) {
+
+                    setLogin(true)
+                } else {
+                    setLoginError(true)
+
+                }
             });
     }
     // console.log(disableds);
@@ -87,12 +96,13 @@ export default function Login() {
                 <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
                     <FormProvider {...methods} >
                         <form className="flex flex-col gap-6" onSubmit={handleSubmit(onSubmit)}>
-                            
+                           
                             <ComInput
                                 placeholder={textApp.Login.placeholder.username}
                                 label={textApp.Login.label.username}
                                 type="text"
                                 // search
+                                maxLength={15}
                                 {...register("username")}
                                 required
                             />
@@ -100,12 +110,14 @@ export default function Login() {
                             <ComInput
                                 placeholder={textApp.Login.placeholder.password}
                                 label={textApp.Login.label.password}
-                                type="password"                           
+                                type="password"
+                                maxLength={16}
                                 {...register("password")}
                                 required
                             />
 
                             <FieldError className="text-red-500 text-center">{Login ? textApp.Login.message.error : ''}</FieldError>
+                            <FieldError className="text-red-500 text-center">{LoginError ? textApp.Login.message.error1 : ''}</FieldError>
                             <ComButton
 
                                 disabled={disabled}
@@ -133,7 +145,7 @@ export default function Login() {
                     </p>
                 </div>
             </div>
-
+            <ComFooter />
         </>
     )
 

@@ -12,32 +12,31 @@ import { useStorage } from "../../../hooks/useLocalStorage";
 import { useEffect, useState } from "react";
 import { postData } from "../../../api/api";
 import ComHeader from "../../Components/ComHeader/ComHeader";
-import { FieldError } from "../../Components/FieldError/FieldError";
-import { Navigate } from "react-router-dom";
 
 
 
 export default function Reissue() {
 
-    const [data, setData] = useState({});
+    const [error, setError] = useState("");
     const [disabled, setDisabled] = useState(false);
 
-    const [showSuccess, setShowSuccess] = useState(false);
-    const [showFailure, setShowFailure] = useState(false);
+
 
     const loginMessenger = yup.object({
         // code: yup.string().required(textApp.Reissue.message.username).min(5, "Username must be at least 5 characters"),
-        username: yup.string().required(textApp.Reissue.message.username),
+        username: yup.string().required(textApp.Reissue.message.username).min(6, textApp.Reissue.message.usernameMIn),
         phone: yup.string().required(textApp.Reissue.message.phone),
-        password: yup.string().required(textApp.Reissue.message.password),
-        // email: yup.string().email('định dạng sai').required('Login ID is required email'),
+        // .matches(/^[0-9]+$/, 'Số điện thoại phải chứa chỉ số'),
+        password: yup.string().required(textApp.Reissue.message.password).min(5, textApp.Reissue.message.passwordMIn),
+        password2: yup.string().required(textApp.Reissue.message.password2).min(5, textApp.Reissue.message.passwordMIn),
+        email: yup.string().email(textApp.Reissue.message.emailFormat).required(textApp.Reissue.message.email),
     })
     const LoginRequestDefault = {
         // code: "",
         password: "",
         phone: "",
         username: "",
-        // email: "",
+        email: "",
 
     };
     const methods = useForm({
@@ -47,44 +46,43 @@ export default function Reissue() {
             username: "",
             phone: "",
             password: "",
-            // email: "",
+            email: "",
         },
         values: LoginRequestDefault
     })
     const { handleSubmit, register, setFocus, watch, setValue } = methods
     const onSubmit = (data) => {
+        if (data.password2 !== data.password) {
+
+            return setError(textApp.Reissue.message.passwordCheck)
+        }
         setDisabled(true)
-        postData(`/LoginAndRegister/Add_Account?email=${data.username}&phone_number=${data.phone}&password=${data.password}`)
+        setError("")
+        postData('/reg', data, {})
             .then((data) => {
                 console.log(data);
                 setDisabled(false)
-                setShowSuccess(true);
-                setTimeout(() => {
-                    setShowSuccess(false);
-                    Navigate('/login');
-                }, 3000);
             })
             .catch((error) => {
+                setError(error?.response?.data?.error)
                 console.error("Error fetching items:", error);
                 setDisabled(false)
-                setShowFailure(true);
-                setTimeout(() => {
-                    setShowFailure(false);
-                }, 3000);
             });
+
     }
     // console.log(disableds);
     // useEffect(() => {
 
     // }, [disableds]);
+    console.log(disabled);
     return (
         <>
             <ComHeader />
-            <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+            <div className="flex min-h-full flex-1 flex-col justify-center px-6 lg:px-8">
                 <div className="sm:mx-auto sm:w-full sm:max-w-sm">
 
                     <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-                        Create in to your account
+                        {textApp.Reissue.pageTitle}
                     </h2>
                 </div>
 
@@ -97,7 +95,8 @@ export default function Reissue() {
                                 label={textApp.Reissue.label.username}
                                 type="text"
                                 // search
-                                maxLength={15}
+                                maxLength={26}
+                                onchange={() => { setError("") }}
                                 {...register("username")}
                                 required
                             />
@@ -111,16 +110,30 @@ export default function Reissue() {
                                 required
                             />
                             <ComInput
+                                placeholder={textApp.Reissue.placeholder.email}
+                                label={textApp.Reissue.label.email}
+                                type="text"
+                                {...register("email")}
+                                required
+                            />
+                            <ComInput
                                 placeholder={textApp.Reissue.placeholder.password}
                                 label={textApp.Reissue.label.password}
                                 type="password"
-                                maxLength={16}
+                                maxLength={26}
                                 {...register("password")}
                                 required
                             />
-
+                            <ComInput
+                                placeholder={textApp.Reissue.placeholder.password2}
+                                label={textApp.Reissue.label.password2}
+                                type="password"
+                                maxLength={26}
+                                {...register("password2")}
+                                required
+                            />
+                            <h1 className="text-red-500">{error}</h1>
                             <ComButton
-
                                 disabled={disabled}
                                 htmlType="submit"
                                 type="primary"
@@ -128,13 +141,7 @@ export default function Reissue() {
                                 {textApp.Reissue.pageTitle}
                             </ComButton>
 
-                            {/* <ComButton
-                                htmlType="submit"
-                                type="primary"
-                                className="bg-black hover:bg-white"
-                            >
-                                cancel
-                            </ComButton> */}
+
                         </form>
                     </FormProvider>
 
@@ -147,21 +154,6 @@ export default function Reissue() {
                 </div>
             </div>
 
-            {showSuccess && (
-                <div className="fixed inset-0 flex items-center justify-center">
-                    <div className="bg-white p-4 rounded-lg shadow-lg">
-                        <p className="text-green-500 font-bold">Account created successfully!</p>
-                    </div>
-                </div>
-            )}
-
-            {showFailure && (
-                <div className="fixed inset-0 flex items-center justify-center">
-                    <div className="bg-white p-4 rounded-lg shadow-lg">
-                        <p className="text-red-500 font-bold">Failed to create account. Please try again.</p>
-                    </div>
-                </div>
-            )}
         </>
     )
 

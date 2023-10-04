@@ -7,7 +7,7 @@ const images = {
             original: require('./homeImg/1.png'),
             thumbnail: require('./homeImg/1.png'),
             className: 'w-24 h-24',
-        },
+        }, 
         {
             original: require('./homeImg/2.png'),
             thumbnail: require('./homeImg/2.png'),
@@ -24,7 +24,9 @@ const images = {
             className: 'w-24 h-24',
         }
 
-    ]
+    ],
+    avatar:require('./user.jpg')
+    
 };
 
 export default images;

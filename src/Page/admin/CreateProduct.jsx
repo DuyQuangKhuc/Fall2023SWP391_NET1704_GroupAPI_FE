@@ -13,6 +13,7 @@ import ComHeaderAdmin from '../Components/ComHeaderAdmin/ComHeaderAdmin'
 import ComTextArea from '../Components/ComInput/ComTextArea'
 import ComNumber from '../Components/ComInput/ComNumber'
 import { Select, notification } from 'antd'
+import ComSelect from '../Components/ComInput/ComSelect'
 
 const options = [
     {
@@ -28,50 +29,36 @@ const options = [
         value: "Kim loại"
     },
 ];
-// for (let i = 10; i < 36; i++) {
-//     options.push({
-//         value: i.toString(36) + i,
-//         label: i.toString(36) + i,
-//     });
-// }
 
 export default function CreateProduct() {
     const [disabled, setDisabled] = useState(false);
     const [image, setImages] = useState([]);
-    const [material, setMaterial] = useState([]);
     const [api, contextHolder] = notification.useNotification();
 
 
     const CreateProductMessenger = yup.object({
-
         name: yup.string().required(textApp.CreateProduct.message.name),
         price: yup.number().min(1, textApp.CreateProduct.message.priceMin).typeError(textApp.CreateProduct.message.price),
         price1: yup.string().required(textApp.CreateProduct.message.price).min(1, textApp.CreateProduct.message.priceMin).test('no-dots', textApp.CreateProduct.message.priceDecimal, value => !value.includes('.')),
         reducedPrice: yup.number().min(1, textApp.CreateProduct.message.priceMin).typeError(textApp.CreateProduct.message.price),
         reducedPrice1: yup.string().required(textApp.CreateProduct.message.price).min(1, textApp.CreateProduct.message.priceMin).test('no-dots', textApp.CreateProduct.message.priceDecimal, value => !value.includes('.')),
         quantity: yup.number().min(1, textApp.CreateProduct.message.quantityMin).typeError(textApp.CreateProduct.message.quantity),
-        detail: yup.string().required(textApp.CreateProduct.message.detail),
         shape: yup.string().required(textApp.CreateProduct.message.shape),
-        models: yup.string().required(textApp.CreateProduct.message.models),
-        // material: yup.string().required(textApp.CreateProduct.message.material),
-        accessory: yup.string().required(textApp.CreateProduct.message.accessory),
+        material: yup.array().required(textApp.CreateProduct.message.material),
         description: yup.string().required(textApp.CreateProduct.message.description),
     })
     const createProductRequestDefault = {
         price: 1000,
         reducedPrice: 1000,
-
     };
-
     const methods = useForm({
         resolver: yupResolver(CreateProductMessenger),
         defaultValues: {
             name: "",
             quantity: 1,
-            detail: "",
             models: "",
             shape: "",
-            material: [],
+            material: "",
             accessory: "",
             image: [],
             description: "",
@@ -85,17 +72,61 @@ export default function CreateProduct() {
     }
     const onSubmit = (data) => {
         console.log(data);
+        console.log(data.reducedPrice%1000!==0);
+        console.log(data.reducedPrice%1000);
 
-
-        if (!isInteger(data.price)) {
-
+        if (data.price%1000!==0) {
             api["error"]({
-                message: 'Notification Title',
+                message: textApp.CreateProduct.Notification.m7.message,
                 description:
-                    'Giá tiền phải là số nguyên',
+                    textApp.CreateProduct.Notification.m7.description
             });
             return
         }
+        if (data.reducedPrice%1000!==0) {
+            api["error"]({
+                message: textApp.CreateProduct.Notification.m8.message,
+                description:
+                    textApp.CreateProduct.Notification.m8.description
+            });
+            return
+        }
+        if (!isInteger(data.price)) {
+
+            api["error"]({
+                message: textApp.CreateProduct.Notification.m1.message,
+                description:
+                    textApp.CreateProduct.Notification.m1.description
+            });
+            return
+        }
+
+        if (data.material.length === 0) {
+            api["error"]({
+                message: textApp.CreateProduct.Notification.m4.message,
+                description:
+                    textApp.CreateProduct.Notification.m4.description
+            });
+            return
+        }
+        if (image.length === 0) {
+            api["error"]({
+                message: textApp.CreateProduct.Notification.m5.message,
+                description:
+                    textApp.CreateProduct.Notification.m5.description
+            });
+            return
+        }
+
+        if (data.price <= data.reducedPrice) {
+            api["error"]({
+                message: textApp.CreateProduct.Notification.m6.message,
+                description:
+                    textApp.CreateProduct.Notification.m6.description
+            });
+            return
+        }
+       
         setDisabled(true)
         firebaseImgs(image)
             .then((dataImg) => {
@@ -103,20 +134,29 @@ export default function CreateProduct() {
                 const updatedData = {
                     ...data, // Giữ lại các trường dữ liệu hiện có trong data
                     image: dataImg, // Thêm trường images chứa đường dẫn ảnh
-                    material
+
                 };
 
                 postData('/product', updatedData, {})
                     .then((dataS) => {
                         console.log(dataS);
                         setDisabled(false)
+                        api["success"]({
+                            message: textApp.CreateProduct.Notification.m2.message,
+                            description:
+                                textApp.CreateProduct.Notification.m2.description
+                        });
                     })
                     .catch((error) => {
+                        api["error"]({
+                            message: textApp.CreateProduct.Notification.m3.message,
+                            description:
+                                textApp.CreateProduct.Notification.m3.description
+                        });
                         console.error("Error fetching items:", error);
                         setDisabled(false)
                     });
-            }
-            )
+            })
             .catch((error) => {
                 console.log(error)
             });
@@ -124,19 +164,16 @@ export default function CreateProduct() {
 
     }
     const onChange = (data) => {
-
         const selectedImages = data;
-
         // Tạo một mảng chứa đối tượng 'originFileObj' của các tệp đã chọn
         const newImages = selectedImages.map((file) => file.originFileObj);
-
         // Cập nhật trạng thái 'image' bằng danh sách tệp mới
         setImages(newImages);
         console.log(image);
         // setFileList(data);
     }
     const handleValueChange = (e, value) => {
-        console.log(value);
+       
         setValue("price", value, { shouldValidate: true });
     };
 
@@ -145,12 +182,13 @@ export default function CreateProduct() {
         setValue("reducedPrice", value, { shouldValidate: true });
     };
 
-    const handleChange = (value) => {
-
-        setMaterial(value)
-        console.log([value]);
+    const handleValueChangeSelect = (e, value) => {
+        if (value.length === 0) {
+            setValue("material", null, { shouldValidate: true });
+        } else {
+            setValue("material", value, { shouldValidate: true });
+        }
     };
-
     return (
         <>
             {contextHolder}
@@ -209,6 +247,7 @@ export default function CreateProduct() {
                                     label={textApp.CreateProduct.label.quantity}
                                     placeholder={textApp.CreateProduct.placeholder.quantity}
                                     // type="numbers"
+                                    min={1}
                                     defaultValue={1}
                                     {...register("quantity")}
                                     required
@@ -216,7 +255,7 @@ export default function CreateProduct() {
 
                             </div>
 
-                            <div className="">
+                            {/* <div className="">
                                 <Select
                                     size={"large"}
                                     style={{
@@ -226,6 +265,21 @@ export default function CreateProduct() {
                                     placeholder={textApp.CreateProduct.placeholder.material}
                                     onChange={handleChange}
                                     options={options}
+                                />
+                            </div> */}
+                            <div className="">
+                                <ComSelect
+                                    size={"large"}
+                                    style={{
+                                        width: '100%',
+                                    }}
+                                    label={textApp.CreateProduct.label.material}
+                                    placeholder={textApp.CreateProduct.placeholder.material}
+                                    required
+                                    onChangeValue={handleValueChangeSelect}
+                                    options={options}
+                                    {...register("material")}
+
                                 />
                             </div>
                             <div className="sm:col-span-2">
@@ -237,16 +291,8 @@ export default function CreateProduct() {
                                     {...register("shape")}
                                 />
                             </div>
-                            <div className="sm:col-span-2">
-                                <ComInput
-                                    label={textApp.CreateProduct.label.detail}
-                                    placeholder={textApp.CreateProduct.placeholder.detail}
-                                    required
-                                    type="text"
-                                    {...register("detail")}
-                                />
-                            </div>
-                            <div className="sm:col-span-2">
+
+                            {/* <div className="sm:col-span-2">
                                 <ComInput
                                     label={textApp.CreateProduct.label.models}
                                     placeholder={textApp.CreateProduct.placeholder.models}
@@ -254,9 +300,9 @@ export default function CreateProduct() {
                                     type="text"
                                     {...register("models")}
                                 />
-                            </div>
+                            </div> */}
 
-                            <div className="sm:col-span-2">
+                            {/* <div className="sm:col-span-2">
                                 <ComInput
                                     label={textApp.CreateProduct.label.accessory}
                                     placeholder={textApp.CreateProduct.placeholder.accessory}
@@ -264,7 +310,7 @@ export default function CreateProduct() {
                                     type="text"
                                     {...register("accessory")}
                                 />
-                            </div>
+                            </div> */}
 
 
                             <div className="sm:col-span-2">
@@ -292,7 +338,6 @@ export default function CreateProduct() {
                                 disabled={disabled}
                                 htmlType="submit"
                                 type="primary"
-
                                 className="block w-full rounded-md bg-indigo-600 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                             >
                                 {textApp.common.button.createProduct}
