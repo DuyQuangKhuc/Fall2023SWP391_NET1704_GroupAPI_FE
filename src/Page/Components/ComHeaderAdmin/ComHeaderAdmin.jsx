@@ -14,6 +14,7 @@ import {
 
   XMarkIcon,
 } from '@heroicons/react/24/outline'
+import images from "../../../img";
 import { ChevronDownIcon, } from '@heroicons/react/20/solid'
 import { ComLink } from '../ComLink/ComLink'
 import { Link, useNavigate } from 'react-router-dom'
@@ -48,36 +49,38 @@ export default function ComHeaderAdmin() {
     window.location.href = '/login';
   };
 
-  const handleDeleteCookie = () => {
-    // removeCookie('accessToken');
+  // const handleDeleteCookie = () => {
+  //   // removeCookie('accessToken');
 
-    localStorage.removeItem('user');
-    // Redirect to login page
-    // window.location.href = '/login';
-  };
-  useEffect(() => {
-    getData('/admin')
-      .then((data) => {
-        if (!data.data.admin) {
-          navigate('/')
-        }
-        if (data.data.admin === 'login') {
-          navigate('/login')
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      })
+  //   localStorage.removeItem('user');
+  //   // Redirect to login page
+  //   // window.location.href = '/login';
+  // };
+  // useEffect(() => {
+  //   getData('/admin')
+  //     .then((data) => {
+  //       if (!data.data.admin) {
+  //         navigate('/')
+  //       }
+  //       if (data.data.admin === 'login') {
+  //         navigate('/login')
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     })
 
-  }, [navigate]);
+  // }, [navigate]);
+  //offsetTop={0} onChange={(affixed) => console.log(affixed)}
   return (
-    <Affix offsetTop={0} onChange={(affixed) => console.log(affixed)}>
+    <Affix >
       <header className="bg-white border-b border-gray-200">
         <nav className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
           <div className="flex lg:flex-1">
-            <a href="#" className="-m-1.5 p-1.5">
+            <a href="#" className="-m-1.5 p-1">
               <span className="sr-only">Your Company</span>
-              <img className="h-8 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600" alt="" />
+              <img className="h-16 w-auto" src={images.logo}
+                alt="" />
             </a>
           </div>
           <div className="flex lg:hidden">
@@ -143,6 +146,8 @@ export default function ComHeaderAdmin() {
               Company
             </a>
           </Popover.Group>
+
+          
           <div className="hidden lg:flex lg:flex-1 lg:justify-end">
             <Popover className="relative -right-24 ">
               {({ open }) => (
@@ -290,8 +295,8 @@ export default function ComHeaderAdmin() {
                   </a>
                 </div>
                 <div className="py-6">
-                  {user && <span>Welcome, {user.name}!</span>}
-                  <Link onClick={() => handleDeleteCookie()} to="/login" className="text-sm font-semibold leading-6 text-gray-900">
+                 
+                  <Link onClick={() => logout()} to="/login" className="text-sm font-semibold leading-6 text-gray-900">
                     Logout
                   </Link>
                 </div>

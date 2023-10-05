@@ -124,7 +124,7 @@ export default function TableProduct() {
                         material
                     };
 
-                    putData(`/product`, productRequestDefault.id, updatedData, {})
+                    putData(`/Product/List_Product`, productRequestDefault.id, updatedData, {})
                         .then((dataS) => {
                             api["success"]({
                                 message: 'Notification Title',
@@ -142,7 +142,7 @@ export default function TableProduct() {
                         material,
                         image: dataImg, // Thêm trường images chứa đường dẫn ảnh
                     };
-                    putData(`/product`, productRequestDefault.id, updatedData, {})
+                    putData(`/Product/List_Product`, productRequestDefault.id, updatedData, {})
                         .then((dataS) => {
                             api["success"]({
                                 message: 'Notification Title',
@@ -168,12 +168,9 @@ export default function TableProduct() {
     }
 
     useEffect(() => {
-        getData('/product', {})
+        getData('/Product/List_Product', {})
             .then((data) => {
-
-
                 setProducts(data?.data?.docs)
-
                 setDisabled(false)
             })
             .catch((error) => {

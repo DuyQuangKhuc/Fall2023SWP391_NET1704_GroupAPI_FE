@@ -10,7 +10,7 @@ const ComImage = ({ product, showThumbnails }) => {
     // }));
 
     return (
-        <div>
+        <div className='w-full h-96' >
             <ImageGallery thumbnailHeight={200} showThumbnails={showThumbnails} showFullscreenButton={false} showPlayButton={false} autoPlay={true} slideDuration={1000} slideInterval={4000} items={product} />
         </div>
     );

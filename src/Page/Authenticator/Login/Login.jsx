@@ -50,7 +50,7 @@ export default function Login() {
     const onSubmit = (data) => {
         setLogin(false)
         setDisabled(true)
-        postData(`/LoginAndRegister/Check_Login/?email=${data.username}&password=${data.password}`)
+        postData(`/LoginAndRegister/Check-Login/?email=${data.username}&password=${data.password}`)
             .then((data) => {
                 console.log(data);
                 setToken(data)

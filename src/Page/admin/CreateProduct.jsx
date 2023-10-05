@@ -17,15 +17,15 @@ import { Select, notification } from 'antd'
 const options = [
     {
         label: "Gỗ",
-        value: "Gỗ"
+        value: "1"
     },
     {
         label: "Nhựa",
-        value: "Nhựa"
+        value: "2"
     },
     {
         label: "Kim Loại",
-        value: "Kim loại"
+        value: "3"
     },
 ];
 // for (let i = 10; i < 36; i++) {
@@ -37,7 +37,7 @@ const options = [
 
 export default function CreateProduct() {
     const [disabled, setDisabled] = useState(false);
-    const [image, setImages] = useState([]);
+    const [imagePath, setImages] = useState([]);
     const [material, setMaterial] = useState([]);
     const [api, contextHolder] = notification.useNotification();
 
@@ -46,39 +46,49 @@ export default function CreateProduct() {
 
         name: yup.string().required(textApp.CreateProduct.message.name),
         price: yup.number().min(1, textApp.CreateProduct.message.priceMin).typeError(textApp.CreateProduct.message.price),
-        price1: yup.string().required(textApp.CreateProduct.message.price).min(1, textApp.CreateProduct.message.priceMin).test('no-dots', textApp.CreateProduct.message.priceDecimal, value => !value.includes('.')),
-        reducedPrice: yup.number().min(1, textApp.CreateProduct.message.priceMin).typeError(textApp.CreateProduct.message.price),
-        reducedPrice1: yup.string().required(textApp.CreateProduct.message.price).min(1, textApp.CreateProduct.message.priceMin).test('no-dots', textApp.CreateProduct.message.priceDecimal, value => !value.includes('.')),
+        //price1: yup.string().required(textApp.CreateProduct.message.price).min(1, textApp.CreateProduct.message.priceMin).test('no-dots', textApp.CreateProduct.message.priceDecimal, value => !value.includes('.')),
+        // reducedPrice: yup.number().min(1, textApp.CreateProduct.message.priceMin).typeError(textApp.CreateProduct.message.price),
+        // reducedPrice1: yup.string().required(textApp.CreateProduct.message.price).min(1, textApp.CreateProduct.message.priceMin).test('no-dots', textApp.CreateProduct.message.priceDecimal, value => !value.includes('.')),
         quantity: yup.number().min(1, textApp.CreateProduct.message.quantityMin).typeError(textApp.CreateProduct.message.quantity),
-        detail: yup.string().required(textApp.CreateProduct.message.detail),
-        shape: yup.string().required(textApp.CreateProduct.message.shape),
-        models: yup.string().required(textApp.CreateProduct.message.models),
-        // material: yup.string().required(textApp.CreateProduct.message.material),
+        // detail: yup.string().required(textApp.CreateProduct.message.detail),
+        // shape: yup.string().required(textApp.CreateProduct.message.shape),
+        // models: yup.string().required(textApp.CreateProduct.message.models),
+        material: yup.string().required(textApp.CreateProduct.message.material),
         accessory: yup.string().required(textApp.CreateProduct.message.accessory),
         description: yup.string().required(textApp.CreateProduct.message.description),
     })
     const createProductRequestDefault = {
-        price: 1000,
-        reducedPrice: 1000,
+        price: "",
+        name: "",
+        quantity: "",
+        //detail: "",
+        // models: "",
+        // shape: "",
+        material: [],
+        accessory: "",
+        imagePath: [],
+        description: "",
+        //reducedPrice: 1000,
 
     };
 
     const methods = useForm({
         resolver: yupResolver(CreateProductMessenger),
         defaultValues: {
+            productId: "",
             name: "",
             quantity: 1,
-            detail: "",
-            models: "",
-            shape: "",
+            //detail: "",
+            // models: "",
+            // shape: "",
             material: [],
             accessory: "",
-            image: [],
+            imagePath: [],
             description: "",
         },
         values: createProductRequestDefault
     })
-    const { handleSubmit, register, setFocus, watch, setValue } = methods
+    const { handleSubmit, register, setValue } = methods
 
     function isInteger(number) {
         return typeof number === 'number' && isFinite(number) && Math.floor(number) === number;
@@ -97,16 +107,16 @@ export default function CreateProduct() {
             return
         }
         setDisabled(true)
-        firebaseImgs(image)
+        firebaseImgs(imagePath)
             .then((dataImg) => {
-                console.log('ảnh nè : ', dataImg);
+                console.log('ảnh : ', dataImg);
                 const updatedData = {
                     ...data, // Giữ lại các trường dữ liệu hiện có trong data
-                    image: dataImg, // Thêm trường images chứa đường dẫn ảnh
+                    imagePath: dataImg, // Thêm trường images chứa đường dẫn ảnh
                     material
                 };
 
-                postData('/product', updatedData, {})
+                postData('/Product/Add_Product', updatedData, {})
                     .then((dataS) => {
                         console.log(dataS);
                         setDisabled(false)
@@ -124,7 +134,7 @@ export default function CreateProduct() {
 
     }
     const onChange = (data) => {
-
+        
         const selectedImages = data;
 
         // Tạo một mảng chứa đối tượng 'originFileObj' của các tệp đã chọn
@@ -132,21 +142,20 @@ export default function CreateProduct() {
 
         // Cập nhật trạng thái 'image' bằng danh sách tệp mới
         setImages(newImages);
-        console.log(image);
+        console.log(imagePath);
         // setFileList(data);
     }
-    const handleValueChange = (e, value) => {
-        console.log(value);
-        setValue("price", value, { shouldValidate: true });
-    };
+    // const handleValueChange = (e, value) => {
+    //     console.log(value);
+    //     setValue("price", value, { shouldValidate: true });
+    // };
 
-    const handleValueChange1 = (e, value) => {
-        console.log(value);
-        setValue("reducedPrice", value, { shouldValidate: true });
-    };
+    // const handleValueChange1 = (e, value) => {
+    //     console.log(value);
+    //     setValue("reducedPrice", value, { shouldValidate: true });
+    // };
 
     const handleChange = (value) => {
-
         setMaterial(value)
         console.log([value]);
     };
@@ -184,13 +193,11 @@ export default function CreateProduct() {
                                     defaultValue={1000}
                                     min={1000}
                                     money
-                                    onChangeValue={handleValueChange}
-                                    {...register("price1")}
+                                    {...register("price")}
                                     required
                                 />
-
                             </div>
-                            <div>
+                            {/* <div>
                                 <ComNumber
                                     label={textApp.CreateProduct.label.reducedPrice}
                                     placeholder={textApp.CreateProduct.placeholder.reducedPrice}
@@ -203,7 +210,7 @@ export default function CreateProduct() {
                                     required
                                 />
 
-                            </div>
+                            </div> */}
                             <div>
                                 <ComNumber
                                     label={textApp.CreateProduct.label.quantity}
@@ -216,8 +223,12 @@ export default function CreateProduct() {
 
                             </div>
 
-                            <div className="">
-                                <Select
+                            <div >
+                                <p className="font-bold tracking-tight pb-4 text-gray-900" >
+                                    {textApp.CreateProduct.label.material}
+                                </p>
+                                <Select  
+                                    label={textApp.CreateProduct.label.material}                  
                                     size={"large"}
                                     style={{
                                         width: '100%',
@@ -226,9 +237,11 @@ export default function CreateProduct() {
                                     placeholder={textApp.CreateProduct.placeholder.material}
                                     onChange={handleChange}
                                     options={options}
+                                    required
                                 />
                             </div>
-                            <div className="sm:col-span-2">
+                            
+                            {/* <div className="sm:col-span-2">
                                 <ComInput
                                     label={textApp.CreateProduct.label.shape}
                                     placeholder={textApp.CreateProduct.placeholder.shape}
@@ -236,8 +249,8 @@ export default function CreateProduct() {
                                     type="text"
                                     {...register("shape")}
                                 />
-                            </div>
-                            <div className="sm:col-span-2">
+                            </div> */}
+                            {/* <div className="sm:col-span-2">
                                 <ComInput
                                     label={textApp.CreateProduct.label.detail}
                                     placeholder={textApp.CreateProduct.placeholder.detail}
@@ -245,8 +258,10 @@ export default function CreateProduct() {
                                     type="text"
                                     {...register("detail")}
                                 />
-                            </div>
-                            <div className="sm:col-span-2">
+                            </div> */}
+
+
+                            {/* <div className="sm:col-span-2">
                                 <ComInput
                                     label={textApp.CreateProduct.label.models}
                                     placeholder={textApp.CreateProduct.placeholder.models}
@@ -254,7 +269,7 @@ export default function CreateProduct() {
                                     type="text"
                                     {...register("models")}
                                 />
-                            </div>
+                            </div> */}
 
                             <div className="sm:col-span-2">
                                 <ComInput
@@ -268,7 +283,6 @@ export default function CreateProduct() {
 
 
                             <div className="sm:col-span-2">
-
                                 <div className="mt-2.5">
 
                                     <ComTextArea
@@ -288,7 +302,6 @@ export default function CreateProduct() {
                         </div>
                         <div className="mt-10">
                             <ComButton
-
                                 disabled={disabled}
                                 htmlType="submit"
                                 type="primary"
