@@ -188,10 +188,8 @@ export default function TableProduct() {
         setImages(newImages);
 
     }
+
     const columns = [
-
-
-
         {
             title: 'ID',
             width: 50,
@@ -204,7 +202,7 @@ export default function TableProduct() {
             width: 150,
             dataIndex: 'name',
             key: 'name',
-            // fixed: 'left',
+            sorter: (a, b) => a.name - b.name,
             render: (_, record) => (
                 <div >
                     <h1>{record.name ? record.name : "Empty"}</h1>
@@ -216,6 +214,7 @@ export default function TableProduct() {
             width: 150,
             dataIndex: 'email',
             key: 'email',
+            sorter: (a, b) => a.email.localeCompare(b.email),
             render: (_, record) => (
                 <div>
                     {record.email}
@@ -249,6 +248,7 @@ export default function TableProduct() {
             dataIndex: 'address',
             width: 200,
             key: 'address',
+            sorter: (a, b) => a.address - b.address,
             render: (_, record) => (
                 <div >
                     {record.address ? record.address : "Empty"}
@@ -266,6 +266,7 @@ export default function TableProduct() {
             width: 80,
             dataIndex: 'role',
             key: 'role',
+            sorter: (a, b) => a.role - b.role,
             render: (_, record) => (
                 <div >
                     {record.role === 1 ? "Admin" : record.role === 2 ? "Manager" : record.role === 3 ? "Staff" : record.role === 4 ? "User" : ''}
@@ -290,18 +291,18 @@ export default function TableProduct() {
             fixed: 'right',
             render: (_, record) => (
                 //onClick={() => showModalEdit(record)}
-                <Dropdown 
+                <Dropdown
                     placement="bottom"
                     overlay={
                         <Menu>
                             <Menu.Item key="1" >
-                                <EditNoteTwoTone/> Edit
+                                <EditNoteTwoTone /> Edit
                             </Menu.Item>
                             <Menu.Item key="2">
-                                <ChangeCircleTwoTone/> Role
+                                <ChangeCircleTwoTone /> Role
                             </Menu.Item>
                             <Menu.Item key="3">
-                                <DeleteForeverTwoTone /> Remove 
+                                <DeleteForeverTwoTone /> Remove
                             </Menu.Item>
                         </Menu>
                     }>
