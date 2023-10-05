@@ -18,7 +18,7 @@ import ComNumber from '../Components/ComInput/ComNumber';
 
 export default function TableProduct() {
     const [disabled, setDisabled] = useState(false);
-    const [image, setImages] = useState([]);
+    const [imagePath, setImages] = useState([]);
     const [material1, setMaterial1] = useState();
     const [material, setMaterial] = useState(material1);
     const [products, setProducts] = useState([]);
@@ -116,15 +116,15 @@ export default function TableProduct() {
 
     const onSubmit = (data) => {
         setDisabled(true)
-        firebaseImgs(image)
+        firebaseImgs(imagePath)
             .then((dataImg) => {
-                if (Array.isArray(image) && image.length === 0) {
+                if (Array.isArray(imagePath) && imagePath.length === 0) {
                     const updatedData = {
                         ...data, // Giữ lại các trường dữ liệu hiện có trong data
                         material
                     };
 
-                    putData(`/Product/List_Product`, productRequestDefault.id, updatedData, {})
+                    putData(`/Product/Update-Product`, productRequestDefault.id, updatedData, {})
                         .then((dataS) => {
                             api["success"]({
                                 message: 'Notification Title',
@@ -140,9 +140,9 @@ export default function TableProduct() {
                     const updatedData = {
                         ...data, // Giữ lại các trường dữ liệu hiện có trong data
                         material,
-                        image: dataImg, // Thêm trường images chứa đường dẫn ảnh
+                        imagePath: dataImg, // Thêm trường images chứa đường dẫn ảnh
                     };
-                    putData(`/Product/List_Product`, productRequestDefault.id, updatedData, {})
+                    putData(`/Product/List-Product`, productRequestDefault.id, updatedData, {})
                         .then((dataS) => {
                             api["success"]({
                                 message: 'Notification Title',
@@ -168,9 +168,9 @@ export default function TableProduct() {
     }
 
     useEffect(() => {
-        getData('/Product/List_Product', {})
+        getData('/Product/List-Product', {})
             .then((data) => {
-                setProducts(data?.data?.docs)
+                setProducts(data?.data)
                 setDisabled(false)
             })
             .catch((error) => {
@@ -189,15 +189,15 @@ export default function TableProduct() {
     const columns = [
 
         {
-            title: 'img',
+            title: 'Img',
 
-            dataIndex: 'image',
+            // dataIndex: 'image',
             key: 'img',
             fixed: 'left',
             render: (_, record) => (
 
                 <div >
-                    <img src={record.image} alt={record.image} />
+                    <img src={record.imagePath} alt={record.imagePath} />
                 </div>
             )
         },
@@ -207,7 +207,6 @@ export default function TableProduct() {
             key: 'name',
             fixed: 'left',
             render: (_, record) => (
-
                 <div >
                     <h1>{record.name}</h1>
                 </div>
@@ -221,23 +220,25 @@ export default function TableProduct() {
             sorter: (a, b) => a.price - b.price,
         },
         {
-            title: 'quantity',
+            title: 'Quantity',
             width: 100,
             dataIndex: 'quantity',
             key: 'quantity',
         },
         {
-            title: 'createdAt',
-            dataIndex: 'createdAt',
-            key: 'createdAt',
-            sorter: (a, b) => a.price - b.price,
+            title: 'Date upload',
+            render: (_, record) => (
+                <div>
+                    {new Date(record.uploadDate).toLocaleDateString('en-GB')}
+                </div>
+            ),
+            key: 'uploadDate',          
         },
-        {
-            title: 'updatedAt',
-            dataIndex: 'updatedAt',
-            key: 'updatedAt',
-            sorter: (a, b) => a.price - b.price,
-        },
+        // {
+        //     title: 'updatedAt',
+        //     dataIndex: 'updatedAt',
+        //     key: 'updatedAt',
+        // },
         {
             title: 'detail',
             dataIndex: 'detail',

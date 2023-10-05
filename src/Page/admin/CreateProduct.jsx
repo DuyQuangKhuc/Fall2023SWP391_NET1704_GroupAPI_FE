@@ -28,12 +28,7 @@ const options = [
         value: "3"
     },
 ];
-// for (let i = 10; i < 36; i++) {
-//     options.push({
-//         value: i.toString(36) + i,
-//         label: i.toString(36) + i,
-//     });
-// }
+
 
 export default function CreateProduct() {
     const [disabled, setDisabled] = useState(false);
@@ -77,7 +72,7 @@ export default function CreateProduct() {
         defaultValues: {
             productId: "",
             name: "",
-            quantity: 1,
+            quantity: "",
             //detail: "",
             // models: "",
             // shape: "",
@@ -88,7 +83,7 @@ export default function CreateProduct() {
         },
         values: createProductRequestDefault
     })
-    const { handleSubmit, register, setValue } = methods
+    const { handleSubmit, register } = methods
 
     function isInteger(number) {
         return typeof number === 'number' && isFinite(number) && Math.floor(number) === number;
@@ -116,7 +111,7 @@ export default function CreateProduct() {
                     material
                 };
 
-                postData('/Product/Add_Product', updatedData, {})
+                postData(`/Product/Add-Product`, updatedData, {})
                     .then((dataS) => {
                         console.log(dataS);
                         setDisabled(false)
@@ -172,7 +167,7 @@ export default function CreateProduct() {
 
                 </div>
                 <FormProvider {...methods} >
-                    <form onSubmit={handleSubmit(onSubmit)} className="mx-auto mt-4 max-w-xl sm:mt-8">
+                    <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data" className="mx-auto mt-4 max-w-xl sm:mt-8">
                         <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
                             <div className="sm:col-span-2">
                                 <div className="mt-2.5">
@@ -190,9 +185,9 @@ export default function CreateProduct() {
                                     label={textApp.CreateProduct.label.price}
                                     placeholder={textApp.CreateProduct.placeholder.price}
                                     // type="money"
-                                    defaultValue={1000}
-                                    min={1000}
-                                    money
+                                    defaultValue={0}
+                                    min={0}
+                                    money="true" 
                                     {...register("price")}
                                     required
                                 />
@@ -298,6 +293,7 @@ export default function CreateProduct() {
                             </div>
                             <div className="sm:col-span-1">
                                 <ComUpImg onChange={onChange} />
+                                
                             </div>
                         </div>
                         <div className="mt-10">
@@ -305,7 +301,6 @@ export default function CreateProduct() {
                                 disabled={disabled}
                                 htmlType="submit"
                                 type="primary"
-
                                 className="block w-full rounded-md bg-indigo-600 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                             >
                                 {textApp.common.button.createProduct}

@@ -8,23 +8,24 @@ import ComButton from "../../Components/ComButton/ComButton";
 import { textApp } from "../../../TextContent/textApp";
 import { ComLink } from "../../Components/ComLink/ComLink";
 import { routs } from "../../../constants/ROUT";
-import { useStorage } from "../../../hooks/useLocalStorage";
+// import { useStorage } from "../../../hooks/useLocalStorage";
 import { useEffect, useState } from "react";
 import { postData } from "../../../api/api";
 import ComHeader from "../../Components/ComHeader/ComHeader";
-import { FieldError } from "../../Components/FieldError/FieldError";
-import { Navigate } from "react-router-dom";
+// import { FieldError } from "../../Components/FieldError/FieldError";
+import { useNavigate } from "react-router-dom";
+
 
 
 
 export default function Reissue() {
 
-    const [data, setData] = useState({});
+    // const [data, setData] = useState({});
     const [disabled, setDisabled] = useState(false);
 
     const [showSuccess, setShowSuccess] = useState(false);
     const [showFailure, setShowFailure] = useState(false);
-
+    const navigate = useNavigate();
     const loginMessenger = yup.object({
         // code: yup.string().required(textApp.Reissue.message.username).min(5, "Username must be at least 5 characters"),
         username: yup.string().required(textApp.Reissue.message.username),
@@ -61,7 +62,7 @@ export default function Reissue() {
                 setShowSuccess(true);
                 setTimeout(() => {
                     setShowSuccess(false);
-                    Navigate('/login');
+                    navigate('/login');
                 }, 3000);
             })
             .catch((error) => {
@@ -136,6 +137,22 @@ export default function Reissue() {
                                 cancel
                             </ComButton> */}
                         </form>
+
+                        {showSuccess && (
+                            <div className="fixed inset-0 flex items-center justify-center">
+                                <div className="bg-white p-4 rounded-lg shadow-lg">
+                                    <p className="text-green-500 font-bold">Account created successfully!</p>
+                                </div>
+                            </div>
+                        )}
+
+                        {showFailure && (
+                            <div className="fixed inset-0 flex items-center justify-center">
+                                <div className="bg-white p-4 rounded-lg shadow-lg">
+                                    <p className="text-red-500 font-bold">Failed to create account. Please try again.</p>
+                                </div>
+                            </div>
+                        )}
                     </FormProvider>
 
                     <p className="mt-10 text-center text-sm text-gray-500">
@@ -147,23 +164,8 @@ export default function Reissue() {
                 </div>
             </div>
 
-            {showSuccess && (
-                <div className="fixed inset-0 flex items-center justify-center">
-                    <div className="bg-white p-4 rounded-lg shadow-lg">
-                        <p className="text-green-500 font-bold">Account created successfully!</p>
-                    </div>
-                </div>
-            )}
-
-            {showFailure && (
-                <div className="fixed inset-0 flex items-center justify-center">
-                    <div className="bg-white p-4 rounded-lg shadow-lg">
-                        <p className="text-red-500 font-bold">Failed to create account. Please try again.</p>
-                    </div>
-                </div>
-            )}
+            
         </>
     )
 
 }
-

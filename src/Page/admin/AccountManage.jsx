@@ -1,248 +1,478 @@
-import React, { useState } from 'react';
-import ComHeaderAdmin from '../Components/ComHeaderAdmin/ComHeaderAdmin';
-import { notification, Modal } from 'antd';
-import { textApp } from '../../TextContent/textApp'
+
+import { useEffect, useState } from 'react'
+import { FormProvider, useForm } from 'react-hook-form'
+import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from "yup"
-import { useFormik } from 'formik';
-export default function AccountManage() {
-    const accounts = [
-        { id: 1, name: 'Tài khoản 1' },
-        { id: 2, name: 'Tài khoản 2' },
-        { id: 3, name: 'Tài khoản 3' },
+
+import { Modal, Select, Table, Typography, notification } from 'antd';
+import { textApp } from '../../TextContent/textApp';
+import { getData, postData, putData } from '../../api/api';
+import { firebaseImgs } from '../../upImgFirebase/firebaseImgs';
+import ComHeaderAdmin from '../Components/ComHeaderAdmin/ComHeaderAdmin';
+import ComButton from '../Components/ComButton/ComButton';
+import ComUpImg from '../Components/ComUpImg/ComUpImg';
+import ComInput from '../Components/ComInput/ComInput';
+import ComTextArea from '../Components/ComInput/ComTextArea';
+import ComNumber from '../Components/ComInput/ComNumber';
+
+
+export default function TableProduct() {
+    const [disabled, setDisabled] = useState(false);
+    const [imagePath, setImages] = useState([]);
+    const [material1, setMaterial1] = useState();
+    const [material, setMaterial] = useState(material1);
+    const [account, setAccount] = useState([]);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [productRequestDefault, setProductRequestDefault] = useState({});
+    const [api, contextHolder] = notification.useNotification();
+    const [selectedMaterials, setSelectedMaterials] = useState(material1);
+
+    const showModalEdit = (e) => {
+        setSelectedMaterials(e.material)
+        setMaterial1(e.material)
+        setProductRequestDefault({
+            name: e.name,
+            price: e.price,
+            quantity: e.quantity,
+            detail: e.detail,
+            shape: e.shape,
+            models: e.models,
+            material: e.material,
+            accessory: e.accessory,
+            description: e.description,
+            id: e._id
+        })
+        setIsModalOpen(true);
+    };
+    const options = [
+        {
+            label: "Gỗ",
+            value: "Gỗ"
+        },
+        {
+            label: "Nhựa",
+            value: "Nhựa"
+        },
+        {
+            label: "Kim Loại",
+            value: "Kim loại"
+        },
     ];
 
-    const AccountSchema = yup.object().shape({
-        updatedName: yup.string().required('Vui lòng nhập tên tài khoản'),
-        updatedPhone: yup.string().required('Vui lòng nhập số điện thoại'),
-    });
+    const handleCancel = () => {
+        setIsModalOpen(false);
 
-    const formik = useFormik({
-        initialValues: {
-            updatedName: '',
-            updatedPhone: '',
+    };
+    const handleValueChange = (e, value) => {
+        console.log(value);
+
+        setValue("price", value, { shouldValidate: true });
+    };
+
+    const handleValueChange1 = (e, value) => {
+        console.log(value);
+        setValue("reducedPrice", value, { shouldValidate: true });
+    };
+    const handleChange = (value) => {
+        setSelectedMaterials(value);
+        setMaterial(value)
+        console.log([value]);
+    };
+
+    const CreateProductMessenger = yup.object({
+
+        name: yup.string().required(textApp.CreateProduct.message.name),
+        price: yup.number().min(1, textApp.CreateProduct.message.priceMin).typeError(textApp.CreateProduct.message.price),
+        price1: yup.string().required(textApp.CreateProduct.message.price).min(1, textApp.CreateProduct.message.priceMin).test('no-dots', textApp.CreateProduct.message.priceDecimal, value => !value.includes('.')),
+        reducedPrice: yup.number().min(1, textApp.CreateProduct.message.priceMin).typeError(textApp.CreateProduct.message.price),
+        reducedPrice1: yup.string().required(textApp.CreateProduct.message.price).min(1, textApp.CreateProduct.message.priceMin).test('no-dots', textApp.CreateProduct.message.priceDecimal, value => !value.includes('.')),
+        quantity: yup.number().min(1, textApp.CreateProduct.message.quantityMin).typeError(textApp.CreateProduct.message.quantity),
+        detail: yup.string().required(textApp.CreateProduct.message.detail),
+        shape: yup.string().required(textApp.CreateProduct.message.shape),
+        models: yup.string().required(textApp.CreateProduct.message.models),
+        // material: yup.string().required(textApp.CreateProduct.message.material),
+        accessory: yup.string().required(textApp.CreateProduct.message.accessory),
+        description: yup.string().required(textApp.CreateProduct.message.description),
+    })
+    const createProductRequestDefault = {
+        price: 1000,
+        reducedPrice: 1000,
+
+    };
+    const methods = useForm({
+        resolver: yupResolver(CreateProductMessenger),
+        defaultValues: {
+            name: "",
+            price: "",
+            quantity: "",
+            detail: "",
+            material: [],
+            models: "",
+            accessory: "",
+            description: "",
         },
-        validationSchema: AccountSchema,
-        onSubmit: (values) => {
-            console.log('Dữ liệu cập nhật:', values);
-            handleConfirmUpdate();
-        },
-    });
+        values: productRequestDefault
+    })
+    const { handleSubmit, register, setFocus, watch, setValue } = methods
 
-    const [selectedAccount, setSelectedAccount] = useState(null);
-    const [api, contextHolder] = notification.useNotification();
+    const onSubmit = (data) => {
+        setDisabled(true)
+        firebaseImgs(imagePath)
+            .then((dataImg) => {
+                if (Array.isArray(imagePath) && imagePath.length === 0) {
+                    const updatedData = {
+                        ...data, // Giữ lại các trường dữ liệu hiện có trong data
+                        material
+                    };
 
-    const [deleteAccount, setDeleteAccount] = useState(null);
-    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+                    putData(`/Product/Update-Product`, productRequestDefault.id, updatedData, {})
+                        .then((dataS) => {
+                            api["success"]({
+                                message: 'Notification Title',
+                                description:
+                                    'This is the content of the notification. This is the content of the notification. This is the content of the notification.',
+                            });
+                        })
+                        .catch((error) => {
+                            console.error("Error fetching items:", error);
+                            setDisabled(false)
+                        });
+                } else {
+                    const updatedData = {
+                        ...data, // Giữ lại các trường dữ liệu hiện có trong data
+                        material,
+                        imagePath: dataImg, // Thêm trường images chứa đường dẫn ảnh
+                    };
+                    putData(`/Product/List-Product`, productRequestDefault.id, updatedData, {})
+                        .then((dataS) => {
+                            api["success"]({
+                                message: 'Notification Title',
+                                description:
+                                    'This is the content of the notification. This is the content of the notification. This is the content of the notification.',
+                            });
+                        })
+                        .catch((error) => {
+                            console.error("Error fetching items:", error);
+                            setDisabled(false)
+                        });
+                }
 
-    const [updateAccount, setUpdateAccount] = useState(null);
-    const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+            }
+            )
+            .catch((error) => {
+                console.log(error)
+            });
+        setImages([]);
+        setDisabled(false)
+        setIsModalOpen(false);
 
-    const [updatedName, setUpdatedName] = useState('');
-    const [updatedPhone, setUpdatedPhone] = useState('');
-
-    //update
-    const handleConfirmUpdate = () => {
-        if (updateAccount) {
-            console.log('Cập nhật tài khoản:', updateAccount.id);
-            console.log('Tên mới:', updatedName);
-            console.log('Số điện thoại mới:', updatedPhone);
-        }
-
-        setIsUpdateModalOpen(false);
-        setUpdateAccount(null);
-        setUpdatedName('');
-        setUpdatedPhone('');
-        api.success({
-            message: 'Cập nhật thành công',
-            description: 'Tài khoản đã được cập nhật thành công.',
-            duration: 2,
-        });
-    };
-
-    const handleUpdate = (accountId) => {
-        const account = accounts.find((account) => account.id === accountId);
-        setSelectedAccount(account);
-        console.log(selectedAccount)
-        setUpdateAccount(accountId);
-        setIsUpdateModalOpen(true);
-    };
-
-    //delete
-    const handleDelete = (accountId) => {
-        setDeleteAccount(accountId);
-        setIsDeleteModalOpen(true);
-    };
-
-
-    const handleConfirmDelete = () => {
-        setIsDeleteModalOpen(false);
-        setDeleteAccount(null);
-        api.success({
-            message: 'Xóa thành công',
-            description: 'Tài khoản đã được xóa thành công.',
-            duration: 2,
-        });
-    };
-
-    //close popup
-    const handleDeleteClose = () => {
-        setIsDeleteModalOpen(false)
     }
 
-    const handleUpdateClose = () => {
-        setIsUpdateModalOpen(false)
+    useEffect(() => {
+        getData('Account/Get-All-Account', {})
+            .then((data) => {
+                setAccount(data?.data)
+                setDisabled(false)
+            })
+            .catch((error) => {
+                console.error("Error fetching items:", error);
+                setDisabled(false)
+            });
+    }, [disabled]);
+    const onChange = (data) => {
+        const selectedImages = data;
+        // Tạo một mảng chứa đối tượng 'originFileObj' của các tệp đã chọn
+        const newImages = selectedImages.map((file) => file.originFileObj);
+        // Cập nhật trạng thái 'image' bằng danh sách tệp mới
+        setImages(newImages);
+
     }
+    const columns = [
 
 
-    const handleCreate = () => {
-        // tạo tài khoản mới
+
+        {
+            title: 'ID',
+            width: 50,
+            dataIndex: 'accountId',
+            key: 'accountId',
+            fixed: 'left',
+        },
+        {
+            title: 'Name',
+            width: 150,
+            dataIndex: 'name',
+            key: 'name',
+            // fixed: 'left',
+            render: (_, record) => (
+                <div >
+                    <h1>{record.name ? record.name : "Empty"}</h1>
+                </div>
+            )
+        },
+        {
+            title: 'Email',
+            width: 150,
+            dataIndex: 'email',
+            key: 'email',
+            render: (_, record) => (
+                <div>
+                    {record.email}
+                </div>
+            ),
+        },
+        {
+            title: 'Password',
+            width: 100,
+            dataIndex: 'password',
+            render: (_, record) => (
+                <div >
+                    {record.password ? "******" : ""}
+                </div>
+            ),
+            key: 'password',
+        },
+        {
+            title: 'Phone',
+            dataIndex: 'phone',
+            width: 150,
+            key: 'phone',
+            render: (_, record) => (
+                <div >
+                    {record.phone ? record.phone : "Empty"}
+                </div>
+            ),
+        },
+        {
+            title: 'Address',
+            dataIndex: 'address',
+            width: 200,
+            key: 'address',
+            render: (_, record) => (
+                <div >
+                    {record.address ? record.address : "Empty"}
+                </div>
+            ),
+        },
+        {
+            title: 'Point',
+            width: 80,
+            dataIndex: 'point',
+            key: '1',
+        },
+        {
+            title: 'Role',
+            width: 80,
+            dataIndex: 'role',
+            key: 'role',
+            render: (_, record) => (
+                <div >
+                    {record.role === 1 ? "Admin" : record.role === 2 ? "Manager" : record.role === 3 ? "Staff" : record.role === 4 ? "User" : ''}
+                </div>
+            ),
+        },
+        {
+            title: 'Status',
+            width: 80,
+            dataIndex: 'status',
+            key: 'status',
+            render: (_, record) => (
+                <div >
+                    {record.status === 1 ? "Action" : record.status === 0 ? "Non-action" : ''}
+                </div>
+            ),
+        },
+        {
+            title: 'Action',
+            key: 'operation',
+            fixed: 'right',
+            width: 100,
+            render: (_, record) => (
+                //onClick={() => showModalEdit(record)}
+                <Typography.Link >
+                    Edit
+                </Typography.Link>
+
+            )
+        },
+    ];
+    const handleChangeSelect = (value) => {
+        setSelectedMaterials(value);
     };
-
     return (
-        <div>
+        <>
             {contextHolder}
             <ComHeaderAdmin />
-            <div className="isolate bg-white px-6 py-10 sm:py-10 lg:px-8">
-                <div className="mx-auto max-w-2xl text-center">
-                    <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-                        {textApp.HeaderAdmin.pageTitle}
-                    </h2>
+            <div className='flex p-5 justify-center'>
+                <Table
+                    rowKey="_id"
+                    columns={columns}
+                    dataSource={account}
+                    scroll={{
+                        x: 1500,
+                        // y: 500,
+                    }}
+                    bordered
+                    pagination={{
+                        showSizeChanger: true, // Hiển thị dropdown cho phép chọn số lượng dữ liệu
+                        pageSizeOptions: ['10', '20', '50', '100'], // Các tùy chọn số lượng dữ liệu
+                    }}
+                />
+            </div>
+            <Modal title={textApp.TableProduct.title.change}
+                okType="primary text-black border-gray-700"
+                open={isModalOpen}
 
-                </div>
-                <div className="mx-auto max-w-screen-lg">
-                    <table className="min-w-full border border w-100">
-                        <thead>
-                            <tr>
-                                <th className="py-2 px-4 border text-center">ID</th>
-                                <th className="py-2 px-4 border text-center">Tên tài khoản</th>
-                                <th className="py-2 px-4 border text-center">Số điện thoại</th>
-                                <th className="py-2 px-4 border text-center">Hành động</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {accounts.map((account) => (
-                                <tr key={account.id}>
-                                    <td className="py-2 px-4 border text-center">{account.id}</td>
-                                    <td className="py-2 px-4 border text-center">{account.name}</td>
-                                    <td className="py-2 px-4 border text-center">số điện thoại</td>
-                                    <td className="py-2 px-4 border text-center">
-                                        <button
-                                            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 mr-2 rounded"
-                                            onClick={() => handleDelete(account.id)}
-                                        >
-                                            Xóa
-                                        </button>
-                                        <button
-                                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                                            onClick={() => handleUpdate(account.id)}
-                                        >
-                                            Cập nhật
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-                <button
-                    className="rounded bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 mt-4"
-                    onClick={handleCreate}
-                >
-                    Tạo tài khoản mới
-                </button>
+                width={1000}
+                style={{ top: 20 }}
+
+                onCancel={handleCancel}>
+                <FormProvider {...methods} >
+                    <form onSubmit={handleSubmit(onSubmit)} className="mx-auto mt-4 max-w-xl sm:mt-8">
+                        <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
+                            <div className="sm:col-span-2">
+                                <div className="mt-2.5">
+                                    <ComInput
+                                        type="text"
+                                        label={textApp.CreateProduct.label.name}
+                                        placeholder={textApp.CreateProduct.placeholder.name}
+                                        {...register("name")}
+                                        required
+                                    />
+                                </div>
+                            </div>
+                            <div>
+                                <ComNumber
+                                    label={textApp.CreateProduct.label.price}
+                                    placeholder={textApp.CreateProduct.placeholder.price}
+                                    // type="money"
+                                    defaultValue={1000}
+                                    min={1000}
+                                    money
+                                    onChangeValue={handleValueChange}
+                                    {...register("price1")}
+                                    required
+                                />
+
+                            </div>
+                            <div>
+                                <ComNumber
+                                    label={textApp.CreateProduct.label.reducedPrice}
+                                    placeholder={textApp.CreateProduct.placeholder.reducedPrice}
+                                    // type="money"
+                                    defaultValue={1000}
+                                    min={1000}
+                                    money
+                                    onChangeValue={handleValueChange1}
+                                    {...register("reducedPrice1")}
+                                    required
+                                />
+
+                            </div>
+                            <div>
+                                <ComNumber
+                                    label={textApp.CreateProduct.label.quantity}
+                                    placeholder={textApp.CreateProduct.placeholder.quantity}
+                                    // type="numbers"
+                                    defaultValue={1}
+                                    {...register("quantity")}
+                                    required
+                                />
+
+                            </div>
+
+                            <div className="">
+                                {selectedMaterials}
+                                <Select
+                                    size={"large"}
+                                    style={{
+                                        width: '100%',
+                                    }}
+                                    value={selectedMaterials}
+                                    mode="multiple"
+                                    placeholder={textApp.CreateProduct.placeholder.material}
+                                    onChange={handleChange}
+                                    options={options}
+                                />
+                            </div>
+                            <div className="sm:col-span-2">
+                                <ComInput
+                                    label={textApp.CreateProduct.label.shape}
+                                    placeholder={textApp.CreateProduct.placeholder.shape}
+                                    required
+                                    type="text"
+                                    {...register("shape")}
+                                />
+                            </div>
+                            <div className="sm:col-span-2">
+                                <ComInput
+                                    label={textApp.CreateProduct.label.detail}
+                                    placeholder={textApp.CreateProduct.placeholder.detail}
+                                    required
+                                    type="text"
+                                    {...register("detail")}
+                                />
+                            </div>
+                            <div className="sm:col-span-2">
+                                <ComInput
+                                    label={textApp.CreateProduct.label.models}
+                                    placeholder={textApp.CreateProduct.placeholder.models}
+                                    required
+                                    type="text"
+                                    {...register("models")}
+                                />
+                            </div>
+
+                            <div className="sm:col-span-2">
+                                <ComInput
+                                    label={textApp.CreateProduct.label.accessory}
+                                    placeholder={textApp.CreateProduct.placeholder.accessory}
+                                    required
+                                    type="text"
+                                    {...register("accessory")}
+                                />
+                            </div>
 
 
+                            <div className="sm:col-span-2">
 
+                                <div className="mt-2.5">
 
-                {/* Thông báo delete */}
-                <Modal
-                    title="Xác nhận xóa"
-                    open={isDeleteModalOpen}
-                    onCancel={handleDeleteClose}
-                >
-                    <p>Bạn có chắc chắn muốn xóa tài khoản này?</p>
-
-                    <div className="flex justify-end mt-4">
-                        <button
-                            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 mr-2 rounded"
-                            onClick={handleConfirmDelete}
-                        >
-                            Xác nhận
-                        </button>
-                        <button
-                            className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
-                            onClick={handleDeleteClose}
-                        >
-                            Hủy bỏ
-                        </button>
-                    </div>
-                </Modal>
-
-                {/* Thông báo cập nhật  */}
-
-                <Modal
-                    title="Cập nhật tài khoản"
-                    open={isUpdateModalOpen}
-                    onCancel={handleUpdateClose}
-                >
-
-                    <form onSubmit={formik.handleSubmit}>
-                        <div className="mb-4">
-                            <label htmlFor="updatedName" className="block text-gray-700 text-sm font-bold mb-2">
-                                Tên tài khoản
-                            </label>
-                            <input
-                                id="updatedName"
-                                name="updatedName"
-                                className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${formik.touched.updatedName && formik.errors.updatedName ? 'border-red-500' : ''
-                                    }`}
-                                type="text"
-                                value={formik.values.updatedName}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                            />
-                            {formik.touched.updatedName && formik.errors.updatedName && (
-                                <p className="text-red-500 text-xs italic">{formik.errors.updatedName}</p>
-                            )}
+                                    <ComTextArea
+                                        label={textApp.CreateProduct.label.description}
+                                        placeholder={textApp.CreateProduct.placeholder.description}
+                                        rows={4}
+                                        defaultValue={''}
+                                        required
+                                        maxLength={1000}
+                                        {...register("description")}
+                                    />
+                                </div>
+                            </div>
+                            <div className="sm:col-span-1">
+                                <ComUpImg onChange={onChange} />
+                            </div>
                         </div>
+                        <div className="mt-10">
+                            <ComButton
 
-                        <div className="mb-4">
-                            <label htmlFor="updatedPhone" className="block text-gray-700 text-sm font-bold mb-2">
-                                Số điện thoại
-                            </label>
-                            <input
-                                id="updatedPhone"
-                                name="updatedPhone"
-                                className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${formik.touched.updatedPhone && formik.errors.updatedPhone ? 'border-red-500' : ''
-                                    }`}
-                                type="text"
-                                value={formik.values.updatedPhone}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                            />
-                            {formik.touched.updatedPhone && formik.errors.updatedPhone && (
-                                <p className="text-red-500 text-xs italic">{formik.errors.updatedPhone}</p>
-                            )}
-                        </div>
+                                disabled={disabled}
+                                htmlType="submit"
+                                type="primary"
 
-                        <div className="flex justify-end mt-4">
-                            <button
-                                type="submit"
-                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mr-2 rounded"
+                                className="block w-full rounded-md bg-indigo-600 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                             >
-                                Xác nhận
-                            </button>
-                            <button
-                                className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
-                                onClick={handleUpdateClose}
-                            >
-                                Hủy bỏ
-                            </button>
+                                {textApp.common.button.createProduct}
+                            </ComButton>
                         </div>
                     </form>
-                </Modal>
+                </FormProvider>
 
-            </div>
-        </div>
-    );
+            </Modal>
+        </>
+
+
+    )
+
+
 }

@@ -57,7 +57,7 @@ export default function Login() {
                 setDisabled(false)
                 localStorage.setItem('user', JSON.stringify(data));
                 if (data.role !== 4 ) {
-                    navigate('/createProduct')
+                    navigate('/tableProduct')
                 }else {
                     navigate('/')   
     
