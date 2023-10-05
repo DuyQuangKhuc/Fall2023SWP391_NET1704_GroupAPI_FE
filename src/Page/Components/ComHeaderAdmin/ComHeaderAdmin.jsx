@@ -131,8 +131,7 @@ export default function ComHeaderAdmin() {
               </Transition>
             </Popover>
 
-            <a href="#" className="text-sm font-semibold leading-6 text-gray-900">
-              
+            <a href="#" className="text-sm font-semibold leading-6 text-gray-900">            
               {account.map((item) => (
                 <ComLink to={item.href} className=" font-semibold text-gray-900 whitespace-nowrap ">
                   {item.name}
@@ -140,10 +139,10 @@ export default function ComHeaderAdmin() {
               ))}
             </a>
             <a href="#" className="text-sm font-semibold leading-6 text-gray-900">
-              Marketplace
+              Order
             </a>
             <a href="#" className="text-sm font-semibold leading-6 text-gray-900">
-              Company
+              Feedback
             </a>
           </Popover.Group>
 

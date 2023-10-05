@@ -4,7 +4,7 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from "yup"
 
-import { Modal, Select, Table, Typography, notification } from 'antd';
+import { Dropdown, Menu, Modal, Select, Table, Typography, notification } from 'antd';
 import { textApp } from '../../TextContent/textApp';
 import { getData, postData, putData } from '../../api/api';
 import { firebaseImgs } from '../../upImgFirebase/firebaseImgs';
@@ -14,6 +14,7 @@ import ComUpImg from '../Components/ComUpImg/ComUpImg';
 import ComInput from '../Components/ComInput/ComInput';
 import ComTextArea from '../Components/ComInput/ComTextArea';
 import ComNumber from '../Components/ComInput/ComNumber';
+import { ChangeCircleTwoTone, DeleteForeverTwoTone, EditAttributesTwoTone, EditLocationAltTwoTone, EditNoteTwoTone } from '@mui/icons-material';
 
 
 export default function TableProduct() {
@@ -283,15 +284,31 @@ export default function TableProduct() {
             ),
         },
         {
-            title: 'Action',
+            title: '',
+            width: 50,
             key: 'operation',
             fixed: 'right',
-            width: 100,
             render: (_, record) => (
                 //onClick={() => showModalEdit(record)}
-                <Typography.Link >
-                    Edit
-                </Typography.Link>
+                <Dropdown 
+                    placement="bottom"
+                    overlay={
+                        <Menu>
+                            <Menu.Item key="1" >
+                                <EditNoteTwoTone/> Edit
+                            </Menu.Item>
+                            <Menu.Item key="2">
+                                <ChangeCircleTwoTone/> Role
+                            </Menu.Item>
+                            <Menu.Item key="3">
+                                <DeleteForeverTwoTone /> Remove 
+                            </Menu.Item>
+                        </Menu>
+                    }>
+                    <Typography.Link >
+                        •••
+                    </Typography.Link>
+                </Dropdown>
 
             )
         },
