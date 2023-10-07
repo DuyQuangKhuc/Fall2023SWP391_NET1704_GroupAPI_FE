@@ -54,6 +54,7 @@ export default function Login() {
             .then((data) => {
                 console.log(data);
                 setToken(data)
+                console.log(data);
                 setDisabled(false)
                 localStorage.setItem('user', JSON.stringify(data));
                 if (data.role !== 4 ) {

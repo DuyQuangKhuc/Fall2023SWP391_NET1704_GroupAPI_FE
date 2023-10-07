@@ -3,10 +3,10 @@ import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from "yup"
-
-import { Dropdown, Menu, Modal, Select, Table, Typography, notification } from 'antd';
+import React from 'react';
+import { Dropdown, Menu, Modal, Segmented, Select, Space, Table, Typography, notification } from 'antd';
 import { textApp } from '../../TextContent/textApp';
-import { getData, postData, putData } from '../../api/api';
+import { deleteData, getData, postData, putData } from '../../api/api';
 import { firebaseImgs } from '../../upImgFirebase/firebaseImgs';
 import ComHeaderAdmin from '../Components/ComHeaderAdmin/ComHeaderAdmin';
 import ComButton from '../Components/ComButton/ComButton';
@@ -14,23 +14,23 @@ import ComUpImg from '../Components/ComUpImg/ComUpImg';
 import ComInput from '../Components/ComInput/ComInput';
 import ComTextArea from '../Components/ComInput/ComTextArea';
 import ComNumber from '../Components/ComInput/ComNumber';
-import { ChangeCircleTwoTone, DeleteForeverTwoTone, EditAttributesTwoTone, EditLocationAltTwoTone, EditNoteTwoTone } from '@mui/icons-material';
+import { ChangeCircleTwoTone, DeleteForeverTwoTone, EditNoteTwoTone } from '@mui/icons-material';
+import ComSelect from '../Components/ComInput/ComSelect';
 
 
 export default function TableProduct() {
-    const [disabled, setDisabled] = useState(false);
-    const [imagePath, setImages] = useState([]);
-    const [material1, setMaterial1] = useState();
-    const [material, setMaterial] = useState(material1);
     const [account, setAccount] = useState([]);
+    const [disabled, setDisabled] = useState(false);
+    const [image, setImages] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isModalOpenDelete, setIsModalOpenDelete] = useState(false);
+    const [dataRun, setDataRun] = useState(false);
     const [productRequestDefault, setProductRequestDefault] = useState({});
     const [api, contextHolder] = notification.useNotification();
-    const [selectedMaterials, setSelectedMaterials] = useState(material1);
+    const [selectedMaterials, setSelectedMaterials] = useState();
 
     const showModalEdit = (e) => {
         setSelectedMaterials(e.material)
-        setMaterial1(e.material)
         setProductRequestDefault({
             name: e.name,
             price: e.price,
@@ -41,10 +41,18 @@ export default function TableProduct() {
             material: e.material,
             accessory: e.accessory,
             description: e.description,
-            id: e._id
+            accountId: e.accountId
         })
         setIsModalOpen(true);
     };
+
+    const showModalDelete = (e) => {
+        setProductRequestDefault({
+            accountId: e.accountId
+        })
+        setIsModalOpenDelete(true);
+    };
+
     const options = [
         {
             label: "Gỗ",
@@ -64,6 +72,10 @@ export default function TableProduct() {
         setIsModalOpen(false);
 
     };
+    const handleCancelDelete = () => {
+        setIsModalOpenDelete(false);
+
+    };
     const handleValueChange = (e, value) => {
         console.log(value);
 
@@ -73,11 +85,6 @@ export default function TableProduct() {
     const handleValueChange1 = (e, value) => {
         console.log(value);
         setValue("reducedPrice", value, { shouldValidate: true });
-    };
-    const handleChange = (value) => {
-        setSelectedMaterials(value);
-        setMaterial(value)
-        console.log([value]);
     };
 
     const CreateProductMessenger = yup.object({
@@ -114,19 +121,20 @@ export default function TableProduct() {
         },
         values: productRequestDefault
     })
+
     const { handleSubmit, register, setFocus, watch, setValue } = methods
 
     const onSubmit = (data) => {
         setDisabled(true)
-        firebaseImgs(imagePath)
+        firebaseImgs(image)
             .then((dataImg) => {
-                if (Array.isArray(imagePath) && imagePath.length === 0) {
+                if (Array.isArray(image) && image.length === 0) {
                     const updatedData = {
                         ...data, // Giữ lại các trường dữ liệu hiện có trong data
-                        material
+
                     };
 
-                    putData(`/Product/Update-Product`, productRequestDefault.id, updatedData, {})
+                    putData(`/Product/Update-Product`, productRequestDefault.productId, updatedData, {})
                         .then((dataS) => {
                             api["success"]({
                                 message: 'Notification Title',
@@ -141,15 +149,14 @@ export default function TableProduct() {
                 } else {
                     const updatedData = {
                         ...data, // Giữ lại các trường dữ liệu hiện có trong data
-                        material,
-                        imagePath: dataImg, // Thêm trường images chứa đường dẫn ảnh
+                        image: dataImg, // Thêm trường images chứa đường dẫn ảnh
                     };
-                    putData(`/Product/List-Product`, productRequestDefault.id, updatedData, {})
+                    putData(`/Product/Update-Product`, productRequestDefault.productId, updatedData, {})
                         .then((dataS) => {
                             api["success"]({
-                                message: 'Notification Title',
+                                message: textApp.TableProduct.Notification.change.message,
                                 description:
-                                    'This is the content of the notification. This is the content of the notification. This is the content of the notification.',
+                                    textApp.TableProduct.Notification.change.description
                             });
                         })
                         .catch((error) => {
@@ -166,20 +173,50 @@ export default function TableProduct() {
         setImages([]);
         setDisabled(false)
         setIsModalOpen(false);
-
+        setDataRun(!dataRun)
     }
 
-    useEffect(() => {
-        getData('Account/Get-All-Account', {})
+    const deleteById = () => {
+        setDisabled(true)
+        deleteData(`/Product/Delete-Account?id=${productRequestDefault.accountId}`)
             .then((data) => {
-                setAccount(data?.data)
                 setDisabled(false)
+                handleCancelDelete()
+                api["success"]({
+                    message: textApp.TableProduct.Notification.delete.message,
+                    description:
+                        textApp.TableProduct.Notification.delete.description
+                });
+
             })
             .catch((error) => {
-                console.error("Error fetching items:", error);
+                console.log(error);
                 setDisabled(false)
-            });
-    }, [disabled]);
+                handleCancelDelete()
+                api["error"]({
+                    message: textApp.TableProduct.Notification.delete.message,
+                    description:
+                        textApp.TableProduct.Notification.delete.description
+                });
+            })
+        setDataRun(!dataRun)
+
+    }
+    useEffect(() => {
+        setTimeout(() => {
+            getData('Account/Get-All-Account', {})
+                .then((data) => {
+                    setAccount(data?.data)
+                })
+                .catch((error) => {
+                    console.error("Error fetching items:", error);
+                });
+
+        }, 100);
+
+
+    }, [dataRun]);
+
     const onChange = (data) => {
         const selectedImages = data;
         // Tạo một mảng chứa đối tượng 'originFileObj' của các tệp đã chọn
@@ -266,7 +303,13 @@ export default function TableProduct() {
             width: 80,
             dataIndex: 'role',
             key: 'role',
-            sorter: (a, b) => a.role - b.role,
+            filters: [
+                { text: 'Admin', value: 1 },
+                { text: 'Manager', value: 2 },
+                { text: 'Staff', value: 3 },
+                { text: 'User', value: 4 }
+            ],
+            onFilter: (value, record) => record.role === value,
             render: (_, record) => (
                 <div >
                     {record.role === 1 ? "Admin" : record.role === 2 ? "Manager" : record.role === 3 ? "Staff" : record.role === 4 ? "User" : ''}
@@ -301,7 +344,7 @@ export default function TableProduct() {
                             <Menu.Item key="2">
                                 <ChangeCircleTwoTone /> Role
                             </Menu.Item>
-                            <Menu.Item key="3">
+                            <Menu.Item key="3" onClick={() => showModalDelete(record)}>
                                 <DeleteForeverTwoTone /> Remove
                             </Menu.Item>
                         </Menu>
@@ -317,10 +360,34 @@ export default function TableProduct() {
     const handleChangeSelect = (value) => {
         setSelectedMaterials(value);
     };
+    const handleValueChangeSelect = (e, value) => {
+
+        if (value.length === 0) {
+            setValue("material", null, { shouldValidate: true });
+        } else {
+            setValue("material", value, { shouldValidate: true });
+
+        }
+    };
+    const handleChange = (e, value) => {
+        console.log(value);
+        setSelectedMaterials(value);
+        // setMaterial(value)
+        if (value.length === 0) {
+            setValue("material", null, { shouldValidate: true });
+        } else {
+            setValue("material", value, { shouldValidate: true });
+
+        }
+        console.log([value]);
+    };
+
+
     return (
         <>
             {contextHolder}
             <ComHeaderAdmin />
+
             <div className='flex p-5 justify-center'>
                 <Table
                     rowKey="_id"
@@ -337,138 +404,159 @@ export default function TableProduct() {
                     }}
                 />
             </div>
+
             <Modal title={textApp.TableProduct.title.change}
                 okType="primary text-black border-gray-700"
                 open={isModalOpen}
 
-                width={1000}
+                width={800}
                 style={{ top: 20 }}
 
                 onCancel={handleCancel}>
                 <FormProvider {...methods} >
                     <form onSubmit={handleSubmit(onSubmit)} className="mx-auto mt-4 max-w-xl sm:mt-8">
-                        <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
-                            <div className="sm:col-span-2">
-                                <div className="mt-2.5">
-                                    <ComInput
-                                        type="text"
-                                        label={textApp.CreateProduct.label.name}
-                                        placeholder={textApp.CreateProduct.placeholder.name}
-                                        {...register("name")}
+                        <div className=' overflow-y-auto p-4'>
+                            <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2"
+                                style={{ height: "65vh" }}>
+                                <div className="sm:col-span-2">
+                                    <div className="mt-2.5">
+                                        <ComInput
+                                            type="text"
+                                            label={textApp.CreateProduct.label.name}
+                                            placeholder={textApp.CreateProduct.placeholder.name}
+                                            {...register("name")}
+                                            required
+                                        />
+                                    </div>
+                                </div>
+                                <div>
+                                    <ComNumber
+                                        label={textApp.CreateProduct.label.price}
+                                        placeholder={textApp.CreateProduct.placeholder.price}
+                                        // type="money"
+                                        defaultValue={1000}
+                                        min={1000}
+                                        money
+                                        onChangeValue={handleValueChange}
+                                        {...register("price1")}
                                         required
                                     />
+
                                 </div>
-                            </div>
-                            <div>
-                                <ComNumber
-                                    label={textApp.CreateProduct.label.price}
-                                    placeholder={textApp.CreateProduct.placeholder.price}
-                                    // type="money"
-                                    defaultValue={1000}
-                                    min={1000}
-                                    money
-                                    onChangeValue={handleValueChange}
-                                    {...register("price1")}
-                                    required
-                                />
+                                <div>
+                                    <ComNumber
+                                        label={textApp.CreateProduct.label.reducedPrice}
+                                        placeholder={textApp.CreateProduct.placeholder.reducedPrice}
+                                        // type="money"
+                                        defaultValue={1000}
+                                        min={1000}
+                                        money
+                                        onChangeValue={handleValueChange1}
+                                        {...register("reducedPrice1")}
+                                        required
+                                    />
 
-                            </div>
-                            <div>
-                                <ComNumber
-                                    label={textApp.CreateProduct.label.reducedPrice}
-                                    placeholder={textApp.CreateProduct.placeholder.reducedPrice}
-                                    // type="money"
-                                    defaultValue={1000}
-                                    min={1000}
-                                    money
-                                    onChangeValue={handleValueChange1}
-                                    {...register("reducedPrice1")}
-                                    required
-                                />
+                                </div>
+                                <div>
+                                    <ComNumber
+                                        label={textApp.CreateProduct.label.quantity}
+                                        placeholder={textApp.CreateProduct.placeholder.quantity}
+                                        // type="numbers"
+                                        defaultValue={1}
+                                        {...register("quantity")}
+                                        required
+                                    />
 
-                            </div>
-                            <div>
-                                <ComNumber
-                                    label={textApp.CreateProduct.label.quantity}
-                                    placeholder={textApp.CreateProduct.placeholder.quantity}
-                                    // type="numbers"
-                                    defaultValue={1}
-                                    {...register("quantity")}
-                                    required
-                                />
+                                </div>
 
-                            </div>
-
-                            <div className="">
+                                {/* <div className="">
                                 {selectedMaterials}
-                                <Select
-                                    size={"large"}
-                                    style={{
-                                        width: '100%',
-                                    }}
-                                    value={selectedMaterials}
-                                    mode="multiple"
-                                    placeholder={textApp.CreateProduct.placeholder.material}
-                                    onChange={handleChange}
-                                    options={options}
-                                />
-                            </div>
-                            <div className="sm:col-span-2">
-                                <ComInput
-                                    label={textApp.CreateProduct.label.shape}
-                                    placeholder={textApp.CreateProduct.placeholder.shape}
-                                    required
-                                    type="text"
-                                    {...register("shape")}
-                                />
-                            </div>
-                            <div className="sm:col-span-2">
-                                <ComInput
-                                    label={textApp.CreateProduct.label.detail}
-                                    placeholder={textApp.CreateProduct.placeholder.detail}
-                                    required
-                                    type="text"
-                                    {...register("detail")}
-                                />
-                            </div>
-                            <div className="sm:col-span-2">
-                                <ComInput
-                                    label={textApp.CreateProduct.label.models}
-                                    placeholder={textApp.CreateProduct.placeholder.models}
-                                    required
-                                    type="text"
-                                    {...register("models")}
-                                />
-                            </div>
+                                    <Select
+                                        size={"large"}
+                                        style={{
+                                            width: '100%',
+                                        }}
+                                        value={selectedMaterials}
+                                        mode="multiple"
+                                        placeholder={textApp.CreateProduct.placeholder.material}
+                                        onChange={handleChange}
+                                        options={options}
+                                    />
+                                </div> */}
 
-                            <div className="sm:col-span-2">
-                                <ComInput
-                                    label={textApp.CreateProduct.label.accessory}
-                                    placeholder={textApp.CreateProduct.placeholder.accessory}
-                                    required
-                                    type="text"
-                                    {...register("accessory")}
-                                />
-                            </div>
-
-
-                            <div className="sm:col-span-2">
-
-                                <div className="mt-2.5">
-
-                                    <ComTextArea
-                                        label={textApp.CreateProduct.label.description}
-                                        placeholder={textApp.CreateProduct.placeholder.description}
-                                        rows={4}
-                                        defaultValue={''}
+                                <div className="">
+                                    <ComSelect
+                                        size={"large"}
+                                        style={{
+                                            width: '100%',
+                                        }}
+                                        label={textApp.CreateProduct.label.material}
+                                        placeholder={textApp.CreateProduct.placeholder.material}
                                         required
-                                        maxLength={1000}
-                                        {...register("description")}
+                                        onChangeValue={handleChange}
+                                        value={selectedMaterials}
+                                        options={options}
+                                        {...register("material")}
+
                                     />
                                 </div>
-                            </div>
-                            <div className="sm:col-span-1">
-                                <ComUpImg onChange={onChange} />
+                                <div className="sm:col-span-2">
+                                    <ComInput
+                                        label={textApp.CreateProduct.label.shape}
+                                        placeholder={textApp.CreateProduct.placeholder.shape}
+                                        required
+                                        type="text"
+                                        {...register("shape")}
+                                    />
+                                </div>
+                                {/* <div className="sm:col-span-2">
+                                    <ComInput
+                                        label={textApp.CreateProduct.label.detail}
+                                        placeholder={textApp.CreateProduct.placeholder.detail}
+                                        required
+                                        type="text"
+                                        {...register("detail")}
+                                    />
+                                </div> */}
+                                {/* <div className="sm:col-span-2">
+                                    <ComInput
+                                        label={textApp.CreateProduct.label.models}
+                                        placeholder={textApp.CreateProduct.placeholder.models}
+                                        required
+                                        type="text"
+                                        {...register("models")}
+                                    />
+                                </div>
+    
+                                <div className="sm:col-span-2">
+                                    <ComInput
+                                        label={textApp.CreateProduct.label.accessory}
+                                        placeholder={textApp.CreateProduct.placeholder.accessory}
+                                        required
+                                        type="text"
+                                        {...register("accessory")}
+                                    />
+                                </div> */}
+
+
+                                <div className="sm:col-span-2">
+
+                                    <div className="mt-2.5">
+
+                                        <ComTextArea
+                                            label={textApp.CreateProduct.label.description}
+                                            placeholder={textApp.CreateProduct.placeholder.description}
+                                            rows={4}
+                                            defaultValue={''}
+                                            required
+                                            maxLength={1000}
+                                            {...register("description")}
+                                        />
+                                    </div>
+                                </div>
+                                <div className="sm:col-span-1">
+                                    <ComUpImg onChange={onChange} />
+                                </div>
                             </div>
                         </div>
                         <div className="mt-10">
@@ -486,6 +574,32 @@ export default function TableProduct() {
                     </form>
                 </FormProvider>
 
+            </Modal>
+            <Modal title={textApp.TableProduct.title.delete}
+                okType="primary text-black border-gray-700"
+                open={isModalOpenDelete}
+                width={500}
+                // style={{ top: 20 }}
+                onCancel={handleCancelDelete}>
+
+                <div className='flex'>
+                    <ComButton
+                        disabled={disabled}
+                        type="primary"
+                        danger
+                        onClick={deleteById}
+
+                    >
+                        {textApp.TableProduct.modal.submitDelete}
+                    </ComButton>
+                    <ComButton
+                        type="primary"
+                        disabled={disabled}
+                        onClick={handleCancelDelete}
+                    >
+                        {textApp.TableProduct.modal.cancel}
+                    </ComButton>
+                </div>
             </Modal>
         </>
 

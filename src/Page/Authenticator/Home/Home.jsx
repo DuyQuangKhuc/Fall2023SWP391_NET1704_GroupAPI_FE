@@ -6,6 +6,7 @@ import ComFooter from "../../Components/ComFooter/ComFooter";
 import ComImage from "../../Components/ComImage/ComImage";
 import images from "../../../img";
 
+
 export default function Home() {
     const [products, setProducts] = useState([])
     useEffect(() => {
@@ -64,7 +65,6 @@ export default function Home() {
                         ))}
                     </div>
                 </div>
-                {/* </div> */}
 
             </div >
             <ComFooter />

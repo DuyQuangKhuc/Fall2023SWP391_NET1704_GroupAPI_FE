@@ -6,7 +6,7 @@ import axios from "axios";
 const api = axios.create({
   baseURL: process.env.REACT_APP_BASE_URLS1,
   headers: {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json'
   },
   withCredentials: true,
 });
@@ -34,7 +34,7 @@ export const postData = async (endpoint, data, headers = {}) => {
 
 export const putData = async (endpoint, id, data, headers = {}) => {
   try {
-    const response = await api.put(`${endpoint}/${id}`, data, { headers });
+    const response = await api.put(`${endpoint}`, data, { headers });
     return response.data;
   } catch (error) {
     throw error;
@@ -43,7 +43,7 @@ export const putData = async (endpoint, id, data, headers = {}) => {
 
 export const deleteData = async (endpoint, id, headers = {}) => {
   try {
-    const response = await api.delete(`${endpoint}/${id}`, { headers });
+    const response = await api.delete(`${endpoint}`, { headers });
     return response.data;
   } catch (error) {
     throw error;

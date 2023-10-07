@@ -6,10 +6,6 @@ import {
 
   CogIcon,
 
-  CreditCardIcon,
-
-  QuestionMarkCircleIcon,
-
   UserCircleIcon,
 
   XMarkIcon,
@@ -74,7 +70,7 @@ export default function ComHeaderAdmin() {
   //offsetTop={0} onChange={(affixed) => console.log(affixed)}
   return (
     <Affix >
-      <header className="bg-white border-b border-gray-200">
+      <header className="bg-indigo-200 border-b border-gray-200">
         <nav className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
           <div className="flex lg:flex-1">
             <a href="#" className="-m-1.5 p-1">
@@ -154,7 +150,7 @@ export default function ComHeaderAdmin() {
                   <Popover.Button
                     className={classNames(
                       open ? 'text-gray-700' : 'text-gray-950',
-                      'group bg-white rounded-md inline-flex items-center text-base font-medium hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
+                      'group rounded-md inline-flex items-center text-base font-medium hover:text-gray-900 focus:outline-none  '
                     )}
                   >
                     <span>Welcome, {user.email}</span>
@@ -181,7 +177,7 @@ export default function ComHeaderAdmin() {
                       static
                       className="absolute z-10 -right-0 mt-3 transform pr-2 w-screen max-w-xs sm:px-0 lg:max-w-min"
                     >
-                      <div className="rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 overflow-hidden">
+                      <div className="rounded-lg shadow-lg overflow-hidden">
                         <div className="relative grid gap-6 bg-white px-5 py-6 sm:gap-8 sm:p-8">
                           <div className="flex items-center gap-4">
                             <img

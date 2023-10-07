@@ -13,6 +13,9 @@ import * as yup from "yup"
 import { yupResolver } from '@hookform/resolvers/yup'
 import ComNumber from '../../Components/ComInput/ComNumber'
 import { MdAdd, MdRemove } from 'react-icons/md';
+import FeedBack from './FeedBack'
+import ComFooter from '../../Components/ComFooter/ComFooter'
+import { Rate } from 'antd'
 
 const product = {
 
@@ -111,7 +114,7 @@ export default function Product() {
     return (
         <>
             <ComHeader />
-            <div className="bg-white">
+            <div className="bg-slate-50">
                 <div className="">
                     {/* Image gallery */}
 
@@ -129,14 +132,14 @@ export default function Product() {
                         <div className="mt-4 lg:row-span-3 lg:mt-0">
                             <h3 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">{Product.name}</h3>
 
-                            <p className="text-3xl tracking-tight text-gray-900">{Product.price}</p>
+                            <p className="text-3xl pt-2 tracking-tight font-serif text-gray-900">${Product.price}</p>
 
                             {/* Reviews */}
                             <div className="mt-6">
                                 <h3 className="sr-only">Reviews</h3>
                                 <div className="flex items-center">
                                     <div className="flex items-center">
-                                        {[0, 1, 2, 3, 4].map((rating) => (
+                                        {/* {[0, 1, 2, 3, 4].map((rating) => (
                                             <StarIcon
                                                 key={rating}
                                                 className={classNames(
@@ -145,7 +148,8 @@ export default function Product() {
                                                 )}
                                                 aria-hidden="true"
                                             />
-                                        ))}
+                                        ))} */}
+                                        <Rate />
                                     </div>
                                     <p className="sr-only">{reviews.average} out of 5 stars</p>
                                     <a href={reviews.href} className="ml-3 text-sm font-medium text-indigo-600 hover:text-indigo-500">
@@ -275,7 +279,10 @@ export default function Product() {
                                 {Product.description}
                             </p>
                         </div>
+                        <FeedBack/>
+                        
                     </div>
+                    <ComFooter />
                 </div>
             </div>
         </>

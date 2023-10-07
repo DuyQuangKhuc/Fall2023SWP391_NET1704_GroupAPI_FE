@@ -13,77 +13,59 @@ import ComHeaderAdmin from '../Components/ComHeaderAdmin/ComHeaderAdmin'
 import ComTextArea from '../Components/ComInput/ComTextArea'
 import ComNumber from '../Components/ComInput/ComNumber'
 import { Select, notification } from 'antd'
+import ComSelect from '../Components/ComInput/ComSelect'
 
 const options = [
     {
         label: "Gỗ",
-        value: "1"
+        value: "Gỗ"
     },
     {
         label: "Nhựa",
-        value: "2"
+        value: "Nhựa"
     },
     {
         label: "Kim Loại",
-        value: "3"
+        value: "Kim loại"
     },
 ];
 
-
 export default function CreateProduct() {
     const [disabled, setDisabled] = useState(false);
-    const [imagePath, setImages] = useState([]);
-    const [material, setMaterial] = useState([]);
+    const [imagePath, setImages] = useState([{}]);
     const [api, contextHolder] = notification.useNotification();
 
 
     const CreateProductMessenger = yup.object({
-
         name: yup.string().required(textApp.CreateProduct.message.name),
         price: yup.number().min(1, textApp.CreateProduct.message.priceMin).typeError(textApp.CreateProduct.message.price),
         //price1: yup.string().required(textApp.CreateProduct.message.price).min(1, textApp.CreateProduct.message.priceMin).test('no-dots', textApp.CreateProduct.message.priceDecimal, value => !value.includes('.')),
-        // reducedPrice: yup.number().min(1, textApp.CreateProduct.message.priceMin).typeError(textApp.CreateProduct.message.price),
-        // reducedPrice1: yup.string().required(textApp.CreateProduct.message.price).min(1, textApp.CreateProduct.message.priceMin).test('no-dots', textApp.CreateProduct.message.priceDecimal, value => !value.includes('.')),
+        //reducedPrice: yup.number().min(1, textApp.CreateProduct.message.priceMin).typeError(textApp.CreateProduct.message.price),
+        //reducedPrice1: yup.string().required(textApp.CreateProduct.message.price).min(1, textApp.CreateProduct.message.priceMin).test('no-dots', textApp.CreateProduct.message.priceDecimal, value => !value.includes('.')),
         quantity: yup.number().min(1, textApp.CreateProduct.message.quantityMin).typeError(textApp.CreateProduct.message.quantity),
-        // detail: yup.string().required(textApp.CreateProduct.message.detail),
-        // shape: yup.string().required(textApp.CreateProduct.message.shape),
-        // models: yup.string().required(textApp.CreateProduct.message.models),
-        material: yup.string().required(textApp.CreateProduct.message.material),
-        accessory: yup.string().required(textApp.CreateProduct.message.accessory),
+        size: yup.string().required(textApp.CreateProduct.message.size),
+        material: yup.array().required(textApp.CreateProduct.message.material),
         description: yup.string().required(textApp.CreateProduct.message.description),
+        //imagePath: yup.array().required(textApp.CreateProduct.message.imagePath),
     })
     const createProductRequestDefault = {
-        price: "",
-        name: "",
-        quantity: "",
-        //detail: "",
-        // models: "",
-        // shape: "",
-        material: [],
-        accessory: "",
-        imagePath: [],
-        description: "",
-        //reducedPrice: 1000,
-
+        price: 0,
+        //reducedPrice: 0,
     };
-
     const methods = useForm({
         resolver: yupResolver(CreateProductMessenger),
         defaultValues: {
-            productId: "",
             name: "",
-            quantity: "",
-            //detail: "",
-            // models: "",
-            // shape: "",
-            material: [],
+            quantity: 1,
+            material: "",
+            size: "",
             accessory: "",
-            imagePath: [],
+            imagePath: "",
             description: "",
         },
         values: createProductRequestDefault
     })
-    const { handleSubmit, register } = methods
+    const { handleSubmit, register, setFocus, watch, setValue } = methods
 
     function isInteger(number) {
         return typeof number === 'number' && isFinite(number) && Math.floor(number) === number;
@@ -91,37 +73,91 @@ export default function CreateProduct() {
     const onSubmit = (data) => {
         console.log(data);
 
-
+        // if (data.price % 1000 !== 0) {
+        //     api["error"]({
+        //         message: textApp.CreateProduct.Notification.m7.message,
+        //         description:
+        //             textApp.CreateProduct.Notification.m7.description
+        //     });
+        //     return
+        // }
+        // if (data.reducedPrice % 1000 !== 0) {
+        //     api["error"]({
+        //         message: textApp.CreateProduct.Notification.m8.message,
+        //         description:
+        //             textApp.CreateProduct.Notification.m8.description
+        //     });
+        //     return
+        // }
         if (!isInteger(data.price)) {
 
             api["error"]({
-                message: 'Notification Title',
+                message: textApp.CreateProduct.Notification.m1.message,
                 description:
-                    'Giá tiền phải là số nguyên',
+                    textApp.CreateProduct.Notification.m1.description
             });
             return
         }
+
+        if (data.material.length === 0) {
+            api["error"]({
+                message: textApp.CreateProduct.Notification.m4.message,
+                description:
+                    textApp.CreateProduct.Notification.m4.description
+            });
+            return
+        }
+        if (imagePath.length === 0) {
+            api["error"]({
+                message: textApp.CreateProduct.Notification.m5.message,
+                description:
+                    textApp.CreateProduct.Notification.m5.description
+            });
+            return
+        }
+        if (data.price <= data.reducedPrice) {
+            api["error"]({
+                message: textApp.CreateProduct.Notification.m6.message,
+                description:
+                    textApp.CreateProduct.Notification.m6.description
+            });
+            return
+        }
+
         setDisabled(true)
+
+
         firebaseImgs(imagePath)
             .then((dataImg) => {
-                console.log('ảnh : ', dataImg);
-                const updatedData = {
-                    ...data, // Giữ lại các trường dữ liệu hiện có trong data
-                    imagePath: dataImg, // Thêm trường images chứa đường dẫn ảnh
-                    material
-                };
+                // console.log(dataImg);
+                // const updatedData = {
+                //     ...data, // Giữ lại các trường dữ liệu hiện có trong data
+                //     imagePath: dataImg, // Thêm trường images chứa đường dẫn ảnh
 
-                postData(`/Product/Add-Product`, updatedData, {})
-                    .then((dataS) => {
-                        console.log(dataS);
+                // };
+                console.log(dataImg[0]);
+                const post = { ...data, material: `${data.material[0]} ${data?.material[1] ? (',', data?.material[1]) : ''} ${data?.material[2] ? (',', data?.material[2] ): ''} `, imagePath: dataImg[0], };
+                console.log(post);
+                postData('/Product/Add-Product',  post)
+                    .then((data) => {
+                        console.log(data);
                         setDisabled(false)
+                        api["success"]({
+                            message: textApp.CreateProduct.Notification.m2.message,
+                            description:
+                                textApp.CreateProduct.Notification.m2.description
+                        });
                     })
                     .catch((error) => {
+                        api["error"]({
+                            message: textApp.CreateProduct.Notification.m3.message,
+                            description:
+                                textApp.CreateProduct.Notification.m3.description
+                        });
                         console.error("Error fetching items:", error);
                         setDisabled(false)
                     });
-            }
-            )
+            })
             .catch((error) => {
                 console.log(error)
             });
@@ -129,32 +165,31 @@ export default function CreateProduct() {
 
     }
     const onChange = (data) => {
-        
         const selectedImages = data;
-
         // Tạo một mảng chứa đối tượng 'originFileObj' của các tệp đã chọn
         const newImages = selectedImages.map((file) => file.originFileObj);
-
         // Cập nhật trạng thái 'image' bằng danh sách tệp mới
         setImages(newImages);
         console.log(imagePath);
         // setFileList(data);
     }
-    // const handleValueChange = (e, value) => {
-    //     console.log(value);
-    //     setValue("price", value, { shouldValidate: true });
-    // };
+    const handleValueChange = (e, value) => {
 
-    // const handleValueChange1 = (e, value) => {
-    //     console.log(value);
-    //     setValue("reducedPrice", value, { shouldValidate: true });
-    // };
-
-    const handleChange = (value) => {
-        setMaterial(value)
-        console.log([value]);
+        setValue("price", value, { shouldValidate: true });
     };
 
+    const handleValueChange1 = (e, value) => {
+        console.log(value);
+        setValue("reducedPrice", value, { shouldValidate: true });
+    };
+
+    const handleValueChangeSelect = (e, value) => {
+        if (value.length === 0) {
+            setValue("material", null, { shouldValidate: true });
+        } else {
+            setValue("material", value, { shouldValidate: true });
+        }
+    };
     return (
         <>
             {contextHolder}
@@ -167,7 +202,7 @@ export default function CreateProduct() {
 
                 </div>
                 <FormProvider {...methods} >
-                    <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data" className="mx-auto mt-4 max-w-xl sm:mt-8">
+                    <form onSubmit={handleSubmit(onSubmit)} enctype="multipart/form-data" className="mx-auto mt-4 max-w-xl sm:mt-8">
                         <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
                             <div className="sm:col-span-2">
                                 <div className="mt-2.5">
@@ -187,10 +222,12 @@ export default function CreateProduct() {
                                     // type="money"
                                     defaultValue={0}
                                     min={0}
-                                    money="true" 
+                                    money
+                                    onChangeValue={handleValueChange}
                                     {...register("price")}
                                     required
                                 />
+
                             </div>
                             {/* <div>
                                 <ComNumber
@@ -211,6 +248,7 @@ export default function CreateProduct() {
                                     label={textApp.CreateProduct.label.quantity}
                                     placeholder={textApp.CreateProduct.placeholder.quantity}
                                     // type="numbers"
+                                    min={1}
                                     defaultValue={1}
                                     {...register("quantity")}
                                     required
@@ -218,12 +256,8 @@ export default function CreateProduct() {
 
                             </div>
 
-                            <div >
-                                <p className="font-bold tracking-tight pb-4 text-gray-900" >
-                                    {textApp.CreateProduct.label.material}
-                                </p>
-                                <Select  
-                                    label={textApp.CreateProduct.label.material}                  
+                            {/* <div className="">
+                                <Select
                                     size={"large"}
                                     style={{
                                         width: '100%',
@@ -232,29 +266,32 @@ export default function CreateProduct() {
                                     placeholder={textApp.CreateProduct.placeholder.material}
                                     onChange={handleChange}
                                     options={options}
+                                />
+                            </div> */}
+                            <div className="">
+                                <ComSelect
+                                    size={"large"}
+                                    style={{
+                                        width: '100%',
+                                    }}
+                                    label={textApp.CreateProduct.label.material}
+                                    placeholder={textApp.CreateProduct.placeholder.material}
                                     required
+                                    onChangeValue={handleValueChangeSelect}
+                                    options={options}
+                                    {...register("material")}
+
                                 />
                             </div>
-                            
-                            {/* <div className="sm:col-span-2">
+                            <div className="sm:col-span-2">
                                 <ComInput
-                                    label={textApp.CreateProduct.label.shape}
-                                    placeholder={textApp.CreateProduct.placeholder.shape}
+                                    label={textApp.CreateProduct.label.size}
+                                    placeholder={textApp.CreateProduct.placeholder.size}
                                     required
                                     type="text"
-                                    {...register("shape")}
+                                    {...register("size")}
                                 />
-                            </div> */}
-                            {/* <div className="sm:col-span-2">
-                                <ComInput
-                                    label={textApp.CreateProduct.label.detail}
-                                    placeholder={textApp.CreateProduct.placeholder.detail}
-                                    required
-                                    type="text"
-                                    {...register("detail")}
-                                />
-                            </div> */}
-
+                            </div>
 
                             {/* <div className="sm:col-span-2">
                                 <ComInput
@@ -266,7 +303,7 @@ export default function CreateProduct() {
                                 />
                             </div> */}
 
-                            <div className="sm:col-span-2">
+                            {/* <div className="sm:col-span-2">
                                 <ComInput
                                     label={textApp.CreateProduct.label.accessory}
                                     placeholder={textApp.CreateProduct.placeholder.accessory}
@@ -274,10 +311,11 @@ export default function CreateProduct() {
                                     type="text"
                                     {...register("accessory")}
                                 />
-                            </div>
+                            </div> */}
 
 
                             <div className="sm:col-span-2">
+
                                 <div className="mt-2.5">
 
                                     <ComTextArea
@@ -293,11 +331,11 @@ export default function CreateProduct() {
                             </div>
                             <div className="sm:col-span-1">
                                 <ComUpImg onChange={onChange} />
-                                
                             </div>
                         </div>
                         <div className="mt-10">
                             <ComButton
+
                                 disabled={disabled}
                                 htmlType="submit"
                                 type="primary"

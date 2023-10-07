@@ -47,8 +47,8 @@ export default function CreateProduct() {
             name: "",
             price: "",
             quantity: "",
-            // detail: "",
-            // models: "",
+            detail: "",
+            models: "",
             material: "",
             accessory: "",
             image: [],
@@ -63,7 +63,7 @@ export default function CreateProduct() {
         setDisabled(true)
         firebaseImgs(image)
             .then((dataImg) => {
-                console.log('ảnh : ', dataImg);
+                console.log('ảnh nè : ', dataImg);
                 const updatedData = {
                     ...data, // Giữ lại các trường dữ liệu hiện có trong data
                     image: dataImg, // Thêm trường images chứa đường dẫn ảnh
