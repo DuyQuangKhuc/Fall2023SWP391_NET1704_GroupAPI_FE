@@ -24,7 +24,7 @@ const UserListScreen = () => {
     const columns = React.useMemo(
         () =>
             VISIBLE_FIELDS.map((field) => {
-                if (field === 'imagePath1') {
+                if (field === 'role') {
                     return {
                         field,
                         headerName: field.toUpperCase(),
@@ -33,7 +33,7 @@ const UserListScreen = () => {
                         filterable: true,
                         renderCell: (params) => (
                             <div onClick={() => handleCellClick(params)}>
-                                <img src={params.value} alt={params.value} style={{ width: '50px', height: '50px' }} />
+                                {params.value === 1 ? "Admin" : params.value === 2 ? "Manager" : params.value === 3 ? "Staff" : params.value === 4 ? "User" : ''}
                             </div>
 
                         ),
@@ -47,7 +47,7 @@ const UserListScreen = () => {
                         filterable: true,
                         renderCell: (params) => (
                             <div onClick={() => handleCellClick(params)}>
-                                {params.value}
+                                {params.value === 1 ? "Admin" : params.value === 2 ? "Manager" : params.value === 3 ? "Staff" : params.value === 4 ? "User" : ''}
                             </div>
                         ),
                     };
@@ -133,7 +133,7 @@ const UserListScreen = () => {
                                                 Điểm: {selectedRow.point}
                                             </ListGroup.Item>
                                             <ListGroup.Item>
-                                                Role: {selectedRow.role}
+                                                Role: {selectedRow.role === 1 ? "Admin" : selectedRow.role === 2 ? "Manager" : selectedRow.role === 3 ? "Staff" : selectedRow.role === 4 ? "User" : ''}
                                             </ListGroup.Item>
                                             <ListGroup.Item>
                                                 Status: {selectedRow.status}
