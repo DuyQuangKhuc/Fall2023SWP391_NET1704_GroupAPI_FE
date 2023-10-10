@@ -19,7 +19,7 @@ const HomeScreen = () => {
 
     return (
         <div className=" max-w-full  bg-repeat" style={{
-            backgroundImage: "url('https://maggiepashley.com/wp-content/uploads/2017/04/bird-out-of-cage.jpg')",
+            backgroundImage: "url('https://img.rawpixel.com/s3fs-private/rawpixel_images/website_content/v1016-a-02-ksh6oqdp.jpg?w=800&dpr=1&fit=default&crop=default&q=65&vib=3&con=3&usm=15&bg=F4F4F3&ixlib=js-2.2.1&s=8bf67d33cc68e3f340e23db016c234dd')",
             backgroundSize: 'cover',
             backgroundPosition: 'center center',
             backgroundRepeat: 'no-repeat',
@@ -43,7 +43,7 @@ const HomeScreen = () => {
                     ) : (
                         <>
                             <Meta />
-                            <h1> </h1>
+                            <h1>Latest Products</h1>
                             <Row>
                                 {/* {data.products.map((product) => ( */}
                                 {data.map((product) => (

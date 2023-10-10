@@ -193,15 +193,6 @@
         scroll-behavior: smooth;
     }
 }
-footer {
-    background-color: #444655
-        /* eplace with your desired background color */
-}
-
-footer p {
-    color: #ebf0f5;
-    /* Replace with your desired text color */
-}
 
 body {
     margin: 0;

@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-no-duplicate-props */
 import { LinkContainer } from 'react-router-bootstrap';
-import { Table, Row, Col } from 'react-bootstrap';
+import { Table, Row, Col, ListGroup, Image, Button } from 'react-bootstrap';
 import { FaEdit, FaPlus, FaTrash } from 'react-icons/fa';
 import { useParams } from 'react-router-dom';
 import Message from '../../components/Message';
@@ -19,7 +19,8 @@ import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import { useDemoData } from '@mui/x-data-grid-generator';
 import React from 'react';
 import { useState } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions , Button } from '@material-ui/core';
+import { Dialog, DialogTitle, DialogContent, DialogActions  } from '@material-ui/core';
+import Rating from '../../components/Rating';
 
 
 const VISIBLE_FIELDS = ['productId', 'name', 'imagePath1', 'price', 'uploadDate', 'quantity', 'status'];
@@ -76,7 +77,7 @@ function ProductListScreen(props) {
                     return {
                         field,
                         headerName: field.toUpperCase(),
-                        width: 150,
+                        width: 170,
                         sortable: true,
                         filterable: true,
                         renderCell: (params) => (
@@ -172,20 +173,56 @@ function ProductListScreen(props) {
                             }}
                             onCellClick={handleCellClick}
                         />
-                        {selectedRow && (
-                            <Dialog open={Boolean(selectedRow)} onClose={handleCloseDialog}>
-                                <DialogTitle>{selectedRow.name}</DialogTitle>
-                                <DialogContent>
-                                    <img src={selectedRow.imagePath1} alt={selectedRow.name} style={{ width: '100%' }} />
-                                    <p>Price: {selectedRow.price}</p>
-                                    <p>Quantity: {selectedRow.quantity}</p>
-                                    {/* Add more details here */}
-                                </DialogContent>
-                                <DialogActions>
-                                    <Button onClick={handleCloseDialog}>Close</Button>
-                                </DialogActions>
-                            </Dialog>
-                        )}
+                                {selectedRow && (
+                                    <Dialog open={Boolean(selectedRow)} onClose={handleCloseDialog}>
+                                        <DialogTitle>{selectedRow.name}</DialogTitle>
+                                        <DialogContent>
+                                            <Row>
+                                                <Col md={6}>
+                                                    <Image src={selectedRow.imagePath1} alt={selectedRow.name} fluid />
+                                                </Col>
+                                                <Col md={6}>
+                                                    <ListGroup variant='flush'>
+                                                        <ListGroup.Item>
+                                                            <Rating
+                                                                value={selectedRow.rating}
+                                                                text={`${selectedRow.numReviews} reviews`}
+                                                            />
+                                                        </ListGroup.Item>
+                                                        <ListGroup.Item>Giá: ${selectedRow.price}</ListGroup.Item>
+                                                        <ListGroup.Item>
+                                                            Mô tả: {selectedRow.description}
+                                                        </ListGroup.Item>
+                                                        <ListGroup.Item>
+                                                            Màu sắc: {selectedRow.color}
+                                                        </ListGroup.Item>
+                                                        <ListGroup.Item>
+                                                            Kích cỡ: {selectedRow.size}
+                                                        </ListGroup.Item>
+                                                        <ListGroup.Item>
+                                                            Vật liệu: {selectedRow.material}
+                                                        </ListGroup.Item>
+                                                        <ListGroup.Item>
+                                                            Số tầng: {selectedRow.floorQuantity}
+                                                        </ListGroup.Item>
+                                                        <ListGroup.Item>
+                                                            Số cửa: {selectedRow.gateQuantity}
+                                                        </ListGroup.Item>
+                                                        <ListGroup.Item>
+                                                            Độ bền: {selectedRow.durability}
+                                                        </ListGroup.Item>
+                                                        <ListGroup.Item>
+                                                            NSX: {selectedRow.uploadDate}
+                                                        </ListGroup.Item>
+                                                    </ListGroup>
+                                                </Col>
+                                            </Row>
+                                        </DialogContent>
+                                        <DialogActions>
+                                            <Button onClick={handleCloseDialog}>Close</Button>
+                                        </DialogActions>
+                                    </Dialog>
+                                )}
                     </Box>
                     {/* <Table striped bordered hover responsive className='table-sm'>
                         <thead>
