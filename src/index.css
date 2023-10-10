@@ -1,38 +1,56 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-@import "~react-image-gallery/styles/css/image-gallery.css";
-
-
-.product .image-gallery-image {
-  max-height: 400px !important;
+main {
+  min-height: 80vh;
 }
 
-.image-gallery-thumbnail-image {
-  height: 80px;
-
+h3 {
+  padding: 1rem 0;
 }
 
-.ant-table-container {
-  height: 750px;
+h1 {
+  font-size: 1.8rem;
+  padding: 1rem 0;
 }
 
-
-.ant-modal-footer {
-  display: none !important;
+h2 {
+  font-size: 1.4rem;
+  padding: 0.5rem 0;
 }
 
-.ant-table-container {
-  height: auto;
+.rating span {
+  margin: 0.1rem;
 }
 
-.image-gallery-right-nav .image-gallery-svg {
-  height: 60px;
-  width: 60px;
+/* carousel */
+.carousel-item-next,
+.carousel-item-prev,
+.carousel-item.active {
+  display: flex;
 }
 
-.image-gallery-left-nav .image-gallery-svg {
-  height: 60px;
-  width: 60px;
+.carousel-caption {
+  position: absolute;
+  top: 0;
+}
 
+.carousel-caption h2 {
+  color: #fff;
+}
+
+.carousel img {
+  height: 300px;
+  padding: 30px;
+  margin: 40px;
+  border-radius: 50%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.carousel a {
+  margin: 0 auto;
+}
+
+@media (max-width: 900px) {
+  .carousel-caption h2 {
+    font-size: 2.5vw;
+  }
 }
