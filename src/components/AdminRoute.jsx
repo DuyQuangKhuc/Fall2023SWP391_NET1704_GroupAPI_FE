@@ -1,5 +1,6 @@
 import { Navigate, Outlet } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import Dasboard from '../dasboard/Dasboard';
 
 const AdminRoute = () => {
     const { userInfo } = useSelector((state) => state.auth);

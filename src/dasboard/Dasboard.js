@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
-import {
-    DesktopOutlined,
-    FileOutlined,
-    PieChartOutlined,
-    TeamOutlined,
-    UserOutlined,
-} from '@ant-design/icons';
-import { Link } from 'react-router-dom';
-import { Breadcrumb, Layout, Menu, theme } from 'antd';
+import { Layout, Menu } from 'antd';
+import { PieChartOutlined, UserOutlined, DesktopOutlined, FileOutlined } from '@ant-design/icons';
+import UserListScreen from '../screens/admin/UserListScreen';
+import UserEditScreen from '../screens/admin/UserEditScreen';
 import ProductListScreen from '../screens/admin/ProductListScreen';
-const { Header, Content, Footer, Sider } = Layout;
+import ProductEditScreen from '../screens/admin/ProductEditScreen';
+import OrderListScreen from '../screens/admin/OrderListScreen';
+import { Navigate } from 'react-router-dom';
+
+const { Content, Sider } = Layout;
+
 function getItem(label, key, icon, children, route) {
     return {
         key,
@@ -19,56 +19,76 @@ function getItem(label, key, icon, children, route) {
         route
     };
 }
+
 const items = [
-    getItem('Dashboard', '1', <PieChartOutlined />, null, '/admin/dashboard'),
-    getItem('Option 2', '2', <DesktopOutlined />, null, '/admin/option2'),
+    getItem('Dashboard', '1', <PieChartOutlined />, null, '/admin'),
     getItem('Account', 'sub1', <UserOutlined />, [
         getItem('List Account', '3', null, null, '/admin/userlist'),
-        getItem('Add Account', '4', null, null, '/admin/adduser'),
+        getItem('Edit Account', '4', null, null, '/admin/user/:id/edit'),
     ]),
-    getItem('Product', 'sub2', <TeamOutlined />, [
+    getItem('Product', 'sub2', <DesktopOutlined />, [
         getItem('List Product', '5', null, null, '/admin/productlist'),
-        getItem('Team 2', '6', null, null, '/admin/team2'),
+        getItem('Edit Product', '6', null, null, '/admin/user/:id/edit'),
     ]),
-    getItem('Files', '9', <FileOutlined />, null, '/admin/files'),
+    getItem('Files', '9', <FileOutlined />, null, '/admin/orderlist'),
 ];
 
-const Dasboard = () => {
+const Dashboard = () => {
     const [collapsed, setCollapsed] = useState(false);
-    const [selectedMenuItem, setSelectedMenuItem] = useState(null);
-    const {
-        token: { colorBgContainer },
-    } = theme.useToken();
+    const [selectedMenuItem, setSelectedMenuItem] = useState('1');
+
+    const handleMenuClick = (item) => {
+        setSelectedMenuItem(item.key);
+        switch (item.key) {
+            case '1':
+                Navigate('/admin');
+                break;
+            case '2':
+                Navigate('/admin/userlist');
+                break;
+            case '3':
+                Navigate('/admin/user/:id/edit');
+                break;
+            case '4':
+                Navigate('/admin/productlist');
+                break;
+            case '5':
+                Navigate('/admin/user/:id/edit');
+                break;
+            case '6':
+                Navigate('/admin/orderlist');
+                break;
+            default:
+                break;
+        }
+    };
+
     return (
-        <Layout
-            style={{
-                minHeight: '100vh',
-            }}
-        >
-            <Sider hasSider collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
+        <Layout style={{ minHeight: '100vh' }}>
+            <Sider collapsible collapsed={collapsed} onCollapse={setCollapsed}>
                 <div className="demo-logo-vertical" />
                 <Menu
                     theme="dark"
                     defaultSelectedKeys={['1']}
                     mode="inline"
                     items={items}
-                    onSelect={(item) => setSelectedMenuItem(item.key)}
+                    onSelect={handleMenuClick}
                 />
             </Sider>
             <Layout>
                 <Content style={{ margin: '0 16px' }}>
-                    <div style={{ padding: 24, minHeight: 660, background: colorBgContainer }}>
+                    <div style={{ padding: 24, minHeight: 660 }}>
                         {selectedMenuItem === '1' && <div>Dashboard Details</div>}
-                        {selectedMenuItem === '2' && <div>Option 2 Details</div>}
-                        {selectedMenuItem === '3' && <div>List Account Details</div>}
-                        {selectedMenuItem === '4' && <div>Add Account Details</div>}
-                        {selectedMenuItem === '5' && <ProductListScreen />}
-                        {selectedMenuItem === '6' && <div>Team 2 Details</div>}
-                        {selectedMenuItem === '9' && <div>Files Details</div>}
+                        {selectedMenuItem === '2' && <UserListScreen />}
+                        {selectedMenuItem === '3' && <UserEditScreen />}
+                        {selectedMenuItem === '4' && <ProductListScreen />}
+                        {selectedMenuItem === '5' && <ProductEditScreen />}
+                        {selectedMenuItem === '6' && <OrderListScreen />}
                     </div>
                 </Content>
             </Layout>
         </Layout>
     );
 };
-export default Dasboard;
+
+export default Dashboard;

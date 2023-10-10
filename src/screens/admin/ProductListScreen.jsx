@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-no-duplicate-props */
 import { LinkContainer } from 'react-router-bootstrap';
-import { Table, Row, Col, ListGroup, Image, Button } from 'react-bootstrap';
+import { Table, Row, Col, ListGroup, Image, Button, Container } from 'react-bootstrap';
 import { FaEdit, FaPlus, FaTrash } from 'react-icons/fa';
 import { useParams } from 'react-router-dom';
 import Message from '../../components/Message';
@@ -21,6 +21,7 @@ import React from 'react';
 import { useState } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions  } from '@material-ui/core';
 import Rating from '../../components/Rating';
+import ProductEditScreen from './ProductEditScreen';
 
 
 const VISIBLE_FIELDS = ['productId', 'name', 'imagePath1', 'price', 'uploadDate', 'quantity', 'status'];
@@ -136,7 +137,7 @@ function ProductListScreen(props) {
 
     console.log(data)
     return (
-        <>
+        <Container >
             <Row className='align-items-center'>
                 <Col>
                     <h1>Products</h1>
@@ -218,8 +219,22 @@ function ProductListScreen(props) {
                                                 </Col>
                                             </Row>
                                         </DialogContent>
-                                        <DialogActions>
+                                        <DialogActions style={{ display: 'flex', justifyContent: 'space-between' }}>
                                             <Button onClick={handleCloseDialog}>Close</Button>
+                                            <div style={{ display: 'flex' }}>
+                                                <LinkContainer to={`/admin/product/${selectedRow.productId}/edit`}>
+                                                    <Button variant='light' className='btn-sm mx-2'>
+                                                        <FaEdit />
+                                                    </Button>
+                                                </LinkContainer>
+                                                <Button
+                                                    variant='danger'
+                                                    className='btn-sm'
+                                                    onClick={() => deleteHandler(selectedRow.productId)}
+                                                >
+                                                    <FaTrash style={{ color: 'white' }} />
+                                                </Button>
+                                            </div>
                                         </DialogActions>
                                     </Dialog>
                                 )}
@@ -285,7 +300,7 @@ function ProductListScreen(props) {
                     {/* <Paginate pages={data.pages} page={data.page} isAdmin={true} /> */}
                 </>
             )}
-        </>
+        </Container>
     );
 };
 export default ProductListScreen
