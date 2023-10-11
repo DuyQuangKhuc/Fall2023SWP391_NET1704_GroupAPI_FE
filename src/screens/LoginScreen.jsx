@@ -37,7 +37,9 @@ const LoginScreen = () => {
             dispatch(setCredentials({ ...res }));
             navigate(redirect);
         } catch (err) {
-            toast.error(err?.data?.message || err.error);
+            const errorMessage =  "Tài khoản không tồn tại" ;
+            toast.error(errorMessage);
+            console.log(errorMessage)
         }
     };
 
