@@ -72,10 +72,10 @@ const RegisterScreen = () => {
                             onChange={(e) => setEmail(e.target.value)}
                         ></Form.Control>
                     </Form.Group>
-                    <Form.Group className='my-2' controlId='email'>
+                    <Form.Group className='my-2' controlId='phone'>
                         <Form.Label>Phone Number</Form.Label>
                         <Form.Control
-                            type='email'
+                            type='phone'
                             placeholder='Enter phone'
                             value={phone}
                             onChange={(e) => setPhone(e.target.value)}
