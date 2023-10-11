@@ -25,7 +25,7 @@ const RegisterScreen = () => {
 
     const { search } = useLocation();
     const sp = new URLSearchParams(search);
-    const redirect = sp.get('redirect') || '/';
+    const redirect = sp.get('redirect') || '/login';
 
     useEffect(() => {
         if (userInfo) {
@@ -35,7 +35,6 @@ const RegisterScreen = () => {
 
     const submitHandler = async (e) => {
         e.preventDefault();
-
         if (password !== confirmPassword) {
             toast.error('Passwords do not match');
         } else {
@@ -109,7 +108,11 @@ const RegisterScreen = () => {
                     <Button disabled={isLoading} type='submit' variant='primary'>
                         Register
                     </Button>
-
+                    {successAlert && (
+                        <Paper>
+                            <Alert variant="contained" color="success">Success !!</Alert>
+                        </Paper>
+                    )}
                     {isLoading && <Loader />}
                 </Form>
 
@@ -123,11 +126,7 @@ const RegisterScreen = () => {
                 </Row>
             </FormContainer>
 
-            {successAlert && (
-                <Paper>
-                    <Alert variant="contained" color="success"></Alert>
-                </Paper>
-            )}
+
         </Container>
     );
 };
