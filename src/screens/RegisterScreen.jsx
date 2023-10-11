@@ -4,7 +4,7 @@ import { Form, Button, Row, Col, Container } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import Loader from '../components/Loader';
 import FormContainer from '../components/FormContainer';
-
+import { Alert, Paper } from "@mui/material";
 import { useRegisterMutation } from '../slices/usersApiSlice';
 import { setCredentials } from '../slices/authSlice';
 import { toast } from 'react-toastify';
@@ -20,6 +20,7 @@ const RegisterScreen = () => {
 
     const [register, { isLoading }] = useRegisterMutation();
 
+    const [successAlert, setSuccessAlert] = useState(false);
     const { userInfo } = useSelector((state) => state.auth);
 
     const { search } = useLocation();
@@ -41,7 +42,12 @@ const RegisterScreen = () => {
             try {
                 const res = await register({ phone, email, password }).unwrap();
                 dispatch(setCredentials({ ...res }));
+
                 navigate(redirect);
+                setSuccessAlert(true);
+                setTimeout(() => {
+                    setSuccessAlert(true);
+                }, 3000);
             } catch (err) {
                 toast.error(err?.data?.message || err.error);
             }
@@ -116,6 +122,12 @@ const RegisterScreen = () => {
                     </Col>
                 </Row>
             </FormContainer>
+
+            {successAlert && (
+                <Paper>
+                    <Alert variant="contained" color="success"></Alert>
+                </Paper>
+            )}
         </Container>
     );
 };
