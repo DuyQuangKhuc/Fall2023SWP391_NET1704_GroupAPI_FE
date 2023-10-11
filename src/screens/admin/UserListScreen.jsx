@@ -20,6 +20,12 @@ const UserListScreen = () => {
 
     const getRowId = (row) => row.accountId;
 
+    const roleMapping = {
+        1: "Admin",
+        2: "Manager",
+        3: "Staff",
+        4: "User",
+    };
     // Otherwise filter will be applied on fields such as the hidden column id
     const columns = React.useMemo(
         () =>
@@ -33,7 +39,7 @@ const UserListScreen = () => {
                         filterable: true,
                         renderCell: (params) => (
                             <div onClick={() => handleCellClick(params)}>
-                                {params.value === 1 ? "Admin" : params.value === 2 ? "Manager" : params.value === 3 ? "Staff" : params.value === 4 ? "User" : ''}
+                                {roleMapping[params?.role] || ''}
                             </div>
 
                         ),
@@ -47,7 +53,7 @@ const UserListScreen = () => {
                         filterable: true,
                         renderCell: (params) => (
                             <div onClick={() => handleCellClick(params)}>
-                                {params.value === 1 ? "Admin" : params.value === 2 ? "Manager" : params.value === 3 ? "Staff" : params.value === 4 ? "User" : ''}
+                                {roleMapping[params?.role] || ''}
                             </div>
                         ),
                     };

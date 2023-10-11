@@ -36,7 +36,7 @@ const RegisterScreen = () => {
     const submitHandler = async (e) => {
         e.preventDefault();
         if (password !== confirmPassword) {
-            toast.error('Passwords do not match');
+            toast.error('Mật khẩu không giống nhau');
         } else {
             try {
                 const res = await register({ phone, email, password }).unwrap();
@@ -48,7 +48,7 @@ const RegisterScreen = () => {
                     setSuccessAlert(true);
                 }, 3000);
             } catch (err) {
-                toast.error(err?.data?.message || err.error);
+                toast.error("Tài khoản đã tồn tại");
             }
         }
     };
