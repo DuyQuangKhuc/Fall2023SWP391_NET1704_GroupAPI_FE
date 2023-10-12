@@ -146,7 +146,7 @@ const UserListScreen = () => {
                             <DialogActions style={{ display: 'flex', justifyContent: 'space-between' }}>
                                 <Button onClick={handleCloseDialog}>Close</Button>
                                 <div style={{ display: 'flex' }}>
-                                    <LinkContainer to={`/admin/product/${selectedRow.accountId}/edit`}>
+                                    <LinkContainer to={`/admin/user/${selectedRow.accountId}/edit`}>
                                         <Button variant='light' className='btn-sm mx-2'>
                                             <FaEdit />
                                         </Button>

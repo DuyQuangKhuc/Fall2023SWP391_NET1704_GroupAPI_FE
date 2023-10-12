@@ -44,7 +44,8 @@ const UserEditScreen = () => {
         if (user) {
             setName(user.name);
             setEmail(user.email);
-            setIsAdmin(user.isAdmin);
+            setIsAdmin(user.role);
+            
         }
     }, [user]);
 

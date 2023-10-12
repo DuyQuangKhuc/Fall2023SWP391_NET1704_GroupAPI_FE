@@ -17,7 +17,7 @@ const ProductEditScreen = () => {
 
     const [name, setName] = useState('');
     const [price, setPrice] = useState(0);
-    const [image, setImage] = useState('');
+    const [imagePath1, setImage] = useState('');
     const [brand, setBrand] = useState('');
     const [category, setCategory] = useState('');
     const [countInStock, setCountInStock] = useState(0);
@@ -45,7 +45,7 @@ const ProductEditScreen = () => {
                 productId,
                 name,
                 price,
-                image,
+                imagePath1,
                 brand,
                 category,
                 description,
@@ -63,7 +63,7 @@ const ProductEditScreen = () => {
         if (product) {
             setName(product.name);
             setPrice(product.price);
-            setImage(product.image);
+            setImage(product.imagePath1);
             setBrand(product.brand);
             setCategory(product.category);
             setCountInStock(product.countInStock);
@@ -73,11 +73,11 @@ const ProductEditScreen = () => {
 
     const uploadFileHandler = async (e) => {
         const formData = new FormData();
-        formData.append('image', e.target.files[0]);
+        formData.append('imagePath1', e.target.files[0]);
         try {
             const res = await uploadProductImage(formData).unwrap();
             toast.success(res.message);
-            setImage(res.image);
+            setImage(res.imagePath1);
         } catch (err) {
             toast.error(err?.data?.message || err.error);
         }
@@ -86,7 +86,7 @@ const ProductEditScreen = () => {
     return (
         <Container>
 
-            <Link to='/admin' className='btn btn-light my-3'>
+            <Link to='/admin/productlist' className='btn btn-light my-3'>
                 Go Back
             </Link>
             <FormContainer>
@@ -97,7 +97,7 @@ const ProductEditScreen = () => {
                 ) : error ? (
                     <Message variant='danger'>{error.data.message}</Message>
                 ) : (
-                    <Form onSubmit={submitHandler}>
+                    {/* <Form onSubmit={submitHandler}>
                         <Form.Group controlId='name'>
                             <Form.Label>Name</Form.Label>
                             <Form.Control
@@ -123,7 +123,7 @@ const ProductEditScreen = () => {
                             <Form.Control
                                 type='text'
                                 placeholder='Enter image url'
-                                value={image}
+                                value={imagePath1}
                                 onChange={(e) => setImage(e.target.value)}
                             ></Form.Control>
                             <Form.Control
@@ -181,7 +181,7 @@ const ProductEditScreen = () => {
                         >
                             Update
                         </Button>
-                    </Form>
+                    </Form> */}
                 )}
             </FormContainer>
         </Container>
