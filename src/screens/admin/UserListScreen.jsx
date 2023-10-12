@@ -39,9 +39,8 @@ const UserListScreen = () => {
                         filterable: true,
                         renderCell: (params) => (
                             <div onClick={() => handleCellClick(params)}>
-                                {roleMapping[params?.role] || ''}
+                                {params?.value && roleMapping[params.value] ? roleMapping[params.value] : ''}
                             </div>
-
                         ),
                     };
                 } else {
@@ -51,11 +50,7 @@ const UserListScreen = () => {
                         width: 170,
                         sortable: true,
                         filterable: true,
-                        renderCell: (params) => (
-                            <div onClick={() => handleCellClick(params)}>
-                                {roleMapping[params?.role] || ''}
-                            </div>
-                        ),
+
                     };
                 }
             }),
