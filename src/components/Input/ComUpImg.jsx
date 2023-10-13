@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { UploadOutlined } from '@ant-design/icons';
 import { Button, Upload, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
@@ -10,7 +10,7 @@ const getBase64 = (file) =>
         reader.onload = () => resolve(reader.result);
         reader.onerror = (error) => reject(error);
     });
-const ComUpImg = ({onChange}) => {
+const ComUpImg = ({value, onChange}) => {
     const [previewOpen, setPreviewOpen] = useState(false);
     const [fileList, setFileList] = useState([]);
     const [previewImage, setPreviewImage] = useState('');
@@ -26,6 +26,14 @@ const ComUpImg = ({onChange}) => {
         }
         return true;
     };
+    useEffect(() => {
+        if (value) {
+            const fileList = [{
+                url: value // assuming "value" is the URL of the image from the API
+            }];
+            setFileList(fileList);
+        }
+    }, [value]);
    
     const handleCancel = () => setPreviewOpen(false);
 

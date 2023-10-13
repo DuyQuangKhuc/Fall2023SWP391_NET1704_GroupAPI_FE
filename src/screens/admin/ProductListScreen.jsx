@@ -439,7 +439,7 @@ function ProductListScreen(props) {
                                     </div>
                             </div>
                         </div>
-                        <div className="mt-64">
+                        <Col className='text-end'>
                             <Button
                                 disabled={disabled}
                                 htmlType="submit"
@@ -448,7 +448,7 @@ function ProductListScreen(props) {
                             >
                                 {textApp.common.button.createProduct}
                             </Button>
-                        </div>
+                        </Col>
                     </Form>
                 </FormProvider>
             </Modal>

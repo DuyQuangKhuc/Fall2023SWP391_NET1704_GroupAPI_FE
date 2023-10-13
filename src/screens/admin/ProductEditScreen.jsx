@@ -11,6 +11,8 @@ import {
     useUploadProductImageMutation,
 } from '../../slices/productsApiSlice';
 import Dasboard from '../../dasboard/Dasboard';
+import ComUpImg from '../../components/Input/ComUpImg';
+import { Image } from 'antd';
 
 const ProductEditScreen = () => {
     const { id: productId } = useParams();
@@ -97,7 +99,7 @@ const ProductEditScreen = () => {
                 ) : error ? (
                     <Message variant='danger'>{error.data.message}</Message>
                 ) : (
-                    {/* <Form onSubmit={submitHandler}>
+                    <Form onSubmit={submitHandler}>
                         <Form.Group controlId='name'>
                             <Form.Label>Name</Form.Label>
                             <Form.Control
@@ -120,21 +122,20 @@ const ProductEditScreen = () => {
 
                         <Form.Group controlId='image'>
                             <Form.Label>Image</Form.Label>
-                            <Form.Control
-                                type='text'
-                                placeholder='Enter image url'
+                            {/* <Image src= {imagePath1} /> */}
+                            <ComUpImg
                                 value={imagePath1}
-                                onChange={(e) => setImage(e.target.value)}
-                            ></Form.Control>
-                            <Form.Control
+                                onChange={setImage}
+                            ></ComUpImg>
+                            {/* <Form.Control
                                 label='Choose File'
                                 onChange={uploadFileHandler}
                                 type='file'
-                            ></Form.Control>
+                            ></Form.Control> */}
                             {loadingUpload && <Loader />}
                         </Form.Group>
 
-                        <Form.Group controlId='brand'>
+                        {/* <Form.Group controlId='brand'>
                             <Form.Label>Brand</Form.Label>
                             <Form.Control
                                 type='text'
@@ -142,23 +143,23 @@ const ProductEditScreen = () => {
                                 value={brand}
                                 onChange={(e) => setBrand(e.target.value)}
                             ></Form.Control>
-                        </Form.Group>
+                        </Form.Group> */}
 
-                        <Form.Group controlId='countInStock'>
-                            <Form.Label>Count In Stock</Form.Label>
+                                <Form.Group controlId='quantity'>
+                                    <Form.Label>quantity</Form.Label>
                             <Form.Control
                                 type='number'
-                                placeholder='Enter countInStock'
+                                        placeholder='Enter quantity'
                                 value={countInStock}
                                 onChange={(e) => setCountInStock(e.target.value)}
                             ></Form.Control>
                         </Form.Group>
 
-                        <Form.Group controlId='category'>
-                            <Form.Label>Category</Form.Label>
+                                <Form.Group controlId='material'>
+                                    <Form.Label>material</Form.Label>
                             <Form.Control
                                 type='text'
-                                placeholder='Enter category'
+                                        placeholder='Enter material'
                                 value={category}
                                 onChange={(e) => setCategory(e.target.value)}
                             ></Form.Control>
@@ -181,7 +182,7 @@ const ProductEditScreen = () => {
                         >
                             Update
                         </Button>
-                    </Form> */}
+                    </Form>
                 )}
             </FormContainer>
         </Container>
