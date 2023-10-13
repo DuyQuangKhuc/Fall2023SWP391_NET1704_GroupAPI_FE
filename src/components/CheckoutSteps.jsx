@@ -1,10 +1,18 @@
 import React from 'react';
 import { Nav } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
-
+import '../assets/styles/index.css'
+import { useEffect, useState } from 'react';
 const CheckoutSteps = ({ step1, step2, step3, step4 }) => {
+
+    const [animate, setAnimate] = useState(false);
+
+    useEffect(() => {
+        setAnimate(true); // Trigger animation on component mount
+    }, []);
+    
     return (
-        <Nav className='justify-content-center mb-4'>
+        <Nav className= { `justify-content-center mb-4 ${animate ? 'fade-in' : ''}`}>
             <Nav.Item>
                 {step1 ? (
                     <LinkContainer to='/login'>
@@ -15,7 +23,7 @@ const CheckoutSteps = ({ step1, step2, step3, step4 }) => {
                 )}
             </Nav.Item>
 
-            <Nav.Item>
+            {/* <Nav.Item>
                 {step2 ? (
                     <LinkContainer to='/shipping'>
                         <Nav.Link>Shipping</Nav.Link>
@@ -23,7 +31,7 @@ const CheckoutSteps = ({ step1, step2, step3, step4 }) => {
                 ) : (
                     <Nav.Link disabled>Shipping</Nav.Link>
                 )}
-            </Nav.Item>
+            </Nav.Item> */}
 
             <Nav.Item>
                 {step3 ? (

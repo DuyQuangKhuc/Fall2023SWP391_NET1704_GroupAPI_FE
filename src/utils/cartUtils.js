@@ -14,19 +14,19 @@ export const updateCart = (state) => {
         (acc, item) => acc + (item.price * 100 * item.qty) / 100,
         0
     );
-    state.itemsPrice = addDecimals(itemsPrice);
+    state.itemsPrice = (itemsPrice);
 
     // Calculate the shipping price
     const shippingPrice = itemsPrice > 100 ? 0 : 10;
-    state.shippingPrice = addDecimals(shippingPrice);
+    state.shippingPrice = (shippingPrice);
 
     // Calculate the tax price
-    const taxPrice = 0.15 * itemsPrice;
-    state.taxPrice = addDecimals(taxPrice);
+    // const taxPrice = 0.15 * itemsPrice;
+    // state.taxPrice = (taxPrice);
 
-    const totalPrice = itemsPrice + shippingPrice + taxPrice;
+    const totalPrice = itemsPrice + shippingPrice ;
     // Calculate the total price
-    state.totalPrice = addDecimals(totalPrice);
+    state.totalPrice = (totalPrice);
 
     // Save the cart to localStorage
     localStorage.setItem('cart', JSON.stringify(state));

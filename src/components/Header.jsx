@@ -7,6 +7,7 @@ import { useLogoutMutation } from '../slices/usersApiSlice';
 import { logout } from '../slices/authSlice';
 import SearchBox from './SearchBox';
 import { resetCart } from '../slices/cartSlice';
+import { useGetMyOrdersQuery } from '../slices/ordersApiSlice';
 
 const Header = () => {
     const { cartItems } = useSelector((state) => state.cart);
@@ -59,7 +60,7 @@ const Header = () => {
                             </LinkContainer>
                             {userInfo && userInfo.role === 4 ? (
                                 <NavDropdown title={userInfo.email} id='username'>
-                                    <LinkContainer to='/profile'>
+                                    <LinkContainer to={`/profile/${userInfo.accountId}`}>
                                         <NavDropdown.Item>Profile</NavDropdown.Item>
                                     </LinkContainer>
                                     <NavDropdown.Item onClick={logoutHandler}>

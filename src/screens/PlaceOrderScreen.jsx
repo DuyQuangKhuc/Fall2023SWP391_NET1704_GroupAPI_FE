@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Button, Row, Col, ListGroup, Image, Card } from 'react-bootstrap';
@@ -16,6 +16,8 @@ const PlaceOrderScreen = () => {
 
     const [createOrder, { isLoading, error }] = useCreateOrderMutation();
 
+    const [user] = useState(JSON.parse(localStorage.getItem('userInfo')));
+
     useEffect(() => {
         if (!cart.shippingAddress.address) {
             navigate('/shipping');
@@ -23,21 +25,24 @@ const PlaceOrderScreen = () => {
             navigate('/payment');
         }
     }, [cart.paymentMethod, cart.shippingAddress.address, navigate]);
-
+    console.log(user.accountId)
+    console.log(cart.totalPrice)
     const dispatch = useDispatch();
     const placeOrderHandler = async () => {
         try {
             const res = await createOrder({
-                orderItems: cart.cartItems,
-                shippingAddress: cart.shippingAddress,
-                paymentMethod: cart.paymentMethod,
-                itemsPrice: cart.itemsPrice,
-                shippingPrice: cart.shippingPrice,
-                taxPrice: cart.taxPrice,
+                // orderItems: cart.cartItems,
+                // shippingAddress: cart.shippingAddress,
+                // paymentMethod: cart.paymentMethod,
+                // itemsPrice: cart.itemsPrice,
+                // shippingPrice: cart.shippingPrice,
+                // taxPrice: cart.taxPrice,
+                accountId: user.accountId,
                 totalPrice: cart.totalPrice,
-            }).unwrap();
+            }).unwrap()
+            console.log(cart.totalPrice)
             dispatch(clearCartItems());
-            navigate(`/order/${res._id}`);
+            navigate(`/order/${res.orderId}`);
         } catch (err) {
             toast.error(err);
         }
@@ -51,6 +56,7 @@ const PlaceOrderScreen = () => {
                     <ListGroup variant='flush'>
                         <ListGroup.Item>
                             <h2>Shipping</h2>
+                            
                             <p>
                                 <strong>Address:</strong>
                                 {cart.shippingAddress.address}, {cart.shippingAddress.city}{' '}
@@ -76,14 +82,14 @@ const PlaceOrderScreen = () => {
                                             <Row>
                                                 <Col md={1}>
                                                     <Image
-                                                        src={item.image}
+                                                        src={item.imagePath1}
                                                         alt={item.name}
                                                         fluid
                                                         rounded
                                                     />
                                                 </Col>
                                                 <Col>
-                                                    <Link to={`/product/${item.product}`}>
+                                                    <Link to={`/product/${item.productId}`}>
                                                         {item.name}
                                                     </Link>
                                                 </Col>
@@ -117,12 +123,12 @@ const PlaceOrderScreen = () => {
                                     <Col>${cart.shippingPrice}</Col>
                                 </Row>
                             </ListGroup.Item>
-                            <ListGroup.Item>
+                            {/* <ListGroup.Item>
                                 <Row>
                                     <Col>Tax</Col>
                                     <Col>${cart.taxPrice}</Col>
                                 </Row>
-                            </ListGroup.Item>
+                            </ListGroup.Item> */}
                             <ListGroup.Item>
                                 <Row>
                                     <Col>Total</Col>

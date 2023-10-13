@@ -10,16 +10,18 @@ import Loader from '../components/Loader';
 import { useProfileMutation } from '../slices/usersApiSlice';
 import { useGetMyOrdersQuery } from '../slices/ordersApiSlice';
 import { setCredentials } from '../slices/authSlice';
+import { useParams } from 'react-router-dom';
 
 const ProfileScreen = () => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-
     const { userInfo } = useSelector((state) => state.auth);
 
-    const { data: orders, isLoading, error } = useGetMyOrdersQuery();
+    const { id: accountId } = useParams();
+
+    const { data: orders, isLoading, error } = useGetMyOrdersQuery(accountId);
 
     const [updateProfile, { isLoading: loadingUpdateProfile }] =
         useProfileMutation();
@@ -37,7 +39,7 @@ const ProfileScreen = () => {
         } else {
             try {
                 const res = await updateProfile({
-                    _id: userInfo._id,
+                    accountId: userInfo.accountId,
                     name,
                     email,
                     password,
@@ -49,7 +51,7 @@ const ProfileScreen = () => {
             }
         }
     };
-
+    console.log('orders:', orders);
     return (
         <Row>
             <Col md={3}>
@@ -115,20 +117,21 @@ const ProfileScreen = () => {
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>DATE</th>
+                                {/* <th>DATE</th> */}
                                 <th>TOTAL</th>
-                                <th>PAID</th>
-                                <th>DELIVERED</th>
+                                {/* <th>PAID</th> */}
+                                {/* <th>DELIVERED</th> */}
                                 <th></th>
                             </tr>
                         </thead>
                         <tbody>
-                            {orders.map((order) => (
-                                <tr key={order._id}>
-                                    <td>{order._id}</td>
-                                    <td>{order.createdAt.substring(0, 10)}</td>
-                                    <td>{order.totalPrice}</td>
-                                    <td>
+
+                            {orders && orders?.map((order, index) => (
+                                <tr key={index}>
+                                    <td>{order.orderId}</td>
+                                    {/* <td>{order.createdAt.substring(0, 10)}</td> */}
+                                    <td>${order.totalPrice}</td>
+                                    {/* <td>
                                         {order.isPaid ? (
                                             order.paidAt.substring(0, 10)
                                         ) : (
@@ -141,9 +144,9 @@ const ProfileScreen = () => {
                                         ) : (
                                             <FaTimes style={{ color: 'red' }} />
                                         )}
-                                    </td>
+                                    </td> */}
                                     <td>
-                                        <LinkContainer to={`/order/${order._id}`}>
+                                        <LinkContainer to={`/order/${order.orderId}`}>
                                             <Button className='btn-sm' variant='light'>
                                                 Details
                                             </Button>

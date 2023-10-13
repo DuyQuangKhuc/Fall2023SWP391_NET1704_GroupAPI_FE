@@ -13,7 +13,7 @@ const ProductCarousel = () => {
             {products?.map((product, index) => (
                 <Carousel.Item key={index}>
                     <Link to={`/product/${product.productId}`}>
-                        <Image src={product.imagePath1} alt={product.name} fluid />
+                        <Image src={product.imagePath1} alt={product.name} fluid style={{ width: '510px', height: '510px' }} />
                         <Carousel.Caption className='carousel-caption'>
                             <h2 className='text-white text-right'>
                                 {product.name} (${product.price})
