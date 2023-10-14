@@ -1,24 +1,16 @@
 
 import { Fragment, useEffect, useState } from "react";
-import { Dialog, Menu, Popover, Tab, Transition } from "@headlessui/react";
+import { Dialog, Popover, Tab, Transition } from "@headlessui/react";
 import {
   Bars3Icon,
+  MagnifyingGlassIcon,
   ShoppingBagIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import ShoppingCart from "../../Authenticator/ShoppingCart/ShoppingCart";
 import { routs } from "../../../constants/ROUT";
 import { ComLink } from "../ComLink/ComLink";
-import { Affix, FloatButton, } from "antd";
-import images from "../../../img";
-import ComInput from "../ComInput/ComInput";
-import { FormProvider, useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup"
-import { textApp } from "../../../TextContent/textApp";
-import { getData } from "../../../api/api";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useCookies } from "react-cookie";
+import { Affix } from "antd";
 
 const navigation = {
   categories: [
@@ -152,47 +144,15 @@ const navigation = {
 };
 
 function classNames(...classes) {
-  return classes.filter(Boolean).join(' ')
+  return classes.filter(Boolean).join(" ");
 }
 
 export default function ComHeader() {
   const [open, setOpen] = useState(false);
   const [shoppingCart, setShoppingCart] = useState(false);
-  const [sttLogin, setSttLogin] = useState([]);
-  const location = useLocation();
-  const navigate = useNavigate();
-
   const updateShoppingCartStatus = (newStatus) => {
     setShoppingCart(newStatus);
   };
-  const CreateProductMessenger = yup.object({
-    search: yup.string(),
-  })
-  const methods = useForm({
-    resolver: yupResolver(CreateProductMessenger),
-    defaultValues: {
-      search: ''
-    },
-  })
-  useEffect(() => {
-    getData('/login')
-      .then((data) => {
-        setSttLogin(data.data);
-        if (location.pathname === '/login' && data.data.login) {
-          navigate('/')
-
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-
-      });
-  }, []);
-  const { handleSubmit, register } = methods
-  const onSubmit = (data) => {
-    console.log(data);
-  }
-
 
   return (
     <>
@@ -201,7 +161,7 @@ export default function ComHeader() {
         updateShoppingCart={updateShoppingCartStatus}
       ></ShoppingCart>
       <Affix offsetTop={0} >
-        <div className="bg-white ">
+        <div className="bg-white">
           {/* Mobile menu */}
           <Transition.Root show={open} as={Fragment}>
             <Dialog
@@ -344,7 +304,7 @@ export default function ComHeader() {
                       ))}
                     </div>
 
-                    {!sttLogin && <div className="space-y-6 border-t border-gray-200 px-4 py-6">
+                    <div className="space-y-6 border-t border-gray-200 px-4 py-6">
                       <div className="flow-root">
                         <ComLink
                           to={routs["/login"].link}
@@ -361,7 +321,21 @@ export default function ComHeader() {
                           {routs["/reissue"].name}
                         </ComLink>
                       </div>
-                    </div>}
+                    </div>
+
+                    <div className="border-t border-gray-200 px-4 py-6">
+                      <a href="#" className="-m-2 flex items-center p-2">
+                        <img
+                          src="https://tailwindui.com/img/flags/flag-canada.svg"
+                          alt=""
+                          className="block h-auto w-5 flex-shrink-0"
+                        />
+                        <span className="ml-3 block text-base font-medium text-gray-900">
+                          CAD
+                        </span>
+                        <span className="sr-only">, change currency</span>
+                      </a>
+                    </div>
                   </Dialog.Panel>
                 </Transition.Child>
               </div>
@@ -390,8 +364,8 @@ export default function ComHeader() {
                     <ComLink to={routs["/"].link}>
                       <span className="sr-only">Your Company</span>
                       <img
-                        className="h-16 w-auto "
-                        src={images.logo}
+                        className="h-8 w-auto"
+                        src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
                         alt=""
                       />
                     </ComLink>
@@ -522,20 +496,51 @@ export default function ComHeader() {
                   </Popover.Group>
 
                   <div className="ml-auto flex items-center">
+                    <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6">
+                      <ComLink
+                        to={routs["/login"].link}
+                        className="text-sm font-medium text-gray-700 hover:text-gray-800"
+                      >
+                        {routs["/login"].name}
+                      </ComLink>
+                      <span className="h-6 w-px bg-gray-200" aria-hidden="true" />
+                      <ComLink
+                        to={routs["/reissue"].link}
+                        className="text-sm font-medium text-gray-700 hover:text-gray-800"
+                      >
+                        {routs["/reissue"].name}
+                      </ComLink>
+                    </div>
+
+                    <div className="hidden lg:ml-8 lg:flex">
+                      <a
+                        href="#"
+                        className="flex items-center text-gray-700 hover:text-gray-800"
+                      >
+                        <img
+                          src="https://tailwindui.com/img/flags/flag-canada.svg"
+                          alt=""
+                          className="block h-auto w-5 flex-shrink-0"
+                        />
+                        <span className="ml-3 block text-sm font-medium">
+                          CAD
+                        </span>
+                        <span className="sr-only">, change currency</span>
+                      </a>
+                    </div>
 
                     {/* Search */}
                     <div className="flex lg:ml-6">
-                      <FormProvider {...methods} >
-                        <form onSubmit={handleSubmit(onSubmit)}>
-                          <ComInput
-                            placeholder={textApp.Header.search}
-                            search
-                            type="text"
-
-                            {...register("search")}
-                          />
-                        </form>
-                      </FormProvider>
+                      <a
+                        href="#"
+                        className="p-2 text-gray-400 hover:text-gray-500"
+                      >
+                        <span className="sr-only">Search</span>
+                        <MagnifyingGlassIcon
+                          className="h-6 w-6"
+                          aria-hidden="true"
+                        />
+                      </a>
                     </div>
 
                     {/* Cart */}
@@ -556,89 +561,6 @@ export default function ComHeader() {
                         <span className="sr-only">items in cart, view bag</span>
                       </button>
                     </div>
-                    {/* login */}
-                    {!sttLogin?.login && <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6 lg:ml-6">
-                      <ComLink
-                        to={routs["/login"].link}
-                        className="text-sm font-medium text-gray-700 hover:text-gray-800"
-                      >
-                        {routs["/login"].name}
-                      </ComLink>
-                      <span className="h-6 w-px bg-gray-200" aria-hidden="true" />
-                      <ComLink
-                        to={routs["/reissue"].link}
-                        className="text-sm font-medium text-gray-700 hover:text-gray-800"
-                      >
-                        {routs["/reissue"].name}
-                      </ComLink>
-                    </div>}
-
-                    {sttLogin?.login && <div>
-                      <Menu as="div" className="relative ml-3 z-50">
-                        <div>
-                          <Menu.Button className="relative flex max-w-xs items-center rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-                            <span className="absolute -inset-1.5" />
-                            <span className="sr-only">Open user menu</span>
-                            <img on className="h-8 w-8 rounded-full" src={images.avatar} alt="" />
-                          </Menu.Button>
-                        </div>
-                        <Transition
-                          as={Fragment}
-                          enter="transition ease-out duration-100"
-                          enterFrom="transform opacity-0 scale-95"
-                          enterTo="transform opacity-100 scale-100"
-                          leave="transition ease-in duration-75"
-                          leaveFrom="transform opacity-100 scale-100"
-                          leaveTo="transform opacity-0 scale-95"
-                        >
-                          <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-
-                            {sttLogin?.user?.admin && <Menu.Item >
-                              {({ active }) => (
-                                <ComLink
-                                  to={routs['/createProduct'].link}
-                                  className={classNames(
-                                    active ? 'bg-gray-100' : '',
-                                    'block px-4 py-2 text-sm text-gray-700'
-                                  )}
-                                >
-                                  {routs['/createProduct'].name2}
-                                </ComLink>
-                              )}
-                            </Menu.Item>}
-                            <Menu.Item >
-                              {({ active }) => (
-                                <ComLink
-                                  to={routs['/oder'].link}
-                                  className={classNames(
-                                    active ? 'bg-gray-100' : '',
-                                    'block px-4 py-2 text-sm text-gray-700'
-                                  )}
-                                >
-                                  {routs['/oder'].name}
-                                </ComLink>
-
-                              )}
-                            </Menu.Item>
-                            <Menu.Item >
-                              {({ active }) => (
-                                <ComLink
-                                  to={routs['/logout'].link}
-                                  className={classNames(
-                                    active ? 'bg-gray-100' : '',
-                                    'block px-4 py-2 text-sm text-gray-700'
-                                  )}
-                                >
-                                  {routs['/logout'].name}
-                                </ComLink>
-                              )}
-                            </Menu.Item>
-
-                          </Menu.Items>
-                        </Transition>
-                      </Menu>
-                    </div>
-                    }
                   </div>
                 </div>
               </div>
@@ -646,7 +568,6 @@ export default function ComHeader() {
           </header>
         </div>
       </Affix>
-      <FloatButton.BackTop />
     </>
   );
 }

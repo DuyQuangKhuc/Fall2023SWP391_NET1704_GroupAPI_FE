@@ -17,26 +17,24 @@ import ComHeader from "../../Components/ComHeader/ComHeader";
 
 export default function Reissue() {
 
-    const [error, setError] = useState("");
+    const [data, setData] = useState({});
     const [disabled, setDisabled] = useState(false);
 
 
 
     const loginMessenger = yup.object({
         // code: yup.string().required(textApp.Reissue.message.username).min(5, "Username must be at least 5 characters"),
-        username: yup.string().required(textApp.Reissue.message.username).min(6, textApp.Reissue.message.usernameMIn),
+        username: yup.string().required(textApp.Reissue.message.username),
         phone: yup.string().required(textApp.Reissue.message.phone),
-        // .matches(/^[0-9]+$/, 'Số điện thoại phải chứa chỉ số'),
-        password: yup.string().required(textApp.Reissue.message.password).min(5, textApp.Reissue.message.passwordMIn),
-        password2: yup.string().required(textApp.Reissue.message.password2).min(5, textApp.Reissue.message.passwordMIn),
-        email: yup.string().email(textApp.Reissue.message.emailFormat).required(textApp.Reissue.message.email),
+        password: yup.string().required(textApp.Reissue.message.password),
+        // email: yup.string().email('định dạng sai').required('Login ID is required email'),
     })
     const LoginRequestDefault = {
         // code: "",
         password: "",
         phone: "",
         username: "",
-        email: "",
+        // email: "",
 
     };
     const methods = useForm({
@@ -46,57 +44,48 @@ export default function Reissue() {
             username: "",
             phone: "",
             password: "",
-            email: "",
+            // email: "",
         },
         values: LoginRequestDefault
     })
     const { handleSubmit, register, setFocus, watch, setValue } = methods
     const onSubmit = (data) => {
-        if (data.password2 !== data.password) {
-
-            return setError(textApp.Reissue.message.passwordCheck)
-        }
         setDisabled(true)
-        setError("")
         postData('/reg', data, {})
             .then((data) => {
                 console.log(data);
                 setDisabled(false)
             })
             .catch((error) => {
-                setError(error?.response?.data?.error)
                 console.error("Error fetching items:", error);
                 setDisabled(false)
             });
-
     }
     // console.log(disableds);
     // useEffect(() => {
 
     // }, [disableds]);
-    console.log(disabled);
     return (
         <>
             <ComHeader />
-            <div className="flex min-h-full flex-1 flex-col justify-center px-6 lg:px-8">
+            <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
                 <div className="sm:mx-auto sm:w-full sm:max-w-sm">
 
                     <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-                        {textApp.Reissue.pageTitle}
+                        Create in to your account
                     </h2>
                 </div>
 
                 <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
                     <FormProvider {...methods} >
                         <form className="flex flex-col gap-6" onSubmit={handleSubmit(onSubmit)}>
-
+                       
                             <ComInput
                                 placeholder={textApp.Reissue.placeholder.username}
                                 label={textApp.Reissue.label.username}
                                 type="text"
                                 // search
-                                maxLength={26}
-                                onchange={() => { setError("") }}
+                                maxLength={15}
                                 {...register("username")}
                                 required
                             />
@@ -110,30 +99,15 @@ export default function Reissue() {
                                 required
                             />
                             <ComInput
-                                placeholder={textApp.Reissue.placeholder.email}
-                                label={textApp.Reissue.label.email}
-                                type="text"
-                                {...register("email")}
-                                required
-                            />
-                            <ComInput
                                 placeholder={textApp.Reissue.placeholder.password}
                                 label={textApp.Reissue.label.password}
                                 type="password"
-                                maxLength={26}
+                                maxLength={16}
                                 {...register("password")}
                                 required
                             />
-                            <ComInput
-                                placeholder={textApp.Reissue.placeholder.password2}
-                                label={textApp.Reissue.label.password2}
-                                type="password"
-                                maxLength={26}
-                                {...register("password2")}
-                                required
-                            />
-                            <h1 className="text-red-500">{error}</h1>
                             <ComButton
+
                                 disabled={disabled}
                                 htmlType="submit"
                                 type="primary"
@@ -141,7 +115,13 @@ export default function Reissue() {
                                 {textApp.Reissue.pageTitle}
                             </ComButton>
 
-
+                            {/* <ComButton
+                                htmlType="submit"
+                                type="primary"
+                                className="bg-black hover:bg-white"
+                            >
+                                cancel
+                            </ComButton> */}
                         </form>
                     </FormProvider>
 

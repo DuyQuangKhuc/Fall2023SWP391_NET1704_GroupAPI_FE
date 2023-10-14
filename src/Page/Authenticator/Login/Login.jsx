@@ -14,15 +14,13 @@ import { postData } from "../../../api/api";
 import ComHeader from "../../Components/ComHeader/ComHeader";
 import { useNavigate } from "react-router-dom";
 import { FieldError } from "../../Components/FieldError/FieldError";
-import { useCookies } from "react-cookie";
-import ComFooter from "../../Components/ComFooter/ComFooter";
 
 
 export default function Login() {
     const [token, setToken] = useStorage("user", null);
     const [disabled, setDisabled] = useState(false);
     const [Login, setLogin] = useState(false);
-    const [LoginError, setLoginError] = useState(false);
+
     const navigate = useNavigate();
 
     const loginMessenger = yup.object({
@@ -50,8 +48,6 @@ export default function Login() {
     })
     const { handleSubmit, register, setFocus, watch, setValue } = methods
     const onSubmit = (data) => {
-        setLoginError(false)
-
         setLogin(false)
         setDisabled(true)
         postData('/login', data, {})
@@ -69,13 +65,7 @@ export default function Login() {
             .catch((error) => {
                 console.error("Error fetching items:", error);
                 setDisabled(false)
-                if (error?.response?.status === 401) {
-
-                    setLogin(true)
-                } else {
-                    setLoginError(true)
-
-                }
+                setLogin(true)
             });
     }
     // console.log(disableds);
@@ -96,7 +86,46 @@ export default function Login() {
                 <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
                     <FormProvider {...methods} >
                         <form className="flex flex-col gap-6" onSubmit={handleSubmit(onSubmit)}>
-                           
+                            {/* 
+                            <ComInput
+                                placeholder={textApp.Login.label.username}
+                                label={textApp.Login.pageTitle}
+                                type="numbers"
+                                search
+                                maxLength={5}
+                                // minLength={4}
+                                {...register("code")}
+                                required
+                            />
+
+                            <ComInput
+                                placeholder='question'
+                                label='qưe'
+                                type="text"
+                                // search
+                                maxLength={5}
+                                {...register("username")}
+                                required
+                            />
+
+                            <ComInput
+                                placeholder='email'
+                                label='email'
+                                type="emails"
+                                // search
+                                {...register("email")}
+                                required
+                            />
+
+                            <ComInput
+                                placeholder='question'
+                                label='qưe'
+                                type="password"
+                                maxLength={16}
+                                {...register("password")}
+                                required
+                            /> */}
+
                             <ComInput
                                 placeholder={textApp.Login.placeholder.username}
                                 label={textApp.Login.label.username}
@@ -117,7 +146,6 @@ export default function Login() {
                             />
 
                             <FieldError className="text-red-500 text-center">{Login ? textApp.Login.message.error : ''}</FieldError>
-                            <FieldError className="text-red-500 text-center">{LoginError ? textApp.Login.message.error1 : ''}</FieldError>
                             <ComButton
 
                                 disabled={disabled}
@@ -145,7 +173,7 @@ export default function Login() {
                     </p>
                 </div>
             </div>
-            <ComFooter />
+
         </>
     )
 

@@ -35,7 +35,7 @@ const ComUpImg = ({onChange}) => {
         accept=".jpg,.jpeg,.png,.gif" // Chỉ cho phép chọn các tệp hình ảnh
         multiple={true} // Cho phép chọn nhiều tệp
       >
-        <Button icon={<UploadOutlined />}>Tải hình ảnh</Button>
+        <Button icon={<UploadOutlined />}>Select File</Button>
       </Upload>
     </>
   );

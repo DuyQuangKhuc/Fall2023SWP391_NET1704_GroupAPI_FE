@@ -2,7 +2,7 @@ import React from 'react';
 import ImageGallery from 'react-image-gallery';
 
 
-const ComImage = ({ product,showThumbnails }) => {
+const ComImage = ({ product }) => {
     // const images = product.map(image => ({
 
     //     original: image.original,
@@ -11,7 +11,7 @@ const ComImage = ({ product,showThumbnails }) => {
 
     return (
         <div>
-            <ImageGallery thumbnailHeight={200} showThumbnails={showThumbnails} showFullscreenButton={false} showPlayButton={false} autoPlay={true} slideDuration={1000} slideInterval={4000}  items={product} />
+            <ImageGallery thumbnailHeight={200} items={product} />
         </div>
     );
 };

@@ -70,7 +70,6 @@ const ComInput = React.forwardRef(
     const inputId = v4();
 
     const onlyChangeWithCondition = (e) => {
-      console.log(props.type);
       let value = '';
       value =
         e.clipboardData?.getData('text') ??

@@ -75,6 +75,35 @@ const ComTextArea = React.forwardRef(
       value =
         e.clipboardData?.getData('text') ??
         e.target.value;
+      if (props.type === 'password' && !isHalfSize(value)) {
+        return;
+      }
+      switch (props.type) {
+        case 'emails':
+          if (!isHalfSize(value) || !value.match(emailRegex)) {
+            return;
+          }
+          break;
+        case 'code':
+          if (!checkValidType(decimalPositiveStr, value)) {
+            return;
+          }
+          break;
+        case 'numbers':
+          // if (!checkValidType(positiveIntegerStr, value)) {
+          //   return;
+          // }
+          const numericValue = value.replace(/[^0-9]/g, '');
+          value = numericValue;
+          break;
+        default:
+          break;
+      }
+
+      if (maxLength && value.length > maxLength) {
+        value = value.slice(0, maxLength);
+      }
+
       setValue(props.name, value);
       onChangeValue?.(props.name, value);
     };
@@ -95,25 +124,60 @@ const ComTextArea = React.forwardRef(
               {subLabel && <span className="ml-8">{subLabel}</span>}
             </div>
           )}
-
-          <TextArea
-            prefix={
-              search ? (
-                <SearchOutlined className="text-h3 text-grey" />
-              ) : undefined
-            }
-            id={inputId}
-            ref={ref}
-            showCount
-            size="large"
-            {...props}
-            value={props.value ?? valueWatch}
-            status={error && 'error'}
-            onChange={onlyChangeWithCondition}
-            maxLength={maxLength}
-
-          />
-
+          {props.type === 'password' ? (
+            <Input.Password
+              id={inputId}
+              ref={ref}
+              size="large"
+              {...props}
+              value={props.value ?? valueWatch}
+              status={error && 'error'}
+              onChange={onlyChangeWithCondition}
+              iconRender={(visible) =>
+                visible ? (
+                  <EyeOutlined tabIndex={0} />
+                ) : (
+                  <EyeInvisibleOutlined tabIndex={0} />
+                )
+              }
+            />
+          ) : (
+            <TextArea
+              prefix={
+                search ? (
+                  <SearchOutlined className="text-h3 text-grey" />
+                ) : undefined
+              }
+              id={inputId}
+              ref={ref}
+              size="large"
+              {...props}
+              value={props.value ?? valueWatch}
+              status={error && 'error'}
+              onChange={onlyChangeWithCondition}
+              onBlur={(e) => {
+                if (
+                  props.type === 'positiveDecimal' ||
+                  props.type === 'positiveInteger'
+                ) {
+                  let value =
+                    !isEmpty(e.target.value) && !isNaN(Number(e.target.value))
+                      ? e.target.value
+                      : '0';
+                  if (!isNaN(Number(decimalLength))) {
+                    value = toBigDecimal(value, decimalLength ?? 0);
+                  }
+                  if (!isNaN(maxValue) && Number(value) > Number(maxValue)) {
+                    value = (maxValue ?? '').toString();
+                  }
+                  if (!isNaN(minValue) && Number(value) < Number(minValue)) {
+                    value = (minValue ?? '').toString();
+                  }
+                  setValue(props.name, value);
+                }
+              }}
+            />
+          )}
           {error && <FieldError className="text-red-500">{error.message?.toString()}</FieldError>}
         </div>
       </>

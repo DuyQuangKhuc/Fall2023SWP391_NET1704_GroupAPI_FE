@@ -1,193 +1,172 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import ComFooter from "../../Components/ComFooter/ComFooter";
-import ComHeader from "../../Components/ComHeader/ComHeader";
-import { faCreditCard } from "@fortawesome/free-regular-svg-icons";
-import { textApp } from "../../../TextContent/textApp";
-import { FormProvider, useForm } from "react-hook-form";
-import * as yup from "yup"
-import { yupResolver } from "@hookform/resolvers/yup";
 import { useState } from "react";
-import ComInput from "../../Components/ComInput/ComInput";
-import ComTextArea from "../../Components/ComInput/ComTextArea";
-import { useLocation, useNavigate } from "react-router-dom";
-export default function Payment(props) {
-    const [disabled, setDisabled] = useState(false);
-    const navigate = useNavigate();
-    const location = useLocation();
-    const formData = location.state?.formData || null;
+import "./Payment.css";
+import ComHeader from "../../Components/ComHeader/ComHeader";
+function LeftComponent() {
+  const [fullName, setFullName] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [address, setAddress] = useState("");
+  const [email, setEmail] = useState("");
+  const [additionalInfo, setAdditionalInfo] = useState("");
 
-    const loginMessenger = yup.object({
-        name: yup.string().required(textApp.Payment.information.message.name),
-        address: yup.string().required(textApp.Payment.information.message.address),
-        phone: yup.string().required(textApp.Payment.information.message.phone),
-        email: yup.string().email(textApp.Payment.information.message.emailError).required(textApp.Payment.information.message.email),
-    })
-    const LoginRequestDefault = {
-        // code: "",
-    };
-    const methods = useForm({
-        resolver: yupResolver(loginMessenger),
-        defaultValues: {
-            // code: "",
-        },
-        values: LoginRequestDefault
-    })
-    const promotion = useForm({
+  return (
+    <div className="left-component">
+      <h2>Thông tin thanh toán</h2>
+      <div className="input-group">
+        <label>Họ tên:</label>
+        <input
+          placeholder="Nhập họ tên của bạn"
+          type="text"
+          value={fullName}
+          onChange={(e) => setFullName(e.target.value)}
+        />
+      </div>
+      <div className="input-group">
+        <label>Số điện thoại:</label>
+        <input
+          placeholder="Nhập số điện thoại của bạn"
+          type="tel"
+          value={phoneNumber}
+          onChange={(e) => setPhoneNumber(e.target.value)}
+        />
+      </div>
+      <div className="input-group">
+        <label>Địa chỉ:</label>
+        <input
+          placeholder="Nhập địa chỉ của bạn"
+          type="text"
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
+        />
+      </div>
+      <div className="input-group">
+        <label>Email:</label>
+        <input
+          placeholder="Nhập email của bạn"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+      </div>
+      <div className="input-group">
+        <label>Thông tin bổ sung:</label>
+        <textarea
+          placeholder="Nhập thông tin bổ sung (nếu có)"
+          value={additionalInfo}
+          onChange={(e) => setAdditionalInfo(e.target.value)}
+        />
+      </div>
+    </div>
+  );
+}
 
-    })
-    const { handleSubmit, register, setFocus, watch, setValue } = methods
-    const { handleSubmit1, register1, setFocus1, watch1, setValue1 } = promotion
-    const onSubmit = (data) => {
-        console.log(data);
-        navigate('/')
-        setDisabled(true)
+function RightComponent() {
+  const [paymentMethod, setPaymentMethod] = useState(""); // Lựa chọn phương thức thanh toán
 
-    }
-    function formatCurrency(number) {
-        // Sử dụng hàm toLocaleString() để định dạng số thành chuỗi với ngăn cách hàng nghìn và mặc định là USD.
-        return number.toLocaleString('en-US', {
-            style: 'currency',
-            currency: 'VND',
-        });
-    }
-    const totalAmount = formData?.reduce((total, data) => {
-        const itemTotal = data.reducedPrice * data?.data?.quantity;
-        return total + itemTotal;
-      }, 0)||0;
-    return (
-        <>
-            <ComHeader />
-            <div className="flex justify-center flex-col py-5 text-center">
-                <FontAwesomeIcon icon={faCreditCard} size="7x" style={{ color: "#6e7887", }} />
-                <h1 className="text-4xl">{textApp.Payment.title}</h1>
-                <p className="text-2xl">{textApp.Payment.message}</p>
-            </div>
+  const handlePaymentMethodChange = (e) => {
+    setPaymentMethod(e.target.value);
+  };
 
-            <div className="flex flex-col md:flex-row">
+  return (
+    <div className="right-component">
+      <h2
+        style={{
+          fontWeight: "bold",
+          color: "red",
+        }}
+      >
+        Đơn hàng của bạn
+      </h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Sản Phẩm</th>
+            <th>Tạm tính</th>
+          </tr>
+        </thead>
+        <tbody>
+          {/* Dòng mẫu, bạn có thể thêm nhiều dòng sản phẩm ở đây */}
+          <tr>
+            <td>Tên sản phẩm 1</td>
+            <td>$100</td>
+          </tr>
+          <tr>
+            <td>Tên sản phẩm 2</td>
+            <td>$150</td>
+          </tr>
+        </tbody>
+      </table>
+      <div className="payment-options">
+        <h3
+          // in đậm
+          style={{ fontWeight: "bold" }}
+        >
+          Phương thức thanh toán
+        </h3>
+        <label>
+          <input
+            type="radio"
+            value="chuyenkhoan"
+            checked={paymentMethod === "chuyenkhoan"}
+            onChange={handlePaymentMethodChange}
+          />
+          Chuyển khoản
+        </label>
+        <label>
+          <input
+            type="radio"
+            value="tienmat"
+            checked={paymentMethod === "tienmat"}
+            onChange={handlePaymentMethodChange}
+          />
+          Trả tiền mặt khi nhận hàng
+        </label>
 
-                <div className="flex flex-col p-4 md:w-1/3 order-1 md:order-2 mb-4 md:mb-0">
-                    <FormProvider {...promotion} >
-                        <form onSubmit={(onSubmit)} className="text-black text-lg">
-                            <h4 className="flex justify-between items-center mb-3 text-gray-600">
-                                <span>Giỏ hàng</span>
-                                <span className="bg-blue-500 text-white rounded-full py-1 px-2">{formData?.length}</span>
-                            </h4>
-                            <ul className="list-group mb-3">
-                           
-                                {formData?.map((data, index) => (
-                                    <li key={index} className="list-group-item flex justify-between items-center">
-                                        <div>
-                                            <h6 className="my-0">{data.name}</h6>
-                                            <small className="text-gray-500">{formatCurrency(data.reducedPrice)} x {data?.data?.quantity}</small>
-                                        </div>
-                                        <span className="text-gray-500">{formatCurrency(data.reducedPrice*data?.data?.quantity)}</span>
-                                    </li>
-                                ))}
-                                <li className="list-group-item flex justify-between items-center text-black text-xl">
-                                    <span>Tổng thành tiền</span>
-                                    <strong>{formatCurrency(totalAmount)}</strong>
-                                </li>
-                            </ul>
-                            {/* <div className="input-group mb-4">
-                                <ComInput
-                                    placeholder={textApp.Payment.information.placeholder.promotion}
-                                    label={textApp.Payment.information.label.promotion}
+        {/* thông báo xác nhận */}
+        {paymentMethod === "chuyenkhoan" && (
+          <div className="payment-confirm">
+            <p>
+              Vui lòng chuyển khoản đến tài khoản sau: <br />
+              <b>Ngân hàng A, chi nhánh B</b>
+              <br />
+              Số tài khoản: <b>123456789</b>
+              <br />
+              Chủ tài khoản: <b>Nguyễn Văn A</b>
+              <br />
+              Nội dung chuyển khoản: <b>Thanh toan don hang #123456</b>
+            </p>
+          </div>
+        )}
+      </div>
+      <button className="order-button">Đặt hàng</button>
+    </div>
+  );
+}
 
-                                    {...register("promotion")}
-                                    required
-                                />
-                                <div className="input-group-append">
-                                    <button className="bg-blue-500 mt-2 text-white py-2 px-4 ">Xác nhận</button>
-                                </div>
-                            </div> */}
-                        </form>
-                    </FormProvider>
-                </div>
+function HeaderComponent() {
+  return (
+    // Thang thanh toán
+    <div className="header-component">
+      <h1>Thanh toán</h1>
+      <div className="breadcrumb">
+        <span>Thanh toán</span>
+      </div>
+    </div>
+  );
+}
 
-                <div className="flex flex-col p-4 md:w-2/3 md:order-1 order-2 md:pl-8">
-                    <FormProvider {...methods} >
-                        <form onSubmit={handleSubmit(onSubmit)}>
-                            <h4 className="mb-6 text-black text-2xl">{textApp.Payment.information.title}</h4>
-                            <div className="grid grid-cols-1 md:grid-cols-2 sm:grid-cols-2 gap-4 mb-6">
-                                <div>
-                                    <ComInput
-                                        placeholder={textApp.Payment.information.placeholder.name}
-                                        label={textApp.Payment.information.label.name}
-
-                                        {...register("name")}
-                                        required
-                                    />
-                                </div>
-                                <div>
-                                    <ComInput
-                                        placeholder={textApp.Payment.information.placeholder.address}
-                                        label={textApp.Payment.information.label.address}
-                                        {...register("address")}
-                                        required
-                                    />
-                                </div>
-                                <div>
-                                    <ComInput
-                                        placeholder={textApp.Payment.information.placeholder.phone}
-                                        label={textApp.Payment.information.label.phone}
-                                        {...register("phone")}
-                                        required
-                                    />
-                                </div>
-                                <div>
-                                    <ComInput
-                                        placeholder={textApp.Payment.information.placeholder.email}
-                                        label={textApp.Payment.information.label.email}
-                                        {...register("email")}
-                                        required
-                                    />
-                                </div>
-                                <div className="sm:col-span-2">
-                                    <ComTextArea
-                                        placeholder={textApp.Payment.information.placeholder.description}
-                                        label={textApp.Payment.information.label.description}
-                                        rows={4}
-                                        defaultValue={''}
-                                        maxLength={1000}
-                                        {...register("description")}
-                                    />
-                                </div>
-
-                            </div>
-                            <h4 className="mb-3 text-gray-600 text-lg">Hình thức thanh toán</h4>
-                            <div className="space-y-2">
-                                <div className="flex items-center">
-                                    <input id="httt-1" name="httt_ma" type="radio" className="form-radio" required value="1" />
-                                    <label htmlFor="httt-1" className="ml-2">Tiền mặt</label>
-                                </div>
-                                <div className="flex items-center">
-                                    <input id="httt-2" name="httt_ma" type="radio" className="form-radio" required value="2" />
-                                    <label htmlFor="httt-2" className="ml-2">Chuyển khoản</label>
-                                </div>
-                                <div className="flex items-center">
-                                    <input id="httt-3" name="httt_ma" type="radio" className="form-radio" required value="3" />
-                                    <label htmlFor="httt-3" className="ml-2">Ship COD</label>
-                                </div>
-                            </div>
-                            <hr className="my-4" />
-                            {/* <ComButton
-                                disabled={disabled}
-                                htmlType="submit"
-                                type="primary"
-                            >=
-                                Đặt hàng
-                            </ComButton> */}
-                            <div>
-                                <button className="bg-blue-500 text-white py-3 px-6 rounded-lg w-full " type="submit"
-                                    name="btnDatHang">Đặt hàng</button>
-                            </div>
-                        </form>
-                    </FormProvider>
-                </div>
-            </div>
-
-
-            <ComFooter />
-        </>
-    );
+export default function PaymentPage() {
+  return (
+    <>
+      <ComHeader />
+      <HeaderComponent />
+      <div
+        className="payment-page"
+        // chiều rộng của trang thanh toán là 80% chiều rộng của trang
+        style={{ width: "80%", margin: "auto" }}
+      >
+        <LeftComponent />
+        <RightComponent />
+      </div>
+    </>
+  );
 }
