@@ -8,6 +8,9 @@ import Message from '../components/Message';
 import Paginate from '../components/Paginate';
 import ProductCarousel from '../components/ProductCarousel';
 import Meta from '../components/Meta';
+import { useGetOrderIsUsingByAccountIdQuery } from '../slices/ordersApiSlice';
+import { useEffect } from 'react';
+import { useState } from 'react';
 
 const HomeScreen = () => {
     const { pageNumber, keyword } = useParams();
@@ -16,6 +19,14 @@ const HomeScreen = () => {
         keyword,
         pageNumber,
     });
+    const [user] = useState(JSON.parse(localStorage.getItem('userInfo')));
+    const { data: getOrder } = useGetOrderIsUsingByAccountIdQuery(user.accountId);
+    useEffect(() => {
+        if (getOrder) {
+            localStorage.setItem('getOrder', JSON.stringify(getOrder));
+        }
+    }, [getOrder]);
+
 
     return (
         <div className=" max-w-full  bg-repeat" style={{
@@ -46,7 +57,7 @@ const HomeScreen = () => {
                             <h1>Latest Products</h1>
                             <Row>
                                 {/* {data.products.map((product) => ( */}
-                                {data.map((product) => (
+                                        {data.map((product) => (
                                     <Col key={product.productId} sm={12} md={6} lg={4} xl={3}>
                                         <Product product={product} />
                                     </Col>

@@ -14,18 +14,19 @@ import { FaTrash } from 'react-icons/fa';
 import Message from '../components/Message';
 import { addToCart, removeFromCart } from '../slices/cartSlice';
 
+import { useState } from 'react';
+import { useGetListOrderDetailsByOrderIdQuery } from '../slices/ordersApiSlice';
+import { useGetProductDetailsQuery, useGetProductsQuery } from '../slices/productsApiSlice';
+
 const CartScreen = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
     const cart = useSelector((state) => state.cart);
     const { cartItems } = cart;
+    const [order] = useState(JSON.parse(localStorage.getItem('getOrder')));
 
-    // NOTE: no need for an async function here as we are not awaiting the
-    // resolution of a Promise
-    const addToCartHandler = (product, qty) => {
-        dispatch(addToCart({ ...product, qty }));
-    };
+    const { data: getListOrderDetailsByOrderId } = useGetListOrderDetailsByOrderIdQuery(order.orderId);
 
     const removeFromCartHandler = (id) => {
         dispatch(removeFromCart(id));
@@ -40,37 +41,24 @@ const CartScreen = () => {
             <Row className='py-3'>
                 <Col md={8}>
                     <h1 style={{ marginBottom: '20px' }}>Shopping Cart</h1>
-                    {cartItems.length === 0 ? (
+                    {getListOrderDetailsByOrderId === 0 ? (
                         <Message>
                             Your cart is empty <Link to='/'>Go Back</Link>
                         </Message>
                     ) : (
                         <ListGroup variant='flush'>
-                            {cartItems.map((item) => (
-                                <ListGroup.Item key={item.productId}>
+                            {getListOrderDetailsByOrderId?.map((item) => (
+                                <ListGroup.Item key={item.productId}  >
                                     <Row>
                                         <Col md={2}>
+
                                             <Image src={item.image} alt={item.name} fluid rounded />
                                         </Col>
-                                        <Col md={3}>
-                                            <Link to={`/product/${item.productId}`}>{item.name}</Link>
+                                        <Col md={3} className='mt-2'>
+                                            <Link to={`/product/${item.productId}`}>{item.productId}</Link>
                                         </Col>
-                                        <Col md={2}>${item.price}</Col>
-                                        <Col md={2}>
-                                            <Form.Control
-                                                as='select'
-                                                value={item.qty}
-                                                onChange={(e) =>
-                                                    addToCartHandler(item, Number(e.target.value))
-                                                }
-                                            >
-                                                {[...Array(item.quantity).keys()].map((x) => (
-                                                    <option key={x + 1} value={x + 1}>
-                                                        {x + 1}
-                                                    </option>
-                                                ))}
-                                            </Form.Control>
-                                        </Col>
+                                        <Col md={2} className='mt-2'>${item.price}</Col>
+                                        <Col md={2} className='mt-2'>Số lượng: {item.quantity}</Col>
                                         <Col md={2}>
                                             <Button
                                                 type='button'
@@ -97,8 +85,7 @@ const CartScreen = () => {
                                 $
                                 {cartItems
                                     .reduce((acc, item) => acc + item.qty * item.price, 0)
-                                    //.toFixed(2)
-                                    }
+                                }
                             </ListGroup.Item>
                             <ListGroup.Item>
                                 <Button

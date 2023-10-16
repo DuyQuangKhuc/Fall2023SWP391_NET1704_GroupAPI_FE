@@ -3,7 +3,7 @@ import { Nav } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import '../assets/styles/index.css'
 import { useEffect, useState } from 'react';
-const CheckoutSteps = ({ step1, step2, step3, step4 }) => {
+const CheckoutSteps = ({ step1, step3, step4 }) => {
 
     const [animate, setAnimate] = useState(false);
 

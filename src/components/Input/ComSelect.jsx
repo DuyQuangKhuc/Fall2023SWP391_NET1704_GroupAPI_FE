@@ -88,7 +88,7 @@ const ComSelect = React.forwardRef(
             <>
                 <div className={`${className}`}>
                     {label && (
-                        <div className="mb-4 flex justify-between">
+                        <div className="mb-1 flex justify-between">
                             <label htmlFor={inputId} className="text-paragraph font-bold">
                                 {label}
                                 {required && (

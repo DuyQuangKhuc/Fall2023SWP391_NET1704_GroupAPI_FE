@@ -1,25 +1,26 @@
 /* eslint-disable react/jsx-no-duplicate-props */
 import { LinkContainer } from 'react-router-bootstrap';
-import { Table, Row, Col, ListGroup, Image, Button, Container, Form } from 'react-bootstrap';
+import { Row, Col, ListGroup, Image, Button, Container, Form, Table } from 'react-bootstrap';
 import { FaEdit, FaPlus, FaTrash } from 'react-icons/fa';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Message from '../../components/Message';
 import Loader from '../../components/Loader';
-import Paginate from '../../components/Paginate';
+import { Alert, Paper } from "@mui/material";
 import {
     useGetProductsQuery,
     useDeleteProductMutation,
     useCreateProductMutation,
+    useAddComponentMutation,
+    useGetListComponentQuery,
 } from '../../slices/productsApiSlice';
 import { toast } from 'react-toastify';
-import { Dropdown, Menu, Modal, Typography, notification } from 'antd';
-import { DeleteForeverTwoTone, EditNoteTwoTone } from '@mui/icons-material';
+import { Modal, notification } from 'antd';
 import Box from '@mui/material/Box';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import * as yup from "yup"
 import React from 'react';
 import { useState } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions } from '@material-ui/core';
+import { Dialog, DialogTitle, DialogContent, DialogActions, MenuItem, Select } from '@material-ui/core';
 import Rating from '../../components/Rating';
 import { textApp } from '../../components/textApp';
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -31,6 +32,7 @@ import ComTextArea from '../../components/Input/ComTextArea';
 import { postData } from '../../api/api';
 import { firebaseImgs } from '../../upImgFirebase/firebaseImgs'
 import ComUpImg from '../../components/Input/ComUpImg';
+import FormContainer from '../../components/FormContainer';
 
 const VISIBLE_FIELDS = ['productId', 'name', 'imagePath1', 'price', 'uploadDate', 'quantity', 'status'];
 
@@ -56,27 +58,6 @@ function ProductListScreen(props) {
         pageNumber,
     });
 
-    // const { data: demoData } = useDemoData({
-    //     dataSet: 'ProductListScreen',
-    //     visibleFields: VISIBLE_FIELDS,
-    //     rowLength: 100,
-    // });
-    // const row = {
-    //     productId: "",
-    //     name: 'string',
-    //     description: 'string',
-    //     size: 'string',
-    //     color: 'string',
-    //     material: 'string',
-    //     floorQuantity: 0,
-    //     gateQuantity: 0,
-    //     durability: 'string',
-    //     uploadDate: '2023-10-10T00:00:00',
-    //     price: 0,
-    //     quantity: 0,
-    //     imagePath: "",
-    //     status: ""
-    // };
     const getRowId = (row) => row.productId;
 
     // Otherwise filter will be applied on fields such as the hidden column id
@@ -160,17 +141,26 @@ function ProductListScreen(props) {
     const showModal = () => {
         setIsModalOpen(true);
     };
-    // const handleOk = () => {
-    //     setIsModalOpen(false);
-    // };
     const handleCancel = () => {
         setIsModalOpen(false);
     };
 
+    const [isModalOpen2, setIsModalOpen2] = useState(false);
+    const showModal2 = () => {
+        setIsModalOpen2(true);
+    };
+    const handleCancel2 = () => {
+        setIsModalOpen2(false);
+    };
+
     const [disabled, setDisabled] = useState(false);
-    const [imagePath, setImages] = useState([{}]);
+    const [imagePath1, setImages] = useState([]);
     const [api, contextHolder] = notification.useNotification();
 
+    const [imagePath2] = useState("string");
+    const [imagePath3] = useState("string");
+    const [imagePath4] = useState("string");
+    const [imagePath5] = useState("string");
 
     const CreateProductMessenger = yup.object({
         name: yup.string().required(textApp.CreateProduct.message.name),
@@ -180,24 +170,29 @@ function ProductListScreen(props) {
         //reducedPrice1: yup.string().required(textApp.CreateProduct.message.price).min(1, textApp.CreateProduct.message.priceMin).test('no-dots', textApp.CreateProduct.message.priceDecimal, value => !value.includes('.')),
         quantity: yup.number().min(1, textApp.CreateProduct.message.quantityMin).typeError(textApp.CreateProduct.message.quantity),
         size: yup.string().required(textApp.CreateProduct.message.size),
-        material: yup.array().required(textApp.CreateProduct.message.material),
+        durability: yup.string().required(textApp.CreateProduct.message.durability),
+        //material: yup.array().required(textApp.CreateProduct.message.material),
         description: yup.string().required(textApp.CreateProduct.message.description),
         //imagePath: yup.array().required(textApp.CreateProduct.message.imagePath),
     })
     const createProductRequestDefault = {
-        price: 0,
-        //reducedPrice: 0,
+        price: "",
+        //reducedPrice: 0,  
     };
     const methods = useForm({
         resolver: yupResolver(CreateProductMessenger),
         defaultValues: {
             name: "",
             quantity: 1,
-            material: "",
+            //material: "",
             size: "",
-            accessory: "",
-            imagePath: "",
+            durability: "",
+            imagePath1: "",
             description: "",
+            imagePath2,
+            imagePath3,
+            imagePath4,
+            imagePath5,
         },
         values: createProductRequestDefault
     })
@@ -208,23 +203,6 @@ function ProductListScreen(props) {
     }
     const onSubmit = (data) => {
         console.log(data);
-
-        // if (data.price % 1000 !== 0) {
-        //     api["error"]({
-        //         message: textApp.CreateProduct.Notification.m7.message,
-        //         description:
-        //             textApp.CreateProduct.Notification.m7.description
-        //     });
-        //     return
-        // }
-        // if (data.reducedPrice % 1000 !== 0) {
-        //     api["error"]({
-        //         message: textApp.CreateProduct.Notification.m8.message,
-        //         description:
-        //             textApp.CreateProduct.Notification.m8.description
-        //     });
-        //     return
-        // }
         if (!isInteger(data.price)) {
 
             api["error"]({
@@ -235,15 +213,15 @@ function ProductListScreen(props) {
             return
         }
 
-        if (data.material.length === 0) {
-            api["error"]({
-                message: textApp.CreateProduct.Notification.m4.message,
-                description:
-                    textApp.CreateProduct.Notification.m4.description
-            });
-            return
-        }
-        if (imagePath.length === 0) {
+        // if (data.material.length === 0) {
+        //     api["error"]({
+        //         message: textApp.CreateProduct.Notification.m4.message,
+        //         description:
+        //             textApp.CreateProduct.Notification.m4.description
+        //     });
+        //     return
+        // }
+        if (imagePath1.length === 0) {
             api["error"]({
                 message: textApp.CreateProduct.Notification.m5.message,
                 description:
@@ -262,16 +240,10 @@ function ProductListScreen(props) {
 
         setDisabled(true)
 
-        firebaseImgs(imagePath)
+        firebaseImgs(imagePath1)
             .then((dataImg) => {
-                // console.log(dataImg);
-                // const updatedData = {
-                //     ...data, // Giữ lại các trường dữ liệu hiện có trong data
-                //     imagePath: dataImg, // Thêm trường images chứa đường dẫn ảnh
-
-                // };
                 console.log(dataImg[0]);
-                const post = { ...data, material: `${data.material[0]} ${data?.material[1] ? (',', data?.material[1]) : ''} ${data?.material[2] ? (',', data?.material[2]) : ''} `, imagePath: dataImg[0], };
+                const post = { ...data, imagePath1: dataImg[0], };
                 console.log(post);
                 postData('/Product/Add-Product', post)
                     .then((data) => {
@@ -298,7 +270,7 @@ function ProductListScreen(props) {
         const newImages = selectedImages.map((file) => file.originFileObj);
         // Cập nhật trạng thái 'image' bằng danh sách tệp mới
         setImages(newImages);
-        console.log(imagePath);
+        console.log(imagePath1);
         // setFileList(data);
     }
     const handleValueChange = (e, value) => {
@@ -319,15 +291,99 @@ function ProductListScreen(props) {
         }
     };
 
+
+    const MySelectComponent = () => {
+        const [selectedOption, setSelectedOption] = useState('');
+        const { data1 } = useGetListComponentQuery();
+
+        const handleOptionChange = (event) => {
+            setSelectedOption(event.target.value);
+        };
+
+        console.log(data1);
+
+        return (
+            <>
+                {data1 ? (
+                    <Select value={selectedOption} onChange={handleOptionChange}>
+                        {data1.map((components) => (
+                            <MenuItem key={components.componentId} value={components.componentId}>
+                                {components.name}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                ) : (
+                    <p>Loading...</p>
+                )}
+
+                {isLoading ? (
+                    <Loader />
+                ) : error ? (
+                    <Message variant='danger'>
+                        {error?.data?.message || error.error}
+                    </Message>
+                ) : (
+                    <Table>
+                        <tbody>
+                            {data1 && data1
+                                .filter((data) => data.componentId === selectedOption) // Filter the data based on the selected option
+                                .map((data, index) => (
+                                    <tr key={index}>
+                                        <td>{data.color}</td>
+                                        <td>{data.name}</td>
+                                        <td></td>
+                                    </tr>
+                                ))}
+                        </tbody>
+                    </Table>
+                )}
+            </>
+        );
+    };
+
+    const [material, setMaterial] = useState('');
+    const [name, setName] = useState('');
+    const [description, setDescription] = useState('');
+    const [color, setColor] = useState('');
+    const [isReplacable, setIsReplacable] = useState('');
+    const [addComponent, { isLoading: loadingaddComponent }] = useAddComponentMutation();
+
+
+    const submitHandler = async (e) => {
+        e.preventDefault();
+        try {
+            const res = await addComponent({
+                material,
+                name,
+                description,
+                color,
+                isReplacable,
+            }).unwrap();
+            setIsModalOpen2(false);
+            toast.success("Tạo thành công");
+        } catch (err) {
+            toast.error("đã tồn tại");
+
+        }
+    };
+
     return (
         <Container >
             <Row className='align-items-center'>
                 <Col>
                     <h1>Products</h1>
                 </Col>
+
+                <Col className='text-'>
+
+                </Col>
                 <Col className='text-end'>
                     <Button className='my-3' onClick={showModal}>
-                        <FaPlus /> Create Product
+                        <FaPlus /> Create product
+                    </Button>
+
+                    <Button className='mx-3' onClick={showModal2}>
+                        <FaPlus /> Create component
                     </Button>
                 </Col>
             </Row>
@@ -356,53 +412,55 @@ function ProductListScreen(props) {
                             <div className="grid"
                                 style={{ height: "62vh" }}>
                                 <Form.Group className="">
-                                    <Form.Label>Name</Form.Label>                                
-                                        <ComInput
-                                            type="text"
-                                            // label={textApp.CreateProduct.label.name}
-                                            placeholder={textApp.CreateProduct.placeholder.name}
-                                            {...register("name")}
+                                    <Form.Label>Name</Form.Label>
+                                    <ComInput
+                                        type="text"
+                                        // label={textApp.CreateProduct.label.name}
+                                        placeholder={textApp.CreateProduct.placeholder.name}
+                                        {...register("name")}
+                                        required
+                                    />
+
+                                </Form.Group>
+                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                    <Form.Group className=' mt-4 sm:mt-8'>
+                                        <Form.Label>Giá tiền</Form.Label>
+                                        <ComNumber
+                                            //label={textApp.CreateProduct.label.price}
+                                            placeholder={textApp.CreateProduct.placeholder.price}
+                                            // type="money"
+                                            defaultValue={0}
+                                            min={0}
+                                            money
+                                            onChangeValue={handleValueChange}
+                                            {...register("price")}
                                             required
                                         />
-                                
-                                </Form.Group>
-                               
-                                <Form.Group className='mx-auto mt-4 max-w-xl sm:mt-8'>
-                                    <Form.Label>Giá tiền</Form.Label>
-                                    <ComNumber
-                                        //label={textApp.CreateProduct.label.price}
-                                        placeholder={textApp.CreateProduct.placeholder.price}
-                                        // type="money"
-                                        defaultValue={0}
-                                        min={0}
-                                        money
-                                        onChangeValue={handleValueChange}
-                                        {...register("price")}
-                                        required
-                                    />
 
-                                </Form.Group>
+                                    </Form.Group>
 
 
-                                <div>
-                                    <ComNumber
-                                        label={textApp.CreateProduct.label.quantity}
-                                        placeholder={textApp.CreateProduct.placeholder.quantity}
-                                        // type="numbers"
-                                        min={1}
-                                        defaultValue={1}
-                                        {...register("quantity")}
-                                        required
-                                    />
+                                    <Form.Group className='mx-auto mt-4 max-w-xl sm:mt-8'>
+                                        <Form.Label>Số lượng sản phẩm</Form.Label>
+                                        <ComNumber
+                                            placeholder={textApp.CreateProduct.placeholder.quantity}
+                                            // type="numbers"
+                                            min={1}
+                                            {...register("quantity")}
+                                            required
+                                        />
 
+                                    </Form.Group>
                                 </div>
 
-                                <div className="">
+
+                                {/* <Form.Group className='mx-auto mt-4 max-w-xl mb-3'>
                                     <ComSelect
                                         size={"large"}
                                         style={{
                                             width: '100%',
                                         }}
+                                        className='mt-0'
                                         label={textApp.CreateProduct.label.material}
                                         placeholder={textApp.CreateProduct.placeholder.material}
                                         required
@@ -411,8 +469,8 @@ function ProductListScreen(props) {
                                         {...register("material")}
 
                                     />
-                                </div>
-                                <div className="sm:col-span-2">
+                                </Form.Group> */}
+                                <Form.Group className='mx-auto mt-4 max-w-xl mb-3'>
                                     <ComInput
                                         label={textApp.CreateProduct.label.size}
                                         placeholder={textApp.CreateProduct.placeholder.size}
@@ -420,7 +478,17 @@ function ProductListScreen(props) {
                                         type="text"
                                         {...register("size")}
                                     />
-                                </div>
+                                </Form.Group>
+
+                                <ComInput className='mx-auto mt-4 max-w-xl mb-3'
+                                    label={textApp.CreateProduct.label.durability}
+                                    placeholder={textApp.CreateProduct.placeholder.durability}
+                                    rows={4}
+                                    defaultValue={''}
+                                    required
+                                    maxLength={1000}
+                                    {...register("durability")}
+                                />
 
                                 <ComTextArea
                                     label={textApp.CreateProduct.label.description}
@@ -433,10 +501,9 @@ function ProductListScreen(props) {
                                 />
 
 
-
-                                <div className="sm:col-span-1">
-                                        <ComUpImg onChange={onChange} />
-                                    </div>
+                                <div className='mx-auto mt-4 max-w-xl mb-3'>
+                                    <ComUpImg onChange={onChange} />
+                                </div>
                             </div>
                         </div>
                         <Col className='text-end'>
@@ -451,6 +518,101 @@ function ProductListScreen(props) {
                         </Col>
                     </Form>
                 </FormProvider>
+            </Modal>
+
+            <Modal
+                title={
+                    <Col>
+                        <h1>Create component</h1>
+                    </Col>
+                }
+                // okType="primary text-black border-gray-700"
+                open={isModalOpen2}
+
+                width={800}
+                style={{ top: 10 }}
+
+                onCancel={handleCancel2}
+
+                footer={[
+
+                ]}
+            >
+                <Container className='my-3'>
+                    <FormContainer>
+                        <Form onSubmit={submitHandler}>
+                            <Form.Group className='my-3' controlId='name'>
+                                <Form.Label className="font-semibold">Tên thành phần</Form.Label>
+                                <Form.Control
+                                    type='name'
+                                    placeholder='Enter name'
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                    required
+                                ></Form.Control>
+                            </Form.Group>
+                            <Form.Group className='my-3' controlId='material'>
+                                <Form.Label>Chất liệu</Form.Label>
+                                <Form.Control
+                                    type='material'
+                                    placeholder='Enter material'
+                                    value={material}
+                                    onChange={(e) => setMaterial(e.target.value)}
+                                    required
+                                ></Form.Control>
+                            </Form.Group>
+
+
+                            <Form.Group className='my-3' controlId='color' style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                <div >
+                                    <Form.Label >Màu sắc</Form.Label>
+                                    <Form.Control
+                                        style={{ display: 'flex' }}
+                                        type='color'
+                                        placeholder='Confirm color'
+                                        value={color}
+                                        onChange={(e) => setColor(e.target.value)}
+                                    ></Form.Control>
+                                </div>
+
+                                <div >
+                                    <Form.Label className='my-1'>Trạng thái</Form.Label>
+                                    <Form.Check
+                                        type='radio'
+                                        label='Thay đổi'
+                                        checked={isReplacable === 1}
+                                        name='radioOptions'
+                                        onChange={() => setIsReplacable(1)}
+                                    />
+                                    <Form.Check
+                                        type='radio'
+                                        label='Cố định'
+                                        checked={isReplacable === 0}
+                                        name='radioOptions'
+                                        onChange={() => setIsReplacable(0)}
+                                    />
+                                </div>
+
+                            </Form.Group>
+                            <Form.Group className='my-3' controlId='text-area'>
+                                <Form.Label>Mô tả</Form.Label>
+                                <Form.Control
+                                    as='textarea'
+                                    placeholder='Enter description'
+                                    value={description}
+                                    onChange={(e) => setDescription(e.target.value)}
+                                ></Form.Control>
+                            </Form.Group>
+
+                            <Button disabled={loadingaddComponent} type='submit' variant='primary'>
+                                Tạo
+                            </Button>
+                            {loadingaddComponent && <Loader />}
+                        </Form>
+                    </FormContainer>
+
+
+                </Container>
             </Modal>
 
             {loadingCreate && <Loader />}
@@ -478,10 +640,11 @@ function ProductListScreen(props) {
                             }}
                             onCellClick={handleCellClick}
                         />
+
                         {selectedRow && (
-                            <Dialog open={Boolean(selectedRow)} onClose={handleCloseDialog}>
+                            <Dialog open={Boolean(selectedRow)} onClose={handleCloseDialog} >
                                 <DialogTitle>{selectedRow.name}</DialogTitle>
-                                <DialogContent>
+                                <DialogContent >
                                     <Row>
                                         <Col md={6}>
                                             <Image src={selectedRow.imagePath1} alt={selectedRow.name} fluid />
@@ -520,20 +683,30 @@ function ProductListScreen(props) {
                                                     NSX: {selectedRow.uploadDate}
                                                 </ListGroup.Item>
                                             </ListGroup>
+
                                         </Col>
+
                                     </Row>
+
+
+                                    Thêm: <MySelectComponent />
+
+
                                 </DialogContent>
+
+
+
                                 <DialogActions style={{ display: 'flex', justifyContent: 'space-between' }}>
                                     <Button onClick={handleCloseDialog}>Close</Button>
                                     <div style={{ display: 'flex' }}>
                                         <LinkContainer to={`/admin/product/${selectedRow.productId}/edit`}>
-                                            <Button variant='light' className='btn-sm mx-2'>
+                                            <Button variant='dark' className='mx-2'>
                                                 <FaEdit />
                                             </Button>
                                         </LinkContainer>
                                         <Button
                                             variant='danger'
-                                            className='btn-sm'
+                                            className=''
                                             onClick={() => deleteHandler(selectedRow.productId)}
                                         >
                                             <FaTrash style={{ color: 'white' }} />

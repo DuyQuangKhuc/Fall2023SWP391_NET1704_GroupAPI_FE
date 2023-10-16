@@ -5,7 +5,7 @@ export const userApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
         login: builder.mutation({
             query: (data) => ({
-                url: `/api/LoginAndRegister/Check-Login?email=${data.email}&password=${data.password}`,
+                url: `/api/LoginAndRegister/Check-Login-Promax?email=${data.email}&password=${data.password}`,
                 method: 'POST',
                 body: data,
             }),

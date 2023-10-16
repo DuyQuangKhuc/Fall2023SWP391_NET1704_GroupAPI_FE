@@ -24,6 +24,7 @@ import Meta from '../components/Meta';
 import { addToCart } from '../slices/cartSlice';
 import { Tabs } from 'antd/lib';
 import { Timeline } from 'antd';
+import { useAddOrderDetailByAccountIdProductIdQuantityMutation } from '../slices/ordersApiSlice';
 
 const ProductScreen = () => {
     const { productId } = useParams();
@@ -35,11 +36,24 @@ const ProductScreen = () => {
     const [qty, setQty] = useState(1);
     const [rating, setRating] = useState(0);
     const [comment, setComment] = useState('');
+    const [order] = useState(JSON.parse(localStorage.getItem('getOrder')));
+    const [addOrderDetailByAccountIdProductIdQuantity] = useAddOrderDetailByAccountIdProductIdQuantityMutation();
 
-    const addToCartHandler = () => {
-        dispatch(addToCart({ ...product, qty }));
-        navigate('/cart');
+    const addToCartHandler = async () => {
+        try {
+            const res = await addOrderDetailByAccountIdProductIdQuantity({
+                accountId: order.accountId,
+                productId: product.productId,
+                quantity: qty,
+            }).unwrap();
+            console.log(res)
+            dispatch(addToCart({ ...product, qty }));
+            navigate('/cart/');
+        } catch (err) {
+            toast.error(err);
+        }
     };
+
 
     const {
         data: product,

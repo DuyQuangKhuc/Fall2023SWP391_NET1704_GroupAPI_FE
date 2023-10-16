@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Row, Col, ListGroup, Image, Card, Button, Container } from 'react-bootstrap';
 import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
 import { useSelector } from 'react-redux';
@@ -23,14 +23,14 @@ const OrderScreen = () => {
         error,
     } = useGetOrderDetailsQuery(orderId);
 
-    const [payOrder, { isLoading: loadingPay }] = usePayOrderMutation();
+    const [payOrder, { isLoading: loadingPay }] = usePayOrderMutation(orderId);
 
-    // const [deliverOrder, { isLoading: loadingDeliver }] =
-    //     useDeliverOrderMutation();
+    const [deliverOrder, { isLoading: loadingDeliver }] =
+        useDeliverOrderMutation();
 
     const { userInfo } = useSelector((state) => state.auth);
 
-    //const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
+    const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
 
     // const {
     //     data: paypal,
@@ -58,6 +58,7 @@ const OrderScreen = () => {
     //     }
     // }, [errorPayPal, loadingPayPal, order, paypal, paypalDispatch]);
 
+    console.log(orderId)
     function onApprove(data, actions) {
         return actions.order.capture().then(async function (details) {
             try {
@@ -68,6 +69,23 @@ const OrderScreen = () => {
                 toast.error(err?.data?.message || err.error);
             }
         });
+    }
+
+    const navigate = useNavigate();
+    const submitHandler = async () => {
+        try {
+            const res = await payOrder({
+                orderId,
+                accountId: userInfo.accountId,
+                totalPrice: order.totalPrice,
+                orderDate: new Date().toISOString(),
+                status: 1,
+            }).unwrap();
+            toast.success('Thanh toán đơn hàng thành công');
+            navigate(`/profile/${res.accountId}`);
+        } catch (err) {
+            toast.error(err?.data?.message || err.error);
+        }
     }
 
     // TESTING ONLY! REMOVE BEFORE PRODUCTION
@@ -96,10 +114,10 @@ const OrderScreen = () => {
             });
     }
 
-    // const deliverHandler = async () => {
-    //     await deliverOrder(orderId);
-    //     refetch();
-    // };
+    const deliverHandler = async () => {
+        await deliverOrder(orderId);
+        refetch();
+    };
 
     return isLoading ? (
         <Loader />
@@ -131,7 +149,7 @@ const OrderScreen = () => {
                                     Delivered on {order.deliveredAt}
                                 </Message>
                             ) : (
-                                <Message variant='danger'>Not Delivered</Message>
+                                <Message variant='danger'>Chưa vận chuyển</Message>
                             )}
                         </ListGroup.Item>
 
@@ -141,14 +159,14 @@ const OrderScreen = () => {
                                 <strong>Method: </strong>
                                 {order.paymentMethod}
                             </p>
-                            {order.isPaid ? (
-                                <Message variant='success'>Paid on {order.paidAt}</Message>
+                            {order.status && order.status === 1 ? (
+                                <Message variant='success'>Đã thanh toán vào ngày {order.orderDate}</Message>
                             ) : (
-                                <Message variant='danger'>Not Paid</Message>
+                                <Message variant='danger'>Chưa thanh toán</Message>
                             )}
                         </ListGroup.Item>
 
-                        <ListGroup.Item>
+                        {/* <ListGroup.Item>
                             <h2>Order Items</h2>
                             {order?.orderItems?.length === 0 ? (
                                 <Message>Order is empty</Message>
@@ -159,14 +177,14 @@ const OrderScreen = () => {
                                             <Row>
                                                 <Col md={1}>
                                                     <Image
-                                                        src={item.image}
+                                                        src={item.imagePath1}
                                                         alt={item.name}
                                                         fluid
                                                         rounded
                                                     />
                                                 </Col>
                                                 <Col>
-                                                    <Link to={`/product/${item.product}`}>
+                                                    <Link to={`/product/${item.productId}`}>
                                                         {item.name}
                                                     </Link>
                                                 </Col>
@@ -178,7 +196,7 @@ const OrderScreen = () => {
                                     ))}
                                 </ListGroup>
                             )}
-                        </ListGroup.Item>
+                        </ListGroup.Item> */}
                     </ListGroup>
                 </Col>
                 <Col md={4}>
@@ -187,7 +205,7 @@ const OrderScreen = () => {
                             <ListGroup.Item>
                                 <h2>Order Summary</h2>
                             </ListGroup.Item>
-                            <ListGroup.Item>
+                            {/* <ListGroup.Item>
                                 <Row>
                                     <Col>Items</Col>
                                     <Col>${order.itemsPrice}</Col>
@@ -198,7 +216,7 @@ const OrderScreen = () => {
                                     <Col>Shipping</Col>
                                     <Col>${order.shippingPrice}</Col>
                                 </Row>
-                            </ListGroup.Item>
+                            </ListGroup.Item> */}
                             {/* <ListGroup.Item>
                                 <Row>
                                     <Col>Tax</Col>
@@ -230,9 +248,27 @@ const OrderScreen = () => {
                                         </div>
                                     )}
                                 </ListGroup.Item>
-                            )}
+                            )} */}
 
-                            {loadingDeliver && <Loader />}
+                            <ListGroup.Item>
+                                {loadingPay && <Loader />}
+
+                                {isPending ? (
+                                    <Loader />
+                                ) : (
+                                    <div>
+
+                                        <div>
+                                            <Button
+                                                type='button'
+                                                className='btn-block'
+                                                onClick={submitHandler}
+                                            > Payment </Button>
+                                        </div>
+                                    </div>
+                                )}
+                            </ListGroup.Item>
+                            {/* {loadingDeliver && <Loader />}
 
                             {userInfo &&
                                 userInfo.isAdmin &&
@@ -247,7 +283,7 @@ const OrderScreen = () => {
                                             Mark As Delivered
                                         </Button>
                                     </ListGroup.Item>
-                                )} */}
+                                )}  */}
                         </ListGroup>
                     </Card>
                 </Col>

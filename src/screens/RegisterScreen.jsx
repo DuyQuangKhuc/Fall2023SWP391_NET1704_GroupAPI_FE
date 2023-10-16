@@ -40,9 +40,9 @@ const RegisterScreen = () => {
         } else {
             try {
                 const res = await register({ phone, email, password }).unwrap();
-                dispatch(setCredentials({ ...res }));
+                //dispatch(setCredentials({ ...res }));
 
-                navigate(redirect);
+                navigate('/login');
                 setSuccessAlert(true);
                 setTimeout(() => {
                     setSuccessAlert(true);

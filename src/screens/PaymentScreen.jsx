@@ -9,13 +9,13 @@ import { savePaymentMethod } from '../slices/cartSlice';
 const PaymentScreen = () => {
     const navigate = useNavigate();
     const cart = useSelector((state) => state.cart);
-    const { shippingAddress } = cart;
+    //const { shippingAddress } = cart;
 
-    useEffect(() => {
-        if (!shippingAddress.address) {
-            navigate('/shipping');
-        }
-    }, [navigate, shippingAddress]);
+    // useEffect(() => {
+    //     if (!shippingAddress.address) {
+    //         navigate('/shipping');
+    //     }
+    // }, [navigate, shippingAddress]);
 
     const [paymentMethod, setPaymentMethod] = useState('PayPal');
 
@@ -29,7 +29,7 @@ const PaymentScreen = () => {
 
     return (
         <FormContainer>
-            <CheckoutSteps step1 step2 step3 />
+            <CheckoutSteps step1 step3 />
             <h1>Payment Method</h1>
             <Form onSubmit={submitHandler}>
                 <Form.Group>
