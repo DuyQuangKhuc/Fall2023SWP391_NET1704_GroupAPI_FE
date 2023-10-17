@@ -24,6 +24,19 @@ export const productsApiSlice = apiSlice.injectEndpoints({
             }),
             invalidatesTags: ['Product'],
         }),
+ 
+        AddProductDetailClone: builder.mutation({
+            query: (data) => ({
+                url: `/api/Product/Add-Product-Detail-Manual?accountId=${data.accountId}&name=${data.name}&material=${data.material}&description=${data.description}&color=${data.color}&isReplacable=${data.isReplacable}&quantity=${data.quantity}`,
+                method: 'POST',
+                body: data,
+             }),
+            //  invalidatesTags: ['Product'],
+         }),
+
+
+        
+
         updateProduct: builder.mutation({
             query: (data) => ({
                 url: `/api/Product/Update-Product?id=${data.productId}`,
@@ -72,6 +85,19 @@ export const productsApiSlice = apiSlice.injectEndpoints({
             query: () => `/api/Product/List-Product`,
             keepUnusedDataFor: 5,
         }),
+
+        getListComponentOfProductUserCreating: builder.query({
+            query: (accountId) => ({
+                url: `/api/Product/List-Component-Of-Product-User-Creating?accountId=${accountId}`,
+            }),
+        }),
+        
+        getCompleteProduct: builder.mutation({
+            query: (accountId) => ({
+                url: `/api/Product/Complete-Product?accountId=${accountId}`,
+                method: 'POST',
+            }),
+        }),
     }),
 });
 
@@ -86,4 +112,7 @@ export const {
     useGetTopProductsQuery,
     useAddComponentMutation,
     useGetListComponentQuery,
+    useAddProductDetailCloneMutation,
+    useGetListComponentOfProductUserCreatingQuery,
+    useGetCompleteProductMutation
 } = productsApiSlice;

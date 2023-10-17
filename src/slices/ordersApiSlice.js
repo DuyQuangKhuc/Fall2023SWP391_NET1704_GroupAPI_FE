@@ -57,6 +57,16 @@ export const orderApiSlice = apiSlice.injectEndpoints({
             }),
         }),
 
+        getAddProductUserAutomatic: builder.mutation({
+            query: (accountId) => ({
+                url: `/api/Product/Add-Product-User-Automatic?accountId=${accountId}`,
+                method: 'POST',
+                body: accountId,
+            }),
+        }),
+
+       
+
         getListOrderDetailCloneByOrderIdorderId : builder.query({
             query: (orderId) => ({
                 url: `/api/Order/List-Order-Detail-Clone-By-OrderId?orderId=${orderId}`,
@@ -89,5 +99,6 @@ export const {
     useGetOrderIsUsingByAccountIdQuery,
     useAddOrderDetailByAccountIdProductIdQuantityMutation,
     useGetListOrderDetailCloneByOrderIdorderIdQuery,
-    useDeleteOrderDetailMutation
+    useDeleteOrderDetailMutation,
+    useGetAddProductUserAutomaticMutation
 } = orderApiSlice;

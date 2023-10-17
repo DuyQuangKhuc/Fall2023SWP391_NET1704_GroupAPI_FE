@@ -15,8 +15,7 @@ import Message from '../components/Message';
 import { addToCart, removeFromCart } from '../slices/cartSlice';
 
 import { useState } from 'react';
-import { useDeleteOrderDetailMutation, useGetListOrderDetailCloneByOrderIdorderIdQuery, useGetListOrderDetailsByOrderIdQuery } from '../slices/ordersApiSlice';
-import { useGetProductDetailsQuery, useGetProductsQuery } from '../slices/productsApiSlice';
+import { useDeleteOrderDetailMutation, useGetListOrderDetailCloneByOrderIdorderIdQuery } from '../slices/ordersApiSlice';
 import { toast } from 'react-toastify';
 
 const CartScreen = () => {
@@ -27,7 +26,7 @@ const CartScreen = () => {
     const { cartItems } = cart;
     const [order] = useState(JSON.parse(localStorage.getItem('getOrder')));
 
-    const { data: getListOrderDetailCloneByOrderIdorderId, refetch } = useGetListOrderDetailCloneByOrderIdorderIdQuery(order.orderId);
+    const { data: getListOrderDetailCloneByOrderIdorderId, refetch } = useGetListOrderDetailCloneByOrderIdorderIdQuery(order?.orderId);
 
     // const removeFromCartHandler = (id) => {
     //     dispatch(removeFromCart(id));
@@ -50,13 +49,13 @@ const CartScreen = () => {
     const checkoutHandler = () => {
         navigate('/login?redirect=/payment');
     };
-
+    console.log(getListOrderDetailCloneByOrderIdorderId)
     return (
         <Container>
             <Row className='py-3'>
                 <Col md={8}>
                     <h1 style={{ marginBottom: '20px' }}>Shopping Cart</h1>
-                    {getListOrderDetailCloneByOrderIdorderId?.length === 0 ? (
+                    {getListOrderDetailCloneByOrderIdorderId && getListOrderDetailCloneByOrderIdorderId.error ? (
                         <Message>
                             Your cart is empty <Link to='/'>Go Back</Link>
                         </Message>

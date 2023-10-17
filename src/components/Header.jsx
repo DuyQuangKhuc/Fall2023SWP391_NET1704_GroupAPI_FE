@@ -1,5 +1,5 @@
 import { Navbar, Nav, Container, NavDropdown, Badge } from 'react-bootstrap';
-import { FaShoppingCart, FaUser,  } from 'react-icons/fa';
+import { FaShoppingCart, FaUser, } from 'react-icons/fa';
 import { LinkContainer } from 'react-router-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -8,6 +8,9 @@ import { logout } from '../slices/authSlice';
 import SearchBox from './SearchBox';
 import { resetCart } from '../slices/cartSlice';
 import { MdAddShoppingCart } from "react-icons/md";
+import { useState } from 'react';
+import { useGetAddProductUserAutomaticMutation, useGetListOrderDetailCloneByOrderIdorderIdQuery } from '../slices/ordersApiSlice';
+
 const Header = () => {
     const { cartItems } = useSelector((state) => state.cart);
     const { userInfo } = useSelector((state) => state.auth);
@@ -15,13 +18,16 @@ const Header = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    
+    const [order] = useState(JSON.parse(localStorage.getItem('getOrder')));
+
+
+    const { data: getListOrderDetailCloneByOrderIdorderId } = useGetListOrderDetailCloneByOrderIdorderIdQuery(order?.orderId);
+
 
     const logoutHandler = async () => {
         try {
             //await logoutApiCall().unwrap();
             localStorage.clear();
-
             dispatch(logout());
             // NOTE: here we need to reset cart state for when a user logs out so the next
             // user doesn't inherit the previous users cart and shipping
@@ -30,8 +36,23 @@ const Header = () => {
         } catch (err) {
             console.error(err);
         }
+    }
+
+    const [getAddProductUserAutomatic, refetch] = useGetAddProductUserAutomaticMutation()
+
+    const deleteHandler = async () => {
+        try {
+            const res = await getAddProductUserAutomatic(userInfo.accountId);
+            navigate('/order');
+        } catch (err) {
+            // Handle error
+        }
     };
 
+
+    const checkoutHandler = () => {
+        navigate('/login?redirect=/order');
+    };
     return (
         <header >
 
@@ -50,25 +71,20 @@ const Header = () => {
                             <LinkContainer to='/cart'>
                                 <Nav.Link>
                                     <FaShoppingCart /> Cart
-                                    {cartItems.length > 0 && (
+                                    {getListOrderDetailCloneByOrderIdorderId?.length > 0 && (
                                         <Badge pill bg='success' style={{ marginLeft: '5px' }}>
-                                            {cartItems.reduce((a, c) => a + c.qty, 0)}
+                                            {getListOrderDetailCloneByOrderIdorderId?.reduce((a, c) => a + c.quantity, 0)}
                                         </Badge>
                                     )}
                                 </Nav.Link>
                             </LinkContainer>
-                            <LinkContainer to='/cart'>
+                            <LinkContainer onClick={deleteHandler} to='/order'>
                                 <Nav.Link>
                                     <MdAddShoppingCart /> Đặt riêng
-                                    {cartItems.length > 0 && (
-                                        <Badge pill bg='success' style={{ marginLeft: '5px' }}>
-                                            {cartItems.reduce((a, c) => a + c.qty, 0)}
-                                        </Badge>
-                                    )}
                                 </Nav.Link>
                             </LinkContainer>
-                            {userInfo && userInfo.role === 4 ? (
-                                <NavDropdown title={userInfo.email} id='username'>
+                            {userInfo && userInfo?.role === 4 ? (
+                                <NavDropdown title={userInfo?.email} id='username'>
                                     <LinkContainer to={`/profile/${userInfo.accountId}`}>
                                         <NavDropdown.Item>Profile</NavDropdown.Item>
                                     </LinkContainer>
@@ -77,7 +93,7 @@ const Header = () => {
                                     </NavDropdown.Item>
                                 </NavDropdown>
                             ) : (
-                                userInfo && userInfo.role === 1 ? (
+                                userInfo && userInfo?.role === 1 ? (
                                     <NavDropdown title='Admin' id='adminmenu'>
                                         {/* <LinkContainer to='/admin'>
                                             <NavDropdown.Item>Dasboard</NavDropdown.Item>
