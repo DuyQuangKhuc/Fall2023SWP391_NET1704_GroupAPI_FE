@@ -452,24 +452,7 @@ function ProductListScreen(props) {
 
                                     </Form.Group>
                                 </div>
-
-
-                                {/* <Form.Group className='mx-auto mt-4 max-w-xl mb-3'>
-                                    <ComSelect
-                                        size={"large"}
-                                        style={{
-                                            width: '100%',
-                                        }}
-                                        className='mt-0'
-                                        label={textApp.CreateProduct.label.material}
-                                        placeholder={textApp.CreateProduct.placeholder.material}
-                                        required
-                                        onChangeValue={handleValueChangeSelect}
-                                        options={options}
-                                        {...register("material")}
-
-                                    />
-                                </Form.Group> */}
+                                
                                 <Form.Group className='mx-auto mt-4 max-w-xl mb-3'>
                                     <ComInput
                                         label={textApp.CreateProduct.label.size}

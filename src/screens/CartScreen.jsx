@@ -15,8 +15,9 @@ import Message from '../components/Message';
 import { addToCart, removeFromCart } from '../slices/cartSlice';
 
 import { useState } from 'react';
-import { useGetListOrderDetailsByOrderIdQuery } from '../slices/ordersApiSlice';
+import { useDeleteOrderDetailMutation, useGetListOrderDetailCloneByOrderIdorderIdQuery, useGetListOrderDetailsByOrderIdQuery } from '../slices/ordersApiSlice';
 import { useGetProductDetailsQuery, useGetProductsQuery } from '../slices/productsApiSlice';
+import { toast } from 'react-toastify';
 
 const CartScreen = () => {
     const navigate = useNavigate();
@@ -26,10 +27,24 @@ const CartScreen = () => {
     const { cartItems } = cart;
     const [order] = useState(JSON.parse(localStorage.getItem('getOrder')));
 
-    const { data: getListOrderDetailsByOrderId } = useGetListOrderDetailsByOrderIdQuery(order.orderId);
+    const { data: getListOrderDetailCloneByOrderIdorderId, refetch } = useGetListOrderDetailCloneByOrderIdorderIdQuery(order.orderId);
 
-    const removeFromCartHandler = (id) => {
-        dispatch(removeFromCart(id));
+    // const removeFromCartHandler = (id) => {
+    //     dispatch(removeFromCart(id));
+    // };
+
+    const [deleteOrderDetail, { isLoading: loadingDelete }] =
+        useDeleteOrderDetailMutation();
+
+    const deleteHandler = async (orderDetailId) => {
+        if (window.confirm('Are you sure ?')) {
+            try {
+                await deleteOrderDetail(orderDetailId);
+                refetch();
+            } catch (err) {
+                toast.error(err?.data?.message || err.error);
+            }
+        }
     };
 
     const checkoutHandler = () => {
@@ -41,13 +56,13 @@ const CartScreen = () => {
             <Row className='py-3'>
                 <Col md={8}>
                     <h1 style={{ marginBottom: '20px' }}>Shopping Cart</h1>
-                    {getListOrderDetailsByOrderId === 0 ? (
+                    {getListOrderDetailCloneByOrderIdorderId?.length === 0 ? (
                         <Message>
                             Your cart is empty <Link to='/'>Go Back</Link>
                         </Message>
                     ) : (
                         <ListGroup variant='flush'>
-                            {getListOrderDetailsByOrderId?.map((item) => (
+                                {getListOrderDetailCloneByOrderIdorderId?.map((item) => (
                                 <ListGroup.Item key={item.productId}  >
                                     <Row>
                                         <Col md={2}>
@@ -55,7 +70,7 @@ const CartScreen = () => {
                                             <Image src={item.image} alt={item.name} fluid rounded />
                                         </Col>
                                         <Col md={3} className='mt-2'>
-                                            <Link to={`/product/${item.productId}`}>{item.productId}</Link>
+                                                <Link to={`/product/${item.productId}`}>{item.name}</Link>
                                         </Col>
                                         <Col md={2} className='mt-2'>${item.price}</Col>
                                         <Col md={2} className='mt-2'>Số lượng: {item.quantity}</Col>
@@ -63,7 +78,7 @@ const CartScreen = () => {
                                             <Button
                                                 type='button'
                                                 variant='light'
-                                                onClick={() => removeFromCartHandler(item.productId)}
+                                                onClick={() => deleteHandler(item.orderDetailId)}
                                             >
                                                 <FaTrash />
                                             </Button>

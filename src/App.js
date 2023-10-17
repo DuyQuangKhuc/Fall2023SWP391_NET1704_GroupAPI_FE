@@ -9,6 +9,7 @@ import { logout } from './slices/authSlice';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Dasboard from './dasboard/Dasboard';
+import FloatButton from './components/FloatButton';
 
 const App = () => {
   const dispatch = useDispatch();

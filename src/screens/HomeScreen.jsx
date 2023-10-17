@@ -11,6 +11,7 @@ import Meta from '../components/Meta';
 import { useGetOrderIsUsingByAccountIdQuery } from '../slices/ordersApiSlice';
 import { useEffect } from 'react';
 import { useState } from 'react';
+import FloatButton from '../components/FloatButton';
 
 const HomeScreen = () => {
     const { pageNumber, keyword } = useParams();
@@ -37,7 +38,7 @@ const HomeScreen = () => {
 
         }}>
             <Container>
-                <>
+                <> /
                     {!keyword ? (
                         <ProductCarousel />
                     ) : (
@@ -57,7 +58,7 @@ const HomeScreen = () => {
                             <h1>Latest Products</h1>
                             <Row>
                                 {/* {data.products.map((product) => ( */}
-                                        {data.map((product) => (
+                                {data.map((product) => (
                                     <Col key={product.productId} sm={12} md={6} lg={4} xl={3}>
                                         <Product product={product} />
                                     </Col>

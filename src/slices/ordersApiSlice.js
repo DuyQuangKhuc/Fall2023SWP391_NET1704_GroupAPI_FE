@@ -57,12 +57,18 @@ export const orderApiSlice = apiSlice.injectEndpoints({
             }),
         }),
 
-        getListOrderDetailsByOrderId: builder.query({
+        getListOrderDetailCloneByOrderIdorderId : builder.query({
             query: (orderId) => ({
-                url: `/api/Order/List-Order-Details-By-OrderId?orderId=${orderId}`,
+                url: `/api/Order/List-Order-Detail-Clone-By-OrderId?orderId=${orderId}`,
             }),
         }),
-
+   
+        deleteOrderDetail: builder.mutation({
+            query: (orderDetailId) => ({
+                url: `/api/Order/Delete-Order-Detail?orderDetailId=${orderDetailId}`,
+                method: 'DELETE',
+            }),
+        }),
         deliverOrder: builder.mutation({
             query: (orderId) => ({
                 url: `${ORDERS_URL}/${orderId}/deliver`,
@@ -82,5 +88,6 @@ export const {
     useDeliverOrderMutation,
     useGetOrderIsUsingByAccountIdQuery,
     useAddOrderDetailByAccountIdProductIdQuantityMutation,
-    useGetListOrderDetailsByOrderIdQuery
+    useGetListOrderDetailCloneByOrderIdorderIdQuery,
+    useDeleteOrderDetailMutation
 } = orderApiSlice;
