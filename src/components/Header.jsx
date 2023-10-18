@@ -21,7 +21,10 @@ const Header = () => {
     const [order] = useState(JSON.parse(localStorage.getItem('getOrder')));
 
 
-    const { data: getListOrderDetailCloneByOrderIdorderId } = useGetListOrderDetailCloneByOrderIdorderIdQuery(order?.orderId);
+    const { data: getListOrderDetailCloneByOrderIdorderId, refetch } = useGetListOrderDetailCloneByOrderIdorderIdQuery(order?.orderId ,{
+        refetchInterval: 1000, // Set the interval in milliseconds (e.g., every 5 seconds)
+        enabled: true, // Enable the automatic refetch
+    });
 
 
     const logoutHandler = async () => {
@@ -38,7 +41,10 @@ const Header = () => {
         }
     }
 
-    const [getAddProductUserAutomatic, refetch] = useGetAddProductUserAutomaticMutation()
+    const [getAddProductUserAutomatic ] = useGetAddProductUserAutomaticMutation({
+        refetchInterval: 1000, // Set the interval in milliseconds (e.g., every 5 seconds)
+        enabled: true, // Enable the automatic refetch
+    })
 
     const deleteHandler = async () => {
         try {
@@ -71,9 +77,9 @@ const Header = () => {
                             <LinkContainer to='/cart'>
                                 <Nav.Link>
                                     <FaShoppingCart /> Cart
-                                    {getListOrderDetailCloneByOrderIdorderId?.length > 0 && (
+                                    { getListOrderDetailCloneByOrderIdorderId?.length > 0 && (
                                         <Badge pill bg='success' style={{ marginLeft: '5px' }}>
-                                            {getListOrderDetailCloneByOrderIdorderId?.reduce((a, c) => a + c.quantity, 0)}
+                                            { getListOrderDetailCloneByOrderIdorderId?.reduce((a, c) => a + c.quantity, 0)}
                                         </Badge>
                                     )}
                                 </Nav.Link>

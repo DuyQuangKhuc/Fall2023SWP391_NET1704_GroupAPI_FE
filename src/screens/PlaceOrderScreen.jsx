@@ -14,10 +14,9 @@ const PlaceOrderScreen = () => {
 
     const cart = useSelector((state) => state.cart);
 
-    const [createOrder, { isLoading, error }] = useCreateOrderMutation();
-
     const [user] = useState(JSON.parse(localStorage.getItem('userInfo')));
 
+    const [createOrder, { isLoading, error }] = useCreateOrderMutation(user.accountId);
     // useEffect(() => {
     //     if (!cart.shippingAddress.address) {
     //         navigate('/shipping');
@@ -37,7 +36,6 @@ const PlaceOrderScreen = () => {
                 // itemsPrice: cart.itemsPrice,
                 // shippingPrice: cart.shippingPrice,
                 // taxPrice: cart.taxPrice,
-                status: 0,
                 orderDate: new Date().toISOString(),
                 accountId: user.accountId,
                 totalPrice: cart.totalPrice,
@@ -74,7 +72,7 @@ const PlaceOrderScreen = () => {
                         </ListGroup.Item>
 
                         <ListGroup.Item>
-                            <h2>Order Items</h2>
+                            {/* <h2>Order Items</h2>
                             {cart.cartItems.length === 0 ? (
                                 <Message>Your cart is empty</Message>
                             ) : (
@@ -103,7 +101,7 @@ const PlaceOrderScreen = () => {
                                         </ListGroup.Item>
                                     ))}
                                 </ListGroup>
-                            )}
+                            )} */}
                         </ListGroup.Item>
                     </ListGroup>
                 </Col>
@@ -139,7 +137,7 @@ const PlaceOrderScreen = () => {
                             </ListGroup.Item>
                             {/* <ListGroup.Item> */}
                                 {error && (
-                                    <Message variant='danger'>{error.data.message}</Message>
+                                    <Message variant='danger'>{error?.data?.message}</Message>
                                 )}
                             {/* </ListGroup.Item> */}
                             <ListGroup.Item>

@@ -34,6 +34,9 @@ import { Provider } from 'react-redux';
 import { PayPalScriptProvider } from '@paypal/react-paypal-js';
 import Dasboard from './dasboard/Dasboard';
 import UserOrderScreen from './screens/UserOrderScreen';
+import { QueryClient, QueryClientProvider } from 'react-query';
+
+
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -61,20 +64,21 @@ const router = createBrowserRouter(
       {/* Admin users */}
       <Route path='' element={<AdminRoute />}>
         {/* <Route path='/admin' element={<Dasboard />} > */}
-          <Route path='/admin/orderlist' element={<OrderListScreen />} />
-          <Route path='/admin/productlist' element={<ProductListScreen />} />
-          <Route
-            path='/admin/productlist/:pageNumber'
-            element={<ProductListScreen />}
-          />
-          <Route path='/admin/userlist' element={<UserListScreen />} />
-          <Route path='/admin/product/:id/edit' element={<ProductEditScreen />} />
-          <Route path='/admin/user/:id/edit' element={<UserEditScreen />} />
+        <Route path='/admin/orderlist' element={<OrderListScreen />} />
+        <Route path='/admin/productlist' element={<ProductListScreen />} />
+        <Route
+          path='/admin/productlist/:pageNumber'
+          element={<ProductListScreen />}
+        />
+        <Route path='/admin/userlist' element={<UserListScreen />} />
+        <Route path='/admin/product/:id/edit' element={<ProductEditScreen />} />
+        <Route path='/admin/user/:id/edit' element={<UserEditScreen />} />
         {/* </Route> */}
       </Route>
     </Route>
   )
 );
+
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

@@ -24,7 +24,7 @@ const UserOrderScreen = () => {
     const [color, setColor] = useState("");
     const [isReplacable, setIsReplacable] = useState('');
     const [quantity, setQuantity] = useState('');
-
+    const navigate = useNavigate();
     const { userInfo } = useSelector((state) => state.auth);
 
     const [AddProductDetailClone, { isLoading: loadingaddComponent }] = useAddProductDetailCloneMutation();
@@ -41,9 +41,9 @@ const UserOrderScreen = () => {
                     quantity,
                     name,
                     description,
-                    color,
+                    color: 222,
                     isReplacable,
-                }).unwrap();
+                }).unwrap()
                 toast.success("Tạo thành công");
             }
         } catch (err) {
@@ -57,7 +57,8 @@ const UserOrderScreen = () => {
     const Handler = async () => {
         try {
             const res = await getCompleteProduct(userInfo.accountId);
-            toast.success("Thành công");
+            toast.success("Tạo thành công");
+            navigate('/')
         } catch (err) {
             // Handle error
         }
@@ -152,30 +153,36 @@ const UserOrderScreen = () => {
                     </FormContainer>
                 </Col>
                 <Col >
-                    <Card title="Danh sách đã tạo"
-                        extra={
-                            <Button onClick={Handler} >
-                                Tạo
-                            </Button>
-                        }
-                    >
-                        {listComponent?.map((component) => (
-                            <Card
-                                style={{
-                                    marginTop: 16,
-                                }}
-                                type="inner"
-                                title={component.name}
+                    
+                        <Card title="Danh sách đã tạo"
+                            extra={
+                                <Button onClick={Handler}  >
+                                    Tạo
+                                </Button>
+                            }
+                        >
+                            {listComponent?.map((component) => (
+                                <Card
+                                    style={{
+                                        marginTop: 16,
+                                    }}
+                                    type="inner"
+                                    title={component.name}
                                 // extra={<a href="#">More</a>}
-                            >
-                                <div style={{ display: 'flex' }}>
-                                    <p>▣ Chất liệu: {component.material}</p>
+                                >
+                                    <div style={{ display: 'flex' , justifyContent: 'space-between'}}>
+                                        <p>▣ Chất liệu: {component.material}</p>
+                                        <p>▣ Số lượng: {component.quantity}</p>
+                                        <p>▣ Màu sắc: {component.color}</p>
+                                        <p>▣ Trạng thái: {component.isReplacable}</p>
+                                       
+                                    </div>
                                     <p>▣ Mô tả: {component.description}</p>
-                                    {/* Add more properties as needed */}
-                                </div>
-                            </Card>
-                        ))}
-                    </Card>
+                                </Card>
+                            ))}
+
+                        </Card>
+                
                 </Col>
             </Row>
 

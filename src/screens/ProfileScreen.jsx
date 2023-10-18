@@ -11,6 +11,9 @@ import { useProfileMutation } from '../slices/usersApiSlice';
 import { useGetMyOrdersQuery, useGetOrderIsUsingByAccountIdQuery } from '../slices/ordersApiSlice';
 import { setCredentials } from '../slices/authSlice';
 import { useParams } from 'react-router-dom';
+import { Tabs } from 'antd';
+import TabPane from 'antd/es/tabs/TabPane';
+import { useGetListProductCreatedByUserQuery } from '../slices/productsApiSlice';
 
 const ProfileScreen = () => {
 
@@ -24,8 +27,8 @@ const ProfileScreen = () => {
 
     const { data: orders, isLoading, error } = useGetMyOrdersQuery(accountId);
 
-    
-    
+
+    const { data: getListProductCreatedByUser } = useGetListProductCreatedByUserQuery(accountId);
 
     const [updateProfile, { isLoading: loadingUpdateProfile }] =
         useProfileMutation();
@@ -38,7 +41,7 @@ const ProfileScreen = () => {
     const dispatch = useDispatch();
     const submitHandler = async (e) => {
         e.preventDefault();
-       
+
 
         if (password !== confirmPassword) {
             toast.error('Passwords do not match');
@@ -113,59 +116,104 @@ const ProfileScreen = () => {
                     </Form>
                 </Col>
                 <Col md={9}>
-                    <h2>My Orders</h2>
-                    {isLoading ? (
-                        <Loader />
-                    ) : error ? (
-                        <Message variant='danger'>
-                            {error?.data?.message || error.error}
-                        </Message>
-                    ) : (
-                        
-                        <Table striped hover responsive className='table-sm'>
-                            <thead>
-                                <tr>
-                                    <th>Mã đơn hàng</th>
-                                    <th>Ngày tạo đơn</th>
-                                    <th>Tổng số tiền</th>
-                                    <th>Thanh toán</th>
-                                    {/* <th>DELIVERED</th> */}
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
+                    <Tabs defaultActiveKey='1'>
+                        <TabPane tab=<h4>Đơn hàng</h4> key='1'>
+                            
+                            {isLoading ? (
+                                <Loader />
+                            ) : (
 
-                                {orders && orders?.map((order, index) => (
-                                    <tr key={index}>
-                                        <td>{order.orderId}</td>
-                                        <td>{order.orderDate}</td>
-                                        <td>${order.totalPrice}</td>
-                                        <td>
-                                            {order.status && order.status === 1 ? (
-                                                <FaCheck style={{ color: 'green' }} />
-                                            ) : (
-                                                <FaTimes style={{ color: 'red' }} />
-                                            )}
-                                        </td>
-                                        {/* <td>
+                                <Table striped hover responsive className='table-sm'>
+                                    <thead>
+                                        <tr>
+                                            <th>Mã đơn hàng</th>
+                                            <th>Ngày tạo đơn</th>
+                                            <th>Tổng số tiền</th>
+                                            <th>Thanh toán</th>
+                                            {/* <th>DELIVERED</th> */}
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+                                        {orders && orders?.map((order, index) => (
+                                            <tr key={index}>
+                                                <td>{order.orderId}</td>
+                                                <td>{order.orderDate}</td>
+                                                <td>${order.totalPrice}</td>
+                                                <td>
+                                                    {order.status && order.status === 1 ? (
+                                                        <FaCheck style={{ color: 'green' }} />
+                                                    ) : (
+                                                        <FaTimes style={{ color: 'red' }} />
+                                                    )}
+                                                </td>
+                                                {/* <td>
                                         {order.isDelivered ? (
                                             order.deliveredAt.substring(0, 10)
                                         ) : (
                                             <FaTimes style={{ color: 'red' }} />
                                         )}
                                     </td> */}
-                                        <td>
-                                            <LinkContainer to={`/order/${order.orderId}`}>
-                                                <Button className='btn-sm' variant='light'>
-                                                    Details
-                                                </Button>
-                                            </LinkContainer>
-                                        </td>
+                                                <td>
+                                                    <LinkContainer to={`/order/${order.orderId}`}>
+                                                        <Button className='btn-sm' variant='light'>
+                                                            Details
+                                                        </Button>
+                                                    </LinkContainer>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </Table>
+                            )}
+                        </TabPane>
+                        <TabPane tab=<h4>Lịch sử đặt hàng</h4> key='2'>
+                            <Table striped hover responsive className='table-sm'>
+                                <thead>
+                                    <tr>
+                                        <th>Mã đơn hàng</th>
+                                        <th>Ngày tạo đơn</th>
+                                        {/* <th>Tổng số tiền</th>
+                                        <th>Thanh toán</th> */}
+                                        {/* <th>DELIVERED</th> */}
+                                        <th></th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </Table>
-                    )}
+                                </thead>
+                                <tbody>
+
+                                    {getListProductCreatedByUser && getListProductCreatedByUser?.map((order, index) => (
+                                        <tr key={index}>
+                                            <td>{order.productId}</td>
+                                            <td>{order.uploadDate}</td>
+                                            {/* <td>${order.totalPrice}</td>
+                                            <td>
+                                                {order.status && order.status === 1 ? (
+                                                    <FaCheck style={{ color: 'green' }} />
+                                                ) : (
+                                                    <FaTimes style={{ color: 'red' }} />
+                                                )}
+                                            </td> */}
+                                            {/* <td>
+                                        {order.isDelivered ? (
+                                            order.deliveredAt.substring(0, 10)
+                                        ) : (
+                                            <FaTimes style={{ color: 'red' }} />
+                                        )}
+                                    </td> */}
+                                            {/* <td>
+                                                <LinkContainer to={`/order/${order.orderId}`}>
+                                                    <Button className='btn-sm' variant='light'>
+                                                        Details
+                                                    </Button>
+                                                </LinkContainer>
+                                            </td> */}
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </Table>
+                        </TabPane>
+                    </Tabs>
                 </Col>
             </Row>
         </Container>

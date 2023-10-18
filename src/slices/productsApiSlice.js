@@ -10,12 +10,14 @@ export const productsApiSlice = apiSlice.injectEndpoints({
             }),
             keepUnusedDataFor: 5,
             providesTags: ['Products'],
+            refetchInterval: 1000,
         }),
         getProductDetails: builder.query({
             query: (productId) => ({
                 url: `/api/Product/Product?id=${productId}`,
             }),
             keepUnusedDataFor: 5,
+            refetchInterval: 1000,
         }),
         createProduct: builder.mutation({
             query: () => ({
@@ -23,6 +25,7 @@ export const productsApiSlice = apiSlice.injectEndpoints({
                 method: 'POST',
             }),
             invalidatesTags: ['Product'],
+            refetchInterval: 1000,
         }),
  
         AddProductDetailClone: builder.mutation({
@@ -32,6 +35,7 @@ export const productsApiSlice = apiSlice.injectEndpoints({
                 body: data,
              }),
             //  invalidatesTags: ['Product'],
+            refetchInterval: 1000,
          }),
 
 
@@ -51,6 +55,7 @@ export const productsApiSlice = apiSlice.injectEndpoints({
                 method: 'POST',
                 body: data,
             }),
+            refetchInterval: 1000,
         }),
 
         addComponent: builder.mutation({
@@ -59,12 +64,14 @@ export const productsApiSlice = apiSlice.injectEndpoints({
                 method: 'POST',
                 body: data,
             }),
+            refetchInterval: 1000,
         }),
 
         getListComponent: builder.query({
             query: () => ({
                 url: `/api/Product/List-Component`,
             }),
+            refetchInterval: 1000,
         }),
         deleteProduct: builder.mutation({
             query: (productId) => ({
@@ -72,6 +79,7 @@ export const productsApiSlice = apiSlice.injectEndpoints({
                 method: 'DELETE',
             }),
             providesTags: ['Product'],
+            refetchInterval: 1000,
         }),
         createReview: builder.mutation({
             query: (data) => ({
@@ -80,16 +88,19 @@ export const productsApiSlice = apiSlice.injectEndpoints({
                 body: data,
             }),
             invalidatesTags: ['Product'],
+            refetchInterval: 1000,
         }),
         getTopProducts: builder.query({
             query: () => `/api/Product/List-Product`,
             keepUnusedDataFor: 5,
+            refetchInterval: 1000,
         }),
 
         getListComponentOfProductUserCreating: builder.query({
             query: (accountId) => ({
                 url: `/api/Product/List-Component-Of-Product-User-Creating?accountId=${accountId}`,
             }),
+            refetchInterval: 1000,
         }),
         
         getCompleteProduct: builder.mutation({
@@ -97,6 +108,14 @@ export const productsApiSlice = apiSlice.injectEndpoints({
                 url: `/api/Product/Complete-Product?accountId=${accountId}`,
                 method: 'POST',
             }),
+            refetchInterval: 1000,
+        }),
+
+        getListProductCreatedByUser : builder.query({
+            query: (accountId) => ({
+                url: `/api/Product/List-Product-Created-By-User?AccountId=${accountId}`,
+            }),
+            refetchInterval: 1000,
         }),
     }),
 });
@@ -114,5 +133,6 @@ export const {
     useGetListComponentQuery,
     useAddProductDetailCloneMutation,
     useGetListComponentOfProductUserCreatingQuery,
-    useGetCompleteProductMutation
+    useGetCompleteProductMutation,
+    useGetListProductCreatedByUserQuery,
 } = productsApiSlice;

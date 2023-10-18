@@ -15,7 +15,7 @@ import Message from '../components/Message';
 import { addToCart, removeFromCart } from '../slices/cartSlice';
 
 import { useState } from 'react';
-import { useDeleteOrderDetailMutation, useGetListOrderDetailCloneByOrderIdorderIdQuery } from '../slices/ordersApiSlice';
+import { useDeleteAllOrderDetailInOrderMutation, useDeleteOrderDetailMutation, useGetListOrderDetailCloneByOrderIdorderIdQuery } from '../slices/ordersApiSlice';
 import { toast } from 'react-toastify';
 
 const CartScreen = () => {
@@ -26,7 +26,7 @@ const CartScreen = () => {
     const { cartItems } = cart;
     const [order] = useState(JSON.parse(localStorage.getItem('getOrder')));
 
-    const { data: getListOrderDetailCloneByOrderIdorderId, refetch } = useGetListOrderDetailCloneByOrderIdorderIdQuery(order?.orderId);
+    const { data: getListOrderDetailCloneByOrderIdorderId } = useGetListOrderDetailCloneByOrderIdorderIdQuery(order?.orderId);
 
     // const removeFromCartHandler = (id) => {
     //     dispatch(removeFromCart(id));
@@ -39,7 +39,19 @@ const CartScreen = () => {
         if (window.confirm('Are you sure ?')) {
             try {
                 await deleteOrderDetail(orderDetailId);
-                refetch();
+                deleteOrderDetail.refetch();
+            } catch (err) {
+                toast.error(err?.data?.message || err.error);
+            }
+        }
+    };
+
+    const [deleteAllOrderDetailInOrder] = useDeleteAllOrderDetailInOrderMutation();
+
+    const deleteAllHandler = async (orderId) => {
+        if (window.confirm('Are you sure ?')) {
+            try {
+                await deleteAllOrderDetailInOrder(orderId);
             } catch (err) {
                 toast.error(err?.data?.message || err.error);
             }
@@ -55,13 +67,24 @@ const CartScreen = () => {
             <Row className='py-3'>
                 <Col md={8}>
                     <h1 style={{ marginBottom: '20px' }}>Shopping Cart</h1>
-                    {getListOrderDetailCloneByOrderIdorderId && getListOrderDetailCloneByOrderIdorderId.error ? (
+                    {getListOrderDetailCloneByOrderIdorderId === undefined || getListOrderDetailCloneByOrderIdorderId.error ? (
                         <Message>
                             Your cart is empty <Link to='/'>Go Back</Link>
                         </Message>
                     ) : (
+
                         <ListGroup variant='flush'>
-                                {getListOrderDetailCloneByOrderIdorderId?.map((item) => (
+                            <Button
+                                className='mb-3'
+                                type='button'
+                                variant='light'
+                                onClick={() => deleteAllHandler(order.orderId)}
+                            >
+                                <FaTrash /> Clear all items
+                            </Button>
+
+                            {getListOrderDetailCloneByOrderIdorderId?.map((item) => (
+
                                 <ListGroup.Item key={item.productId}  >
                                     <Row>
                                         <Col md={2}>
@@ -69,7 +92,7 @@ const CartScreen = () => {
                                             <Image src={item.image} alt={item.name} fluid rounded />
                                         </Col>
                                         <Col md={3} className='mt-2'>
-                                                <Link to={`/product/${item.productId}`}>{item.name}</Link>
+                                            <Link to={`/product/${item.productId}`}>{item.name}</Link>
                                         </Col>
                                         <Col md={2} className='mt-2'>${item.price}</Col>
                                         <Col md={2} className='mt-2'>Số lượng: {item.quantity}</Col>
@@ -83,8 +106,10 @@ const CartScreen = () => {
                                             </Button>
                                         </Col>
                                     </Row>
+
                                 </ListGroup.Item>
                             ))}
+
                         </ListGroup>
                     )}
                 </Col>
@@ -93,12 +118,11 @@ const CartScreen = () => {
                         <ListGroup variant='flush'>
                             <ListGroup.Item>
                                 <h2>
-                                    Subtotal ({cartItems.reduce((acc, item) => acc + item.qty, 0)})
-                                    items
+                                    Tổng {getListOrderDetailCloneByOrderIdorderId?.reduce((acc, item) => acc + item.quantity, 0)} đơn hàng
                                 </h2>
-                                $
-                                {cartItems
-                                    .reduce((acc, item) => acc + item.qty * item.price, 0)
+                                Số tiền : $
+                                {getListOrderDetailCloneByOrderIdorderId
+                                    ?.reduce((acc, item) => acc + item.quantity * item.price, 0)
                                 }
                             </ListGroup.Item>
                             <ListGroup.Item>
@@ -108,7 +132,7 @@ const CartScreen = () => {
                                     disabled={cartItems.length === 0}
                                     onClick={checkoutHandler}
                                 >
-                                    Proceed To Checkout
+                                    Đặt hàng
                                 </Button>
                             </ListGroup.Item>
                         </ListGroup>

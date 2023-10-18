@@ -33,7 +33,7 @@ const ProductScreen = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const [qty, setQty] = useState(1);
+    const [quantity, setquantity] = useState(1);
     const [rating, setRating] = useState(0);
     const [comment, setComment] = useState('');
     const [order] = useState(JSON.parse(localStorage.getItem('getOrder')));
@@ -44,11 +44,11 @@ const ProductScreen = () => {
             const res = await addOrderDetailByAccountIdProductIdQuantity({
                 accountId: order.accountId,
                 productId: product.productId,
-                quantity: qty,
+                quantity: quantity,
             }).unwrap();
             console.log(res)
-            dispatch(addToCart({ ...product, qty }));
-            navigate('/cart/');
+            dispatch(addToCart({ ...product, quantity }));
+            navigate('/cart', { replace: true });
         } catch (err) {
             toast.error(err);
         }
@@ -58,7 +58,6 @@ const ProductScreen = () => {
     const {
         data: product,
         isLoading,
-        refetch,
         error,
     } = useGetProductDetailsQuery(productId);
 
@@ -76,7 +75,6 @@ const ProductScreen = () => {
                 rating,
                 comment,
             }).unwrap();
-            refetch();
             toast.success('Review created successfully');
         } catch (err) {
             toast.error(err?.data?.message || err.error);
@@ -139,7 +137,7 @@ const ProductScreen = () => {
                                             </Row>
                                         </ListGroup.Item>
 
-                                        {/* Qty Select */}
+                                        {/* quantity Select */}
                                         {product.quantity > 0 && (
                                             <ListGroup.Item>
                                                 <Row>
@@ -147,8 +145,8 @@ const ProductScreen = () => {
                                                     <Col>
                                                         <Form.Control
                                                             as='select'
-                                                            value={qty}
-                                                            onChange={(e) => setQty(Number(e.target.value))}
+                                                            value={quantity}
+                                                            onChange={(e) => setquantity(Number(e.target.value))}
                                                         >
                                                             {[...Array(product.quantity).keys()].map(
                                                                 (x) => (
@@ -284,11 +282,11 @@ const ProductScreen = () => {
                                     </Col>
                                 </Row>
                             </TabPane>
-                        </Tabs >
+                        </Tabs>
                     </>
                 )}
             </>
-        </Container >
+        </Container>
 
     );
 };
