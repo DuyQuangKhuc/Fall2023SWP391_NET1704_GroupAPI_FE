@@ -13,7 +13,7 @@ import { setCredentials } from '../slices/authSlice';
 import { useParams } from 'react-router-dom';
 import { Tabs } from 'antd';
 import TabPane from 'antd/es/tabs/TabPane';
-import { useGetListProductCreatedByUserQuery } from '../slices/productsApiSlice';
+import { useGetListComponentOfProductQuery, useGetListProductCreatedByUserQuery } from '../slices/productsApiSlice';
 import ButtonGroup from 'antd/es/button/button-group';
 
 const ProfileScreen = () => {
@@ -48,7 +48,17 @@ const ProfileScreen = () => {
 
 
     const { data: getListProductCreatedByUser } = useGetListProductCreatedByUserQuery(accountId);
+    useEffect(() => {
+        if (getListProductCreatedByUser) {
+            localStorage.setItem('ListProductCreatedByUser', JSON.stringify(getListProductCreatedByUser));
+        }
+    }, [getListProductCreatedByUser]);
 
+    const [product] = useState(JSON.parse(localStorage.getItem('ListProductCreatedByUser')));
+
+    const { data: getListComponentOfProduct } = useGetListComponentOfProductQuery(product.productId);
+
+    console.log('product:', product.productId);
     const [updateProfile, { isLoading: loadingUpdateProfile }] =
         useProfileMutation();
 
@@ -78,7 +88,7 @@ const ProfileScreen = () => {
             }
         }
     };
-    console.log('orders:', orders);
+
     return (
         <Container className='my-3'>
             <Row>
@@ -136,7 +146,7 @@ const ProfileScreen = () => {
                 <Col md={9}>
                     <Tabs defaultActiveKey='1'>
                         <TabPane tab=<h4>Đơn hàng</h4> key='1'>
-                            
+
                             {isLoading ? (
                                 <Loader />
                             ) : (
@@ -210,13 +220,12 @@ const ProfileScreen = () => {
                                                 <td>{order.uploadDate}</td>
                                             </tr>
                                             {isRowExpanded(index) && (
-                                                
-                                                <tr>
-                                                    <td colSpan="3">
-                                                        <td>{order.productId}</td>
-                                                        <td>{order.uploadDate}</td>
-                                                    </td>
-                                                </tr>
+                                                getListComponentOfProduct.productId.map((id, subIndex) => (
+                                                    <div key={subIndex}>
+                                                        <td>{id.productId}</td>
+                                                        <td>{id.uploadDate}</td>
+                                                    </div>
+                                                ))
                                             )}
                                         </React.Fragment>
                                     ))}

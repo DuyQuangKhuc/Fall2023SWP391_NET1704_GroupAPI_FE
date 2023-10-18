@@ -122,7 +122,6 @@ export const productsApiSlice = apiSlice.injectEndpoints({
             query: (productId) => ({
                 url: `/api/Product/List-Component-Of-Product?productId=${productId}`,
             }),
-            refetchInterval: 1000,
         }),
     }),
 });
