@@ -23,6 +23,24 @@ const ProfileScreen = () => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const { userInfo } = useSelector((state) => state.auth);
 
+    // Define useState hook to track the expanded rows
+    const [expandedRows, setExpandedRows] = useState([]);
+
+    // Function to toggle the expanded state of a row
+    const toggleRow = (index) => {
+        // Check if the row is already expanded
+        if (expandedRows.includes(index)) {
+            // Remove the row index from the expanded rows array
+            setExpandedRows(expandedRows.filter((row) => row !== index));
+        } else {
+            // Add the row index to the expanded rows array
+            setExpandedRows([...expandedRows, index]);
+        }
+    };
+
+    // Function to check if a row is expanded
+    const isRowExpanded = (index) => expandedRows.includes(index);
+
     const { id: accountId } = useParams();
 
     const { data: orders, isLoading, error } = useGetMyOrdersQuery(accountId);
@@ -39,10 +57,9 @@ const ProfileScreen = () => {
     }, [userInfo.email, userInfo.phone]);
 
     const dispatch = useDispatch();
+
     const submitHandler = async (e) => {
         e.preventDefault();
-
-
         if (password !== confirmPassword) {
             toast.error('Passwords do not match');
         } else {
@@ -174,41 +191,31 @@ const ProfileScreen = () => {
                                     <tr>
                                         <th>Mã đơn hàng</th>
                                         <th>Ngày tạo đơn</th>
-                                        {/* <th>Tổng số tiền</th>
-                                        <th>Thanh toán</th> */}
-                                        {/* <th>DELIVERED</th> */}
                                         <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
 
                                     {getListProductCreatedByUser && getListProductCreatedByUser?.map((order, index) => (
-                                        <tr key={index}>
-                                            <td>{order.productId}</td>
-                                            <td>{order.uploadDate}</td>
-                                            {/* <td>${order.totalPrice}</td>
-                                            <td>
-                                                {order.status && order.status === 1 ? (
-                                                    <FaCheck style={{ color: 'green' }} />
-                                                ) : (
-                                                    <FaTimes style={{ color: 'red' }} />
-                                                )}
-                                            </td> */}
-                                            {/* <td>
-                                        {order.isDelivered ? (
-                                            order.deliveredAt.substring(0, 10)
-                                        ) : (
-                                            <FaTimes style={{ color: 'red' }} />
-                                        )}
-                                    </td> */}
-                                            {/* <td>
-                                                <LinkContainer to={`/order/${order.orderId}`}>
-                                                    <Button className='btn-sm' variant='light'>
-                                                        Details
-                                                    </Button>
-                                                </LinkContainer>
-                                            </td> */}
-                                        </tr>
+                                        <React.Fragment key={index}>
+                                            <tr>
+                                                <td>{order.productId}</td>
+                                                <td>{order.uploadDate}</td>
+                                                <td>
+                                                    <button onClick={() => toggleRow(index)}>
+                                                        {isRowExpanded(index) ? "Collapse" : "Expand"}
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            {isRowExpanded(index) && (
+                                                <tr>
+                                                    <td colSpan="3">
+                                                        {/* Content of the expandable row */}
+                                                        {/* Add your expandable content here */}
+                                                    </td>
+                                                </tr>
+                                            )}
+                                        </React.Fragment>
                                     ))}
                                 </tbody>
                             </Table>
