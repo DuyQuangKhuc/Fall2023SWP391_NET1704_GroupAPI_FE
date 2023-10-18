@@ -117,6 +117,13 @@ export const productsApiSlice = apiSlice.injectEndpoints({
             }),
             refetchInterval: 1000,
         }),
+
+        getListComponentOfProduct : builder.query({
+            query: (productId) => ({
+                url: `/api/Product/List-Component-Of-Product?productId=${productId}`,
+            }),
+            refetchInterval: 1000,
+        }),
     }),
 });
 
@@ -135,4 +142,5 @@ export const {
     useGetListComponentOfProductUserCreatingQuery,
     useGetCompleteProductMutation,
     useGetListProductCreatedByUserQuery,
+    useGetListComponentOfProductQuery
 } = productsApiSlice;

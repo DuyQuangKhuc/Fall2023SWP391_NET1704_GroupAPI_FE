@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Table, Form, Button, Row, Col, Container } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { FaCheck, FaTimes } from 'react-icons/fa';
+import { FaCheck, FaTimes, AiOutlinePlusCircle, FaPlus, FaWindowMinimize } from 'react-icons/fa';
 
 import { toast } from 'react-toastify';
 import Message from '../components/Message';
@@ -14,6 +14,7 @@ import { useParams } from 'react-router-dom';
 import { Tabs } from 'antd';
 import TabPane from 'antd/es/tabs/TabPane';
 import { useGetListProductCreatedByUserQuery } from '../slices/productsApiSlice';
+import ButtonGroup from 'antd/es/button/button-group';
 
 const ProfileScreen = () => {
 
@@ -189,6 +190,7 @@ const ProfileScreen = () => {
                             <Table striped hover responsive className='table-sm'>
                                 <thead>
                                     <tr>
+                                        <th></th>
                                         <th>Mã đơn hàng</th>
                                         <th>Ngày tạo đơn</th>
                                         <th></th>
@@ -199,19 +201,20 @@ const ProfileScreen = () => {
                                     {getListProductCreatedByUser && getListProductCreatedByUser?.map((order, index) => (
                                         <React.Fragment key={index}>
                                             <tr>
+                                                <td>
+                                                    <ButtonGroup onClick={() => toggleRow(index)}>
+                                                        {isRowExpanded(index) ? <FaWindowMinimize /> : <FaPlus />}
+                                                    </ButtonGroup>
+                                                </td>
                                                 <td>{order.productId}</td>
                                                 <td>{order.uploadDate}</td>
-                                                <td>
-                                                    <button onClick={() => toggleRow(index)}>
-                                                        {isRowExpanded(index) ? "Collapse" : "Expand"}
-                                                    </button>
-                                                </td>
                                             </tr>
                                             {isRowExpanded(index) && (
+                                                
                                                 <tr>
                                                     <td colSpan="3">
-                                                        {/* Content of the expandable row */}
-                                                        {/* Add your expandable content here */}
+                                                        <td>{order.productId}</td>
+                                                        <td>{order.uploadDate}</td>
                                                     </td>
                                                 </tr>
                                             )}
