@@ -27,9 +27,25 @@ const CartScreen = () => {
     const [order] = useState(JSON.parse(localStorage.getItem('getOrder')));
 
     const { data: getListOrderDetailCloneByOrderIdorderId, refetch } = useGetListOrderDetailCloneByOrderIdorderIdQuery(order?.orderId);
+    useEffect(() => {
+        if (getListOrderDetailCloneByOrderIdorderId) {
+            const intervalId = setInterval(refetch, 1000); // Refresh every 1 seconds
+            return () => clearInterval(intervalId); // Cleanup the interval on component unmount or 'order' change
+        }
+    }, [getListOrderDetailCloneByOrderIdorderId, refetch]);
 
-    const [deleteOrderDetail, { isLoading: loadingDelete }] =
-        useDeleteOrderDetailMutation();
+
+    // const removeFromCartHandler = (id) => {
+    //     dispatch(removeFromCart(id));
+    // };
+
+    const [deleteOrderDetail, { isLoading: loadingDelete, refetch: deleteOrderDetailRefetch }] = useDeleteOrderDetailMutation();
+    useEffect(() => {
+        if (deleteOrderDetail) {
+            const intervalId = setInterval(deleteOrderDetailRefetch, 1000); // Refresh every 1 seconds
+            return () => clearInterval(intervalId); // Cleanup the interval on component unmount or 'order' change
+        }
+    }, [deleteOrderDetail, deleteOrderDetailRefetch]);
 
     const deleteHandler = async (orderDetailId) => {
         if (window.confirm('Are you sure ?')) {
@@ -41,7 +57,13 @@ const CartScreen = () => {
         }
     };
 
-    const [deleteAllOrderDetailInOrder] = useDeleteAllOrderDetailInOrderMutation();
+    const [deleteAllOrderDetailInOrder, { refetch: deleteAllOrderDetailInOrderRefetch }] = useDeleteAllOrderDetailInOrderMutation();
+    useEffect(() => {
+        if (deleteAllOrderDetailInOrder) {
+            const intervalId = setInterval(deleteAllOrderDetailInOrderRefetch, 1000); // Refresh every 1 seconds
+            return () => clearInterval(intervalId); // Cleanup the interval on component unmount or 'order' change
+        }
+    }, [deleteAllOrderDetailInOrder, deleteAllOrderDetailInOrderRefetch]);
 
     const deleteAllHandler = async (orderId) => {
         if (window.confirm('Are you sure ?')) {
@@ -52,10 +74,6 @@ const CartScreen = () => {
             }
         }
     };
-
-    useEffect(() => {
-        refetch();
-    }, []);
 
     const checkoutHandler = () => {
         navigate('/login?redirect=/payment');

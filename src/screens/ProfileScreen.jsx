@@ -58,7 +58,7 @@ const ProfileScreen = () => {
 
     const { data: getListComponentOfProduct } = useGetListComponentOfProductQuery(product?.productId);
 
-   // console.log('product:', product.productId);
+    console.log('product:', product);
     const [updateProfile, { isLoading: loadingUpdateProfile }] =
         useProfileMutation();
 
