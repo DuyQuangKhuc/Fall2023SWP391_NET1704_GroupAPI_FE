@@ -15,14 +15,7 @@ import { useGetOrderIsUsingByAccountIdQuery } from './slices/ordersApiSlice';
 const App = () => {
   const dispatch = useDispatch();
 
-  const [user] = useState(JSON.parse(localStorage.getItem('userInfo')));
-  const { data: getOrder } = useGetOrderIsUsingByAccountIdQuery(user?.accountId);
-  useEffect(() => {
-    if (getOrder) {
-      localStorage.setItem('getOrder', JSON.stringify(getOrder));
-    }
-  }, [getOrder]);
-
+  
   useEffect(() => {
     const expirationTime = localStorage.getItem('expirationTime');
     if (expirationTime) {

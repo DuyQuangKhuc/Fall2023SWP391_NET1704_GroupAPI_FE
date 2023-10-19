@@ -20,7 +20,13 @@ const HomeScreen = () => {
         keyword,
         pageNumber,
     });
-    
+    const [user] = useState(JSON.parse(localStorage.getItem('userInfo')));
+    const { data: getOrder } = useGetOrderIsUsingByAccountIdQuery(user?.accountId);
+    useEffect(() => {
+        if (getOrder) {
+            localStorage.setItem('getOrder', JSON.stringify(getOrder));
+        }
+    }, [getOrder]);
 
 
     return (
