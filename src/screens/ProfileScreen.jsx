@@ -56,9 +56,9 @@ const ProfileScreen = () => {
 
     const [product] = useState(JSON.parse(localStorage.getItem('ListProductCreatedByUser')));
 
-    const { data: getListComponentOfProduct } = useGetListComponentOfProductQuery(product.productId);
+    const { data: getListComponentOfProduct } = useGetListComponentOfProductQuery(product?.productId);
 
-    console.log('product:', product.productId);
+   // console.log('product:', product.productId);
     const [updateProfile, { isLoading: loadingUpdateProfile }] =
         useProfileMutation();
 
@@ -207,8 +207,7 @@ const ProfileScreen = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-
-                                    {getListProductCreatedByUser && getListProductCreatedByUser?.map((order, index) => (
+                                    {getListProductCreatedByUser?.map((order, index) => (
                                         <React.Fragment key={index}>
                                             <tr>
                                                 <td>
@@ -216,7 +215,7 @@ const ProfileScreen = () => {
                                                         {isRowExpanded(index) ? <FaWindowMinimize /> : <FaPlus />}
                                                     </ButtonGroup>
                                                 </td>
-                                                <td>{order.productId}</td>
+                                                <td>{order?.productId}</td>
                                                 <td>{order.uploadDate}</td>
                                             </tr>
                                             {isRowExpanded(index) && (
