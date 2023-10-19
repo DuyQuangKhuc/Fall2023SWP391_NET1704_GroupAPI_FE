@@ -116,7 +116,15 @@ export const orderApiSlice = apiSlice.injectEndpoints({
                 body: data,
             }),
             refetchInterval: 1000,
-        }),    
+        }), 
+        
+        getListOrderOfUser: builder.query({
+            query: (accountId) => ({
+                url: `/api/Order/List-Order-Of-User?accountId=${accountId}`,
+                body: accountId,
+            }),
+            refetchInterval: 1000,
+        }),
 
     }),
 });
@@ -136,5 +144,6 @@ export const {
     useGetAddProductUserAutomaticMutation,
     useDeleteAllOrderDetailInOrderMutation,
     useGetListPaymentMethodQuery,
-    useAddPaymentPromaxMutation
+    useAddPaymentPromaxMutation,
+    useGetListOrderOfUserQuery
 } = orderApiSlice;

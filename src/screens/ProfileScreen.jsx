@@ -57,6 +57,7 @@ const ProfileScreen = () => {
     const [product] = useState(JSON.parse(localStorage.getItem('ListProductCreatedByUser')));
 
     const { data: getListComponentOfProduct } = useGetListComponentOfProductQuery(product?.productId);
+    
 
     console.log('product:', product);
     const [updateProfile, { isLoading: loadingUpdateProfile }] =
@@ -232,7 +233,33 @@ const ProfileScreen = () => {
                             </Table>
                         </TabPane>
                         <TabPane tab=<h4>Lịch sử mua hàng</h4> key='3'>
-
+                            <Table striped hover responsive className='table-sm'>
+                                <thead>
+                                    <tr>
+                                        <th>Mã đơn hàng</th>
+                                        <th>Ngày mua hàng</th>
+                                        <th>Tổng số tiền</th>
+                                        <th>Thanh toán</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {orders && orders?.map((order, index) => (
+                                        <tr key={index}>
+                                            <td>{order.orderId}</td>
+                                            <td>{order.orderDate}</td>
+                                            <td>${order.totalPrice}</td>
+                                            <td>
+                                                {order.status && order.status === 1 ? (
+                                                    <FaCheck style={{ color: 'green' }} />
+                                                ) : (
+                                                    <FaTimes style={{ color: 'red' }} />
+                                                )}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </Table>
                         </TabPane>
                     </Tabs>
                 </Col>
