@@ -18,7 +18,7 @@ import { Modal, notification } from 'antd';
 import Box from '@mui/material/Box';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import * as yup from "yup"
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useState } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, MenuItem, Select } from '@material-ui/core';
 import Rating from '../../components/Rating';
@@ -57,6 +57,12 @@ function ProductListScreen(props) {
     const { data, isLoading, error, refetch } = useGetProductsQuery({
         pageNumber,
     });
+    useEffect(() => {
+        if (data) {
+            const intervalId = setInterval(refetch, 1000); // Refresh every 1 seconds
+            return () => clearInterval(intervalId); // Cleanup the interval on component unmount or 'order' change
+        }
+    }, [data, refetch]);
 
     const getRowId = (row) => row.productId;
 
@@ -157,11 +163,6 @@ function ProductListScreen(props) {
     const [imagePath1, setImages] = useState([]);
     const [api, contextHolder] = notification.useNotification();
 
-    const [imagePath2] = useState("string");
-    const [imagePath3] = useState("string");
-    const [imagePath4] = useState("string");
-    const [imagePath5] = useState("string");
-
     const CreateProductMessenger = yup.object({
         name: yup.string().required(textApp.CreateProduct.message.name),
         price: yup.number().min(1, textApp.CreateProduct.message.priceMin).typeError(textApp.CreateProduct.message.price),
@@ -189,10 +190,6 @@ function ProductListScreen(props) {
             durability: "",
             imagePath1: "",
             description: "",
-            imagePath2,
-            imagePath3,
-            imagePath4,
-            imagePath5,
         },
         values: createProductRequestDefault
     })
@@ -379,11 +376,11 @@ function ProductListScreen(props) {
                 </Col>
                 <Col className='text-end'>
                     <Button className='my-3' onClick={showModal}>
-                        <FaPlus /> Create product
+                        <FaPlus />Tạo sản phẩm
                     </Button>
 
                     <Button className='mx-3' onClick={showModal2}>
-                        <FaPlus /> Create component
+                        <FaPlus />Thêm thành phần
                     </Button>
                 </Col>
             </Row>
@@ -391,7 +388,7 @@ function ProductListScreen(props) {
             <Modal
                 title={
                     <Col>
-                        <h1>Create Product</h1>
+                        <h1>Tạo sản phẩm</h1>
                     </Col>
                 }
                 // okType="primary text-black border-gray-700"
@@ -412,7 +409,7 @@ function ProductListScreen(props) {
                             <div className="grid"
                                 style={{ height: "62vh" }}>
                                 <Form.Group className="">
-                                    <Form.Label>Name</Form.Label>
+                                    <Form.Label>Tên sản phẩm</Form.Label>
                                     <ComInput
                                         type="text"
                                         // label={textApp.CreateProduct.label.name}
@@ -444,7 +441,7 @@ function ProductListScreen(props) {
                                         <Form.Label>Số lượng sản phẩm</Form.Label>
                                         <ComNumber
                                             placeholder={textApp.CreateProduct.placeholder.quantity}
-                                            // type="numbers"
+                                            type="numbers"
                                             min={1}
                                             {...register("quantity")}
                                             required
@@ -479,6 +476,7 @@ function ProductListScreen(props) {
                                     rows={4}
                                     defaultValue={''}
                                     required
+                                    type="text"
                                     maxLength={1000}
                                     {...register("description")}
                                 />
@@ -506,7 +504,7 @@ function ProductListScreen(props) {
             <Modal
                 title={
                     <Col>
-                        <h1>Create component</h1>
+                        <h1>Thêm thành phần</h1>
                     </Col>
                 }
                 // okType="primary text-black border-gray-700"
@@ -645,19 +643,7 @@ function ProductListScreen(props) {
                                                     Mô tả: {selectedRow.description}
                                                 </ListGroup.Item>
                                                 <ListGroup.Item>
-                                                    Màu sắc: {selectedRow.color}
-                                                </ListGroup.Item>
-                                                <ListGroup.Item>
                                                     Kích cỡ: {selectedRow.size}
-                                                </ListGroup.Item>
-                                                <ListGroup.Item>
-                                                    Vật liệu: {selectedRow.material}
-                                                </ListGroup.Item>
-                                                <ListGroup.Item>
-                                                    Số tầng: {selectedRow.floorQuantity}
-                                                </ListGroup.Item>
-                                                <ListGroup.Item>
-                                                    Số cửa: {selectedRow.gateQuantity}
                                                 </ListGroup.Item>
                                                 <ListGroup.Item>
                                                     Độ bền: {selectedRow.durability}
