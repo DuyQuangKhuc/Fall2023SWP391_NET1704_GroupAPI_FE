@@ -14,7 +14,7 @@ import { FaTrash } from 'react-icons/fa';
 import Message from '../components/Message';
 import { addToCart, removeFromCart } from '../slices/cartSlice';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDeleteAllOrderDetailInOrderMutation, useDeleteOrderDetailMutation, useGetListOrderDetailCloneByOrderIdorderIdQuery } from '../slices/ordersApiSlice';
 import { toast } from 'react-toastify';
 
@@ -26,11 +26,7 @@ const CartScreen = () => {
     const { cartItems } = cart;
     const [order] = useState(JSON.parse(localStorage.getItem('getOrder')));
 
-    const { data: getListOrderDetailCloneByOrderIdorderId } = useGetListOrderDetailCloneByOrderIdorderIdQuery(order?.orderId);
-
-    // const removeFromCartHandler = (id) => {
-    //     dispatch(removeFromCart(id));
-    // };
+    const { data: getListOrderDetailCloneByOrderIdorderId, refetch } = useGetListOrderDetailCloneByOrderIdorderIdQuery(order?.orderId);
 
     const [deleteOrderDetail, { isLoading: loadingDelete }] =
         useDeleteOrderDetailMutation();
@@ -39,7 +35,6 @@ const CartScreen = () => {
         if (window.confirm('Are you sure ?')) {
             try {
                 await deleteOrderDetail(orderDetailId);
-                deleteOrderDetail.refetch();
             } catch (err) {
                 toast.error(err?.data?.message || err.error);
             }
@@ -57,6 +52,10 @@ const CartScreen = () => {
             }
         }
     };
+
+    useEffect(() => {
+        refetch();
+    }, []);
 
     const checkoutHandler = () => {
         navigate('/login?redirect=/payment');
@@ -129,7 +128,7 @@ const CartScreen = () => {
                                 <Button
                                     type='button'
                                     className='btn-block'
-                                    disabled={cartItems.length === 0}
+                                    disabled={getListOrderDetailCloneByOrderIdorderId?.length === 0}
                                     onClick={checkoutHandler}
                                 >
                                     Đặt hàng

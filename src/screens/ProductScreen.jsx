@@ -47,7 +47,7 @@ const ProductScreen = () => {
                 quantity: quantity,
             }).unwrap();
             console.log(res)
-            dispatch(addToCart({ ...product, quantity }));
+            //dispatch(addToCart({ ...product, quantity }));
             navigate('/cart', { replace: true });
         } catch (err) {
             toast.error(err);

@@ -220,10 +220,10 @@ const ProfileScreen = () => {
                                                 <td>{order.uploadDate}</td>
                                             </tr>
                                             {isRowExpanded(index) && (
-                                                getListComponentOfProduct.productId.map((id, subIndex) => (
+                                                getListComponentOfProduct?.map((id, subIndex) => (
                                                     <div key={subIndex}>
-                                                        <td>{id.productId}</td>
-                                                        <td>{id.uploadDate}</td>
+                                                        <td>{id?.productId}</td>
+                                                        <td>{id?.uploadDate}</td>
                                                     </div>
                                                 ))
                                             )}
