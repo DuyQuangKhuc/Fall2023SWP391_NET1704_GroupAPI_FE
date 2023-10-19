@@ -70,9 +70,7 @@ export const orderApiSlice = apiSlice.injectEndpoints({
                 body: accountId,
             }),
             refetchInterval: 1000,
-        }),
-
-       
+        }),    
 
         getListOrderDetailCloneByOrderIdorderId : builder.query({
             query: (orderId) => ({
@@ -102,6 +100,24 @@ export const orderApiSlice = apiSlice.injectEndpoints({
                 body: orderId,
             }),
         }),
+
+        getListPaymentMethod: builder.query({
+            query: (name) => ({
+                url: `/api/Payment/List-Payment-Method`,
+                body: name,
+            }),
+            refetchInterval: 1000,
+        }),
+
+        addPaymentPromax: builder.mutation({
+            query: (data) => ({
+                url: `/api/Payment/Add-Payment-Promax?orderId=${data.orderId}&paymentMethodId=${data.paymentMethodId}&voucherId=${data.voucherId}&address=${data.address}`,
+                method: 'POST',
+                body: data,
+            }),
+            refetchInterval: 1000,
+        }),    
+
     }),
 });
 
@@ -119,4 +135,6 @@ export const {
     useDeleteOrderDetailMutation,
     useGetAddProductUserAutomaticMutation,
     useDeleteAllOrderDetailInOrderMutation,
+    useGetListPaymentMethodQuery,
+    useAddPaymentPromaxMutation
 } = orderApiSlice;

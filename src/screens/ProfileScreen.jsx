@@ -231,6 +231,9 @@ const ProfileScreen = () => {
                                 </tbody>
                             </Table>
                         </TabPane>
+                        <TabPane tab=<h4>Lịch sử mua hàng</h4> key='3'>
+
+                        </TabPane>
                     </Tabs>
                 </Col>
             </Row>

@@ -39,13 +39,8 @@ const CartScreen = () => {
     //     dispatch(removeFromCart(id));
     // };
 
-    const [deleteOrderDetail, { isLoading: loadingDelete, refetch: deleteOrderDetailRefetch }] = useDeleteOrderDetailMutation();
-    useEffect(() => {
-        if (deleteOrderDetail) {
-            const intervalId = setInterval(deleteOrderDetailRefetch, 1000); // Refresh every 1 seconds
-            return () => clearInterval(intervalId); // Cleanup the interval on component unmount or 'order' change
-        }
-    }, [deleteOrderDetail, deleteOrderDetailRefetch]);
+    const [deleteOrderDetail, { isLoading: loadingDelete,  }] = useDeleteOrderDetailMutation();
+ 
 
     const deleteHandler = async (orderDetailId) => {
         if (window.confirm('Are you sure ?')) {
@@ -57,13 +52,8 @@ const CartScreen = () => {
         }
     };
 
-    const [deleteAllOrderDetailInOrder, { refetch: deleteAllOrderDetailInOrderRefetch }] = useDeleteAllOrderDetailInOrderMutation();
-    useEffect(() => {
-        if (deleteAllOrderDetailInOrder) {
-            const intervalId = setInterval(deleteAllOrderDetailInOrderRefetch, 1000); // Refresh every 1 seconds
-            return () => clearInterval(intervalId); // Cleanup the interval on component unmount or 'order' change
-        }
-    }, [deleteAllOrderDetailInOrder, deleteAllOrderDetailInOrderRefetch]);
+    const [deleteAllOrderDetailInOrder ] = useDeleteAllOrderDetailInOrderMutation();
+
 
     const deleteAllHandler = async (orderId) => {
         if (window.confirm('Are you sure ?')) {
@@ -101,7 +91,6 @@ const CartScreen = () => {
                             </Button>
 
                             {getListOrderDetailCloneByOrderIdorderId?.map((item) => (
-
                                 <ListGroup.Item key={item.productId}  >
                                     <Row>
                                         <Col md={2}>
@@ -146,7 +135,7 @@ const CartScreen = () => {
                                 <Button
                                     type='button'
                                     className='btn-block'
-                                    disabled={getListOrderDetailCloneByOrderIdorderId?.length === 0}
+                                    disabled={getListOrderDetailCloneByOrderIdorderId === undefined || getListOrderDetailCloneByOrderIdorderId.error}
                                     onClick={checkoutHandler}
                                 >
                                     Đặt hàng

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import FormContainer from '../components/FormContainer';
 import CheckoutSteps from '../components/CheckoutSteps';
-import { savePaymentMethod } from '../slices/cartSlice';
+import { useAddPaymentPromaxMutation, useGetListPaymentMethodQuery } from '../slices/ordersApiSlice';
 
 const PaymentScreen = () => {
     const navigate = useNavigate();
@@ -17,34 +17,69 @@ const PaymentScreen = () => {
     //     }
     // }, [navigate, shippingAddress]);
 
-    const [paymentMethod, setPaymentMethod] = useState('PayPal');
+    const [paymentMethodId, setPaymentMethod] = useState('');
+    const [address, setAddress] = useState('');
 
-    const dispatch = useDispatch();
+    const [order] = useState(JSON.parse(localStorage.getItem('getOrder')));
 
-    const submitHandler = (e) => {
+    const { data: getListPaymentMethod } = useGetListPaymentMethodQuery();
+
+    const [addPaymentPromax ] = useAddPaymentPromaxMutation();
+
+    const submitHandler = async (e) => {
         e.preventDefault();
-        dispatch(savePaymentMethod(paymentMethod));
-        navigate('/placeorder');
+        try {
+            const res = await addPaymentPromax({
+                orderId: order.orderId,
+                paymentMethodId,
+                address,
+                voucherId: 1,
+            }).unwrap()
+            navigate('/placeorder');
+        } catch (err) {
+            console.log(err);
+        }
     };
+
+    // const submitHandler = (e) => {
+    //     e.preventDefault();
+    //     dispatch(savePaymentMethod(paymentMethod));
+    //     navigate('/placeorder');
+    // };
 
     return (
         <FormContainer>
             <CheckoutSteps step1 step3 />
-            <h1>Payment Method</h1>
+            <h1>Hình thức thanh toán</h1>
             <Form onSubmit={submitHandler}>
-                <Form.Group>
-                    <Form.Label as='legend'>Select Method</Form.Label>
-                    <Col>
-                        <Form.Check
-                            className='my-2'
-                            type='radio'
-                            label='PayPal or Credit Card'
-                            id='PayPal'
-                            name='paymentMethod'
-                            value='PayPal'
-                            checked
-                            onChange={(e) => setPaymentMethod(e.target.value)}
-                        ></Form.Check>
+                <Form.Group style={{ display: 'flex', justifyContent: 'space-between' }} >
+                    <Col md={6}>
+                        <Form.Label as='legend' >Thông tin địa chỉ giao hàng</Form.Label>
+                        <Form.Group className='my-2' controlId='address'>
+                            <Form.Label>Address</Form.Label>
+                            <Form.Control
+                                type='text'
+                                placeholder='Enter address'
+                                value={address}
+                                required
+                                onChange={(e) => setAddress(e.target.value)}
+                            ></Form.Control>
+                        </Form.Group>
+
+                    </Col>
+                    <Col md={5}>
+                        <Form.Label as='legend' >Lựa chọn thanh toán</Form.Label>
+                        {getListPaymentMethod && Array?.isArray(getListPaymentMethod) && getListPaymentMethod?.map((payment) => (
+                            <Form.Check
+                                key={payment.paymentMethodId}
+                                className='my-2'
+                                type='radio'
+                                label={payment.name}
+                                name='paymentMethod'
+                                checked={paymentMethodId === payment.paymentMethodId}
+                                onChange={() => setPaymentMethod(payment.paymentMethodId)}
+                            />
+                        ))}
                     </Col>
                 </Form.Group>
 

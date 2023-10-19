@@ -47,12 +47,12 @@ const UserOrderScreen = () => {
                 toast.success("Tạo thành công");
             }
         } catch (err) {
-            toast.error("Hãy đăng nhập ");
+            toast.error("Lỗi");
 
         }
     };
 
-    const [getCompleteProduct, refetch] = useGetCompleteProductMutation()
+    const [getCompleteProduct] = useGetCompleteProductMutation()
 
     const Handler = async () => {
         try {
@@ -64,7 +64,13 @@ const UserOrderScreen = () => {
         }
     };
 
-    const { data: listComponent, isLoading, error } = useGetListComponentOfProductUserCreatingQuery(userInfo.accountId);
+    const { data: listComponent,  refetch } = useGetListComponentOfProductUserCreatingQuery(userInfo.accountId);
+    useEffect(() => {
+        if (listComponent) {
+            const intervalId = setInterval(refetch, 1000); // Refresh every 1 seconds
+            return () => clearInterval(intervalId); // Cleanup the interval on component unmount or 'order' change
+        }
+    }, [listComponent, refetch]);
     return (
         <Container>
             <Row className='py-3'>
