@@ -14,6 +14,7 @@ import {
     useGetListComponentQuery,
     useGetListComponentCreatedBySystemQuery,
     useAddComponentIntoProductMutation,
+    useGetListAllComponentQuery,
 } from '../../slices/productsApiSlice';
 import { toast } from 'react-toastify';
 import { Modal, notification } from 'antd';
@@ -263,13 +264,55 @@ function ProductListScreen(props) {
         setValue("price", value, { shouldValidate: true });
     };
 
+    const TableComponent = ({ selectedRowID }) => {
+        const { data: getListAllComponent, refetch: ListAllComponentRefetch } = useGetListAllComponentQuery();
+
+        const filteredComponents = getListAllComponent?.filter(component => component.productId === selectedRowID);
+        useEffect(() => {
+            if (filteredComponents) {
+                const intervalId = setInterval(ListAllComponentRefetch, 1000); // Refresh every 1 seconds
+                return () => clearInterval(intervalId); // Cleanup the interval on component unmount or 'order' change
+            }
+        }, [filteredComponents, ListAllComponentRefetch]);
+
+        console.log(filteredComponents);
+        return (
+            <Container>
+                <Table striped hover responsive className='table-auto'>
+                    <thead>
+                        <tr>
+                            <th>Tên thành phần</th>
+                            <th>Số lượng</th>
+                            <th>Chất liệu</th>
+                            <th>Màu sắc</th>
+                            <th>Mô tả</th>
+                            <th>Trạng thái</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {filteredComponents?.map((component, index) => (
+                            <tr key={index}>
+                                <td>{component?.name}</td>
+                                <td>{component?.quantity}</td>
+                                <td>{component?.material}</td>
+                                <td>{component?.color}</td>
+                                <td>{component?.description}</td>
+                                <td>{component?.isReplacable}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </Table>
+            </Container>
+        );
+    };
+
 
     const MySelectComponent = ({ selectedRowID }) => {
         const [quantity, setQuantity] = useState(0);
         const [componentId, setComponentId] = useState('');
 
         const { data: getListComponentCreatedBySystem } = useGetListComponentCreatedBySystemQuery();
-        const filteredComponents = getListComponentCreatedBySystem?.filter(component => component.productId === selectedRowID);
 
         const [addComponentIntoProduct] = useAddComponentIntoProductMutation();
 
@@ -340,12 +383,14 @@ function ProductListScreen(props) {
                             </Table>
                         )}
                     </Form.Group>
-                    <Button
-                        type='submit'
-                        variant='primary'
-                    >
-                        Tạo
-                    </Button>
+                    <Col className='text-end'>
+                        <Button
+                            type='submit'
+                            variant='primary'
+                        >
+                            Tạo
+                        </Button>
+                    </Col>              
                 </Form>
             </Container>
         );
@@ -384,9 +429,6 @@ function ProductListScreen(props) {
                     <h1>Products</h1>
                 </Col>
 
-                <Col className='text-'>
-
-                </Col>
                 <Col className='text-end'>
                     <Button className='my-3' onClick={showModal}>
                         <FaPlus />Tạo sản phẩm
@@ -667,12 +709,10 @@ function ProductListScreen(props) {
                                             </ListGroup>
 
                                         </Col>
-
+                                        <TableComponent selectedRowID={selectedRow.productId} />
                                     </Row>
 
-
-                                    ▻ Thêm thành phần: <MySelectComponent selectedRowID={selectedRow.productId} />
-
+                                    <p>▻ Thêm thành phần:</p> <MySelectComponent selectedRowID={selectedRow.productId} />
 
                                 </DialogContent>
 

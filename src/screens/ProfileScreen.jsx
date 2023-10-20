@@ -4,13 +4,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { FaCheck, FaTimes, FaPlus, FaWindowMinimize } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import Loader from '../components/Loader';
-import { useProfileMutation } from '../slices/usersApiSlice';
+import { useProfileMutation, useUpdateUserMutation } from '../slices/usersApiSlice';
 import { useGetListOrderOfUserQuery, useGetMyOrdersQuery } from '../slices/ordersApiSlice';
 import { setCredentials } from '../slices/authSlice';
 import { useParams } from 'react-router-dom';
 import { Tabs } from 'antd';
 import TabPane from 'antd/es/tabs/TabPane';
-import { useGetListComponentOfProductQuery, useGetListProductCreatedByUserQuery } from '../slices/productsApiSlice';
+import { useGetListAllComponentQuery, useGetListComponentOfProductQuery, useGetListProductCreatedByUserQuery } from '../slices/productsApiSlice';
 import ButtonGroup from 'antd/es/button/button-group';
 
 const ProfileScreen = () => {
@@ -56,12 +56,13 @@ const ProfileScreen = () => {
 
     const [product] = useState(JSON.parse(localStorage.getItem('ListProductCreatedByUser')));
 
-    const { data: getListComponentOfProduct } = useGetListComponentOfProductQuery(product?.productId);
+    const { data: getListAllComponent } = useGetListAllComponentQuery();
+    // const filteredComponents = getListAllComponent?.filter(component => component.productId === product.productId);
 
+    
 
-    console.log('product:', accountId);
-
-    const [updateProfile, { isLoading: loadingUpdateProfile }] = useProfileMutation(userInfo.accountId);
+    const [updateUser, { isLoading: loadingUpdateProfile }] = useUpdateUserMutation(accountId);
+    
 
     useEffect(() => {
         setPhone(userInfo.phone);
@@ -74,19 +75,20 @@ const ProfileScreen = () => {
     const submitHandler = async (e) => {
         e.preventDefault();
         if (password !== confirmPassword) {
-            toast.error('Passwords do not match');
+            toast.error('sai mật khẩu');
         } else {
             try {
-                const res = await updateProfile({
+                const res = await updateUser({
+                    accountId,
                     name,
                     phone,
                     email,
                     password,
                 }).unwrap();
                 dispatch(setCredentials({ ...res }));
-                toast.success('Profile updated successfully');
+                toast.success('Cập nhập thành công');
             } catch (err) {
-                toast.error(err?.data?.message || err.error);
+                toast.error("lỗi");
             }
         }
     };
@@ -179,12 +181,17 @@ const ProfileScreen = () => {
                                                 <td>{order.uploadDate}</td>
                                             </tr>
                                             {isRowExpanded(index) && (
-                                                getListComponentOfProduct?.map((id, subIndex) => (
-                                                    <div key={subIndex}>
-                                                        <td>{id?.productId}</td>
-                                                        <td>{id?.uploadDate}</td>
-                                                    </div>
-                                                ))
+                                                getListAllComponent
+                                                    .filter((id) => id.componentId === order?.productId)
+                                                    .map((id, subIndex) => (
+                                                        <div key={subIndex}>
+                                                            <td>{id?.name}</td>
+                                                            <td>{id?.material}</td>
+                                                            <td>{id?.description}</td>
+                                                            <td>{id?.color}</td>
+                                                            <td>{id?.isReplacable}</td>
+                                                        </div>
+                                                    ))
                                             )}
                                         </React.Fragment>
                                     ))}

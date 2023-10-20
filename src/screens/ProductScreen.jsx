@@ -184,7 +184,7 @@ const ProductScreen = () => {
                                                 disabled={product.quantity === 0}
                                                 onClick={addToCartHandler}
                                             >
-                                                Add To Cart
+                                                Thêm vào giỏ hàng
                                             </Button>
                                         </ListGroup.Item>
                                     </ListGroup>
@@ -256,7 +256,7 @@ const ProductScreen = () => {
                                 <Row className='review'>
                                     <Col md={6}>
                                         <ListGroup.Item>
-                                            <h2>Write a Customer Review</h2>
+                                            <h2>Viết đánh giá về sản phẩm</h2>
 
                                             {loadingProductReview && <Loader />}
 
@@ -293,18 +293,18 @@ const ProductScreen = () => {
                                                         type='submit'
                                                         variant='primary'
                                                     >
-                                                        Submit
+                                                        Gửi bài
                                                     </Button>
                                                 </Form>
                                             ) : (
                                                 <Message>
-                                                    Please <Link to='/login'>sign in</Link> to write a review
+                                                    Hãy <Link to='/login'>sign in</Link> để viết bình luận
                                                 </Message>
                                             )}
                                         </ListGroup.Item>
                                     </Col>
                                     <Col md={6}>
-                                        <h2>Reviews</h2>
+                                        <h2>Xem bình luận</h2>
                                         {/* {getListFeedbackByProduct?.length === 0 && <Message>No Reviews</Message>} */}
                                         <ListGroup variant='flush'>
                                             {getListFeedbackByProduct?.map((review) => (
