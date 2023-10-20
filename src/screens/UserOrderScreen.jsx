@@ -13,19 +13,20 @@ import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import FormContainer from '../components/FormContainer';
 import Loader from '../components/Loader';
-import { Card } from 'antd';
-import { useGetAddProductUserAutomaticMutation } from '../slices/ordersApiSlice';
-
+import { Card, Select } from 'antd';
+import { ColorPicker, theme } from 'antd';
 
 const UserOrderScreen = () => {
+    const { token } = theme.useToken();
     const [material, setMaterial] = useState('');
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
-    const [color, setColor] = useState("");
+    const [color, setColor] = useState(token.colorPrimary);
     const [isReplacable, setIsReplacable] = useState('');
     const [quantity, setQuantity] = useState('');
     const navigate = useNavigate();
     const { userInfo } = useSelector((state) => state.auth);
+    console.log(token.colorPrimary)
 
     const [AddProductDetailClone, { isLoading: loadingaddComponent }] = useAddProductDetailCloneMutation();
 
@@ -41,7 +42,7 @@ const UserOrderScreen = () => {
                     quantity,
                     name,
                     description,
-                    color: 222,
+                    color,
                     isReplacable,
                 }).unwrap()
                 toast.success("Tạo thành công");
@@ -71,6 +72,8 @@ const UserOrderScreen = () => {
             return () => clearInterval(intervalId); // Cleanup the interval on component unmount or 'order' change
         }
     }, [listComponent, refetch]);
+
+
     return (
         <Container>
             <Row className='py-3'>
@@ -79,13 +82,51 @@ const UserOrderScreen = () => {
                         <Form onSubmit={submitHandler}>
                             <Form.Group className='my-3' controlId='name'>
                                 <Form.Label className="font-semibold">Tên thành phần</Form.Label>
-                                <Form.Control
+                                {/* <Form.Control
                                     type='name'
                                     placeholder='Enter name'
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
                                     required
-                                ></Form.Control>
+                                >
+                                </Form.Control> */}
+                                <Select
+                                    showSearch
+                                    style={{
+                                        width: 295,
+                                    }}
+                                    placeholder="Search to Select"
+                                    optionFilterProp="children"
+                                    filterOption={(input, option) => (option?.label ?? '').includes(input)}
+                                    filterSort={(optionA, optionB) =>
+                                        (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                                    } 
+                                    options={[
+                                        {
+                                            value: 'Cửa',
+                                            label: 'Cửa',
+                                        },
+                                        {
+                                            value: 'Đáy',
+                                            label: 'Đáy',
+                                        },
+                                        {
+                                            value: 'Khung',
+                                            label: 'Khung',
+                                        },
+                                        {
+                                            value: 'Khay đựng',
+                                            label: 'Khay đựng',
+                                        },
+                                        {
+                                            value: 'Móc treo',
+                                            label: 'Móc treo',
+                                        },
+                    
+                                    ]}
+                                    value={name}
+                                    onChange={(value) => setName(value)}
+                                    />
                             </Form.Group>
                             <Form.Group className='my-3' controlId='quantity'>
                                 <Form.Label>Số lượng</Form.Label>
@@ -96,6 +137,7 @@ const UserOrderScreen = () => {
                                     onChange={(e) => setQuantity(e.target.value)}
                                     required
                                 ></Form.Control>
+                                
                             </Form.Group>
 
                             <Form.Group className='my-3' controlId='material'>
@@ -113,13 +155,14 @@ const UserOrderScreen = () => {
                             <Form.Group className='my-3' controlId='color' style={{ display: 'flex', justifyContent: 'space-between' }}>
                                 <div >
                                     <Form.Label >Màu sắc</Form.Label>
-                                    <Form.Control
+                                    {/* <Form.Control
                                         style={{ display: 'flex' }}
                                         type='color'
                                         placeholder='Confirm color'
                                         value={color}
                                         onChange={(e) => setColor(e.target.value)}
-                                    ></Form.Control>
+                                    ></Form.Control> */}
+                                    <ColorPicker style={{ display: 'flex' }} size="large" value={color} onChange={setColor} />
                                 </div>
 
                                 <div >

@@ -11,11 +11,13 @@ import {
     Button,
     Form,
     Container,
+    Table,
 } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import {
     useGetProductDetailsQuery,
     useCreateReviewMutation,
+    useGetListAllComponentQuery,
 } from '../slices/productsApiSlice';
 import Rating from '../components/Rating';
 import Loader from '../components/Loader';
@@ -63,24 +65,31 @@ const ProductScreen = () => {
 
     const { userInfo } = useSelector((state) => state.auth);
 
-    const [createReview, { isLoading: loadingProductReview }] =
-        useCreateReviewMutation();
+    const [createReview, { isLoading: loadingProductReview }] = useCreateReviewMutation();
 
     const submitHandler = async (e) => {
         e.preventDefault();
 
         try {
             await createReview({
-                productId,
+                accountId: order.accountId,
+                productId: product.productId,
                 rating,
                 comment,
             }).unwrap();
             toast.success('Review created successfully');
         } catch (err) {
-            toast.error(err?.data?.message || err.error);
+            toast.error("Bạn phải mua sản phẩm");
         }
     };
 
+    const { data: getListAllComponent } = useGetListAllComponentQuery();
+
+
+
+    const filteredComponents = getListAllComponent?.filter(component => component.productId === product.productId);
+
+    console.log(productId);
     return (
         <Container >
             <>
@@ -98,7 +107,7 @@ const ProductScreen = () => {
                         <Meta title={product.name} description={product.description} />
                         <Row>
                             <Col md={6}>
-                                        <Image src={product.imagePath1} alt={product.name} style={{ height: "400px" }} fluid />
+                                <Image src={product.imagePath1} alt={product.name} style={{ height: "400px" }} className='mb-3' fluid />
                             </Col>
                             <Col md={3}>
                                 <ListGroup variant='flush'>
@@ -176,49 +185,117 @@ const ProductScreen = () => {
                             </Col>
                         </Row>
                         <Tabs defaultActiveKey='1'>
-                            <TabPane tab='Chi tiết sản phẩm' key='1'>
-                                <Timeline className='review'
-                                    items={[
-                                        {
-                                            color: 'green',
-                                            children: `Màu sắc: ${product.color} `,
-                                        },
-                                        {
-                                            color: 'green',
-                                            children: `Kích cỡ: ${product.size} `,
-                                        },
-                                        {
-                                            color: 'green',
-                                            children: `Vật liệu: ${product.material} `,
-                                        },
+                            <TabPane tab=<h5>Chi tiết sản phẩm</h5> key='1' >
+                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                    <Timeline className='review'
+                                        items={[
+                                            {
+                                                color: 'green',
+                                                children: `Màu sắc: ${product.color} `,
+                                            },
+                                            {
+                                                color: 'green',
+                                                children: `Kích cỡ: ${product.size} `,
+                                            },
+                                            {
+                                                color: 'green',
+                                                children: `Vật liệu: ${product.material} `,
+                                            },
+                                            {
+                                                color: 'gray',
+                                                children: (
+                                                    <>
+                                                        <p>Độ bền: {product.durability}</p>
+                                                    </>
+                                                ),
+                                            },
+                                            {
+                                                color: '#00CCFF',
+                                                //dot: <SmileOutlined />,
+                                                children: <p>NSX:  {product.uploadDate}</p>,
+                                            },
+                                        ]}
+                                    />
 
-                                        {
-                                            color: 'green',
-                                            children: (
-                                                <>
-                                                    <p>Số tầng: {product.floorQuantity} </p>
-                                                    <p>Số cửa: {product.gateQuantity} </p>
-                                                </>
-                                            ),
-                                        },
-                                        {
-                                            color: 'gray',
-                                            children: (
-                                                <>
-                                                    <p>Độ bền: {product.durability}</p>
-                                                </>
-                                            ),
-                                        },
-                                        {
-                                            color: '#00CCFF',
-                                            //dot: <SmileOutlined />,
-                                            children: <p>NSX:  {product.uploadDate}</p>,
-                                        },
-                                    ]}
-                                />
+                                    <Table striped hover responsive className='table-auto'>
+                                        <thead>
+                                            <tr>
+                                                <th>Tên thành phần</th>
+                                                <th>Số lượng</th>
+                                                <th>Chất liệu</th>
+                                                <th>Màu sắc</th>
+                                                <th>Mô tả</th>
+                                                <th>Trạng thái</th>
+
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {filteredComponents?.map((component, index) => (
+                                                <tr key={index}>
+                                                    <td>{component?.name}</td>
+                                                    <td>{component?.quantity}</td>
+                                                    <td>{component?.material}</td>
+                                                    <td>{component?.color}</td>
+                                                    <td>{component?.description}</td>
+                                                    <td>{component?.isReplacable}</td>
+
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </Table>
+                                </div>
                             </TabPane>
-                            <TabPane tab='Phản hồi' key='2'>
+                            <TabPane tab=<h5>Phản hồi</h5> key='2'>
                                 <Row className='review'>
+                                    <Col md={6}>
+                                        <ListGroup.Item>
+                                            <h2>Write a Customer Review</h2>
+
+                                            {loadingProductReview && <Loader />}
+
+                                            {userInfo ? (
+                                                <Form onSubmit={submitHandler}>
+                                                    <Form.Group className='my-2' controlId='rating'>
+                                                        <Form.Label>Rating</Form.Label>
+                                                        <Form.Control
+                                                            as='select'
+                                                            required
+                                                            value={rating}
+                                                            onChange={(e) => setRating(e.target.value)}
+                                                        >
+                                                            <option value=''>Select...</option>
+                                                            <option value='1'>1 - Poor</option>
+                                                            <option value='2'>2 - Fair</option>
+                                                            <option value='3'>3 - Good</option>
+                                                            <option value='4'>4 - Very Good</option>
+                                                            <option value='5'>5 - Excellent</option>
+                                                        </Form.Control>
+                                                    </Form.Group>
+                                                    <Form.Group className='my-2' controlId='comment'>
+                                                        <Form.Label>Comment</Form.Label>
+                                                        <Form.Control
+                                                            as='textarea'
+                                                            row='3'
+                                                            required
+                                                            value={comment}
+                                                            onChange={(e) => setComment(e.target.value)}
+                                                        ></Form.Control>
+                                                    </Form.Group>
+                                                    <Button
+                                                        disabled={loadingProductReview}
+                                                        type='submit'
+                                                        variant='primary'
+                                                    >
+                                                        Submit
+                                                    </Button>
+                                                </Form>
+                                            ) : (
+                                                <Message>
+                                                    Please <Link to='/login'>sign in</Link> to write a review
+                                                </Message>
+                                            )}
+                                        </ListGroup.Item>
+                                    </Col>
                                     <Col md={6}>
                                         <h2>Reviews</h2>
                                         {product?.reviews?.length === 0 && <Message>No Reviews</Message>}
@@ -231,55 +308,9 @@ const ProductScreen = () => {
                                                     <p>{review.comment}</p>
                                                 </ListGroup.Item>
                                             ))}
-                                            <ListGroup.Item>
-                                                <h2>Write a Customer Review</h2>
-
-                                                {loadingProductReview && <Loader />}
-
-                                                {userInfo ? (
-                                                    <Form onSubmit={submitHandler}>
-                                                        <Form.Group className='my-2' controlId='rating'>
-                                                            <Form.Label>Rating</Form.Label>
-                                                            <Form.Control
-                                                                as='select'
-                                                                required
-                                                                value={rating}
-                                                                onChange={(e) => setRating(e.target.value)}
-                                                            >
-                                                                <option value=''>Select...</option>
-                                                                <option value='1'>1 - Poor</option>
-                                                                <option value='2'>2 - Fair</option>
-                                                                <option value='3'>3 - Good</option>
-                                                                <option value='4'>4 - Very Good</option>
-                                                                <option value='5'>5 - Excellent</option>
-                                                            </Form.Control>
-                                                        </Form.Group>
-                                                        <Form.Group className='my-2' controlId='comment'>
-                                                            <Form.Label>Comment</Form.Label>
-                                                            <Form.Control
-                                                                as='textarea'
-                                                                row='3'
-                                                                required
-                                                                value={comment}
-                                                                onChange={(e) => setComment(e.target.value)}
-                                                            ></Form.Control>
-                                                        </Form.Group>
-                                                        <Button
-                                                            disabled={loadingProductReview}
-                                                            type='submit'
-                                                            variant='primary'
-                                                        >
-                                                            Submit
-                                                        </Button>
-                                                    </Form>
-                                                ) : (
-                                                    <Message>
-                                                        Please <Link to='/login'>sign in</Link> to write a review
-                                                    </Message>
-                                                )}
-                                            </ListGroup.Item>
                                         </ListGroup>
                                     </Col>
+
                                 </Row>
                             </TabPane>
                         </Tabs>

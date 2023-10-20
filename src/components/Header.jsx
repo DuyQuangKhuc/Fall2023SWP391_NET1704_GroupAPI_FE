@@ -10,6 +10,7 @@ import { resetCart } from '../slices/cartSlice';
 import { MdAddShoppingCart } from "react-icons/md";
 import { useState } from 'react';
 import { useGetAddProductUserAutomaticMutation, useGetListOrderDetailCloneByOrderIdorderIdQuery } from '../slices/ordersApiSlice';
+import { useEffect } from 'react';
 
 const Header = () => {
     const { cartItems } = useSelector((state) => state.cart);
@@ -25,6 +26,12 @@ const Header = () => {
         refetchInterval: 1000, // Set the interval in milliseconds (e.g., every 5 seconds)
         enabled: true, // Enable the automatic refetch
     });
+    useEffect(() => {
+        if (getListOrderDetailCloneByOrderIdorderId) {
+            const intervalId = setInterval(refetch, 1000); // Refresh every 1 seconds
+            return () => clearInterval(intervalId); // Cleanup the interval on component unmount or 'order' change
+        }
+    }, [getListOrderDetailCloneByOrderIdorderId, refetch]);
 
 
     const logoutHandler = async () => {
@@ -76,7 +83,7 @@ const Header = () => {
                             <SearchBox className="ms-32" />
                             <LinkContainer to='/cart'>
                                 <Nav.Link>
-                                    <FaShoppingCart /> Cart
+                                    <FaShoppingCart /> Đơn hàng
                                     { getListOrderDetailCloneByOrderIdorderId?.length > 0 && (
                                         <Badge pill bg='success' style={{ marginLeft: '5px' }}>
                                             { getListOrderDetailCloneByOrderIdorderId?.reduce((a, c) => a + c.quantity, 0)}

@@ -83,7 +83,7 @@ export const productsApiSlice = apiSlice.injectEndpoints({
         }),
         createReview: builder.mutation({
             query: (data) => ({
-                url: `${PRODUCTS_URL}/${data.productId}/reviews`,
+                url: `/api/Feedback/Add-Feedback?accountId=${data.accountId}&productId=${data.productId}&rating=${data.rating}&comment=${data.comment}`,
                 method: 'POST',
                 body: data,
             }),
@@ -123,6 +123,12 @@ export const productsApiSlice = apiSlice.injectEndpoints({
                 url: `/api/Product/List-Component-Of-Product?productId=${productId}`,
             }),
         }),
+        getListAllComponent: builder.query({
+            query: () => ({
+                url: `/api/Product/List-All-Component`,
+            }),
+            refetchInterval: 1000,
+        }),
     }),
 });
 
@@ -141,5 +147,6 @@ export const {
     useGetListComponentOfProductUserCreatingQuery,
     useGetCompleteProductMutation,
     useGetListProductCreatedByUserQuery,
-    useGetListComponentOfProductQuery
+    useGetListComponentOfProductQuery,
+    useGetListAllComponentQuery
 } = productsApiSlice;
