@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Row, Col, ListGroup, Image, Card, Button, Container } from 'react-bootstrap';
-import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Row, Col, ListGroup, Image, Card, Button, Container, Alert } from 'react-bootstrap';
+import {  usePayPalScriptReducer } from '@paypal/react-paypal-js';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import Message from '../components/Message';
@@ -93,8 +93,7 @@ const OrderScreen = () => {
     //   await payOrder({ orderId, details: { payer: {} } });
     //   refetch();
 
-    //   toast.success('Order is paid');
-    // }
+   
 
     function onError(err) {
         toast.error(err.message);
@@ -268,22 +267,7 @@ const OrderScreen = () => {
                                     </div>
                                 )}
                             </ListGroup.Item>
-                            {/* {loadingDeliver && <Loader />}
-
-                            {userInfo &&
-                                userInfo.isAdmin &&
-                                order.isPaid &&
-                                !order.isDelivered && (
-                                    <ListGroup.Item>
-                                        <Button
-                                            type='button'
-                                            className='btn btn-block'
-                                            onClick={deliverHandler}
-                                        >
-                                            Mark As Delivered
-                                        </Button>
-                                    </ListGroup.Item>
-                                )}  */}
+                          <Alert></Alert>
                         </ListGroup>
                     </Card>
                 </Col>
