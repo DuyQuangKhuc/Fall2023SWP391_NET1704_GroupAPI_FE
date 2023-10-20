@@ -121,7 +121,6 @@ export const orderApiSlice = apiSlice.injectEndpoints({
         getListOrderOfUser: builder.query({
             query: (accountId) => ({
                 url: `/api/Order/List-Order-Of-User?accountId=${accountId}`,
-                body: accountId,
             }),
             refetchInterval: 1000,
         }),

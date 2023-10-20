@@ -8,7 +8,7 @@ import { toast } from 'react-toastify';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
 import { useProfileMutation } from '../slices/usersApiSlice';
-import { useGetMyOrdersQuery, useGetOrderIsUsingByAccountIdQuery } from '../slices/ordersApiSlice';
+import { useGetListOrderOfUserQuery, useGetMyOrdersQuery, useGetOrderIsUsingByAccountIdQuery } from '../slices/ordersApiSlice';
 import { setCredentials } from '../slices/authSlice';
 import { useParams } from 'react-router-dom';
 import { Tabs } from 'antd';
@@ -54,10 +54,13 @@ const ProfileScreen = () => {
         }
     }, [getListProductCreatedByUser]);
 
+    const { data: getListOrderOfUser } = useGetListOrderOfUserQuery(accountId);
+
+
     const [product] = useState(JSON.parse(localStorage.getItem('ListProductCreatedByUser')));
 
     const { data: getListComponentOfProduct } = useGetListComponentOfProductQuery(product?.productId);
-    
+
 
     console.log('product:', product);
     const [updateProfile, { isLoading: loadingUpdateProfile }] =
@@ -146,58 +149,7 @@ const ProfileScreen = () => {
                 </Col>
                 <Col md={9}>
                     <Tabs defaultActiveKey='1'>
-                        <TabPane tab=<h4>Đơn hàng</h4> key='1'>
-
-                            {isLoading ? (
-                                <Loader />
-                            ) : (
-
-                                <Table striped hover responsive className='table-sm'>
-                                    <thead>
-                                        <tr>
-                                            <th>Mã đơn hàng</th>
-                                            <th>Ngày tạo đơn</th>
-                                            <th>Tổng số tiền</th>
-                                            <th>Thanh toán</th>
-                                            {/* <th>DELIVERED</th> */}
-                                            <th></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-
-                                        {orders && orders?.map((order, index) => (
-                                            <tr key={index}>
-                                                <td>{order.orderId}</td>
-                                                <td>{order.orderDate}</td>
-                                                <td>${order.totalPrice}</td>
-                                                <td>
-                                                    {order.status && order.status === 1 ? (
-                                                        <FaCheck style={{ color: 'green' }} />
-                                                    ) : (
-                                                        <FaTimes style={{ color: 'red' }} />
-                                                    )}
-                                                </td>
-                                                {/* <td>
-                                        {order.isDelivered ? (
-                                            order.deliveredAt.substring(0, 10)
-                                        ) : (
-                                            <FaTimes style={{ color: 'red' }} />
-                                        )}
-                                    </td> */}
-                                                <td>
-                                                    <LinkContainer to={`/order/${order.orderId}`}>
-                                                        <Button className='btn-sm' variant='light'>
-                                                            Details
-                                                        </Button>
-                                                    </LinkContainer>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </Table>
-                            )}
-                        </TabPane>
-                        <TabPane tab=<h4>Lịch sử đặt hàng</h4> key='2'>
+                        <TabPane tab=<h4>Lịch sử đặt hàng</h4> key='1'>
                             <Table striped hover responsive className='table-sm'>
                                 <thead>
                                     <tr>
@@ -232,7 +184,7 @@ const ProfileScreen = () => {
                                 </tbody>
                             </Table>
                         </TabPane>
-                        <TabPane tab=<h4>Lịch sử mua hàng</h4> key='3'>
+                        <TabPane tab=<h4>Lịch sử mua hàng</h4> key='2'>
                             <Table striped hover responsive className='table-sm'>
                                 <thead>
                                     <tr>
@@ -244,13 +196,13 @@ const ProfileScreen = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {orders && orders?.map((order, index) => (
+                                    {getListOrderOfUser && getListOrderOfUser?.map((order, index) => (
                                         <tr key={index}>
                                             <td>{order.orderId}</td>
                                             <td>{order.orderDate}</td>
                                             <td>${order.totalPrice}</td>
                                             <td>
-                                                {order.status && order.status === 1 ? (
+                                                {order.status === 1 ? (
                                                     <FaCheck style={{ color: 'green' }} />
                                                 ) : (
                                                     <FaTimes style={{ color: 'red' }} />
