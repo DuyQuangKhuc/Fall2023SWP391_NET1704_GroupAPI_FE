@@ -14,7 +14,7 @@ import { useGetListComponentOfProductQuery, useGetListProductCreatedByUserQuery 
 import ButtonGroup from 'antd/es/button/button-group';
 
 const ProfileScreen = () => {
-    const [user, setUser] = useState('');
+    const [name, setUser] = useState('');
     const [phone, setPhone] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -59,15 +59,15 @@ const ProfileScreen = () => {
     const { data: getListComponentOfProduct } = useGetListComponentOfProductQuery(product?.productId);
 
 
-    console.log('product:', product);
+    console.log('product:', accountId);
 
-    const [updateProfile, { isLoading: loadingUpdateProfile }] =
-        useProfileMutation();
+    const [updateProfile, { isLoading: loadingUpdateProfile }] = useProfileMutation(userInfo.accountId);
 
     useEffect(() => {
         setPhone(userInfo.phone);
         setEmail(userInfo.email);
-    }, [userInfo.email, userInfo.phone]);
+        setUser(userInfo.name)
+    }, [userInfo.email, userInfo.phone, userInfo.name]);
 
     const dispatch = useDispatch();
 
@@ -78,7 +78,7 @@ const ProfileScreen = () => {
         } else {
             try {
                 const res = await updateProfile({
-                    accountId: userInfo.accountId,
+                    name,
                     phone,
                     email,
                     password,
@@ -103,7 +103,7 @@ const ProfileScreen = () => {
                             <Form.Control
                                 type='user'
                                 placeholder='Enter user'
-                                value={user}
+                                value={name}
                                 onChange={(e) => setUser(e.target.value)}
                             ></Form.Control>
                         </Form.Group>
@@ -139,7 +139,7 @@ const ProfileScreen = () => {
                         </Form.Group>
 
                         <Form.Group className='my-2' controlId='confirmPassword'>
-                            <Form.Label>Confirm Password</Form.Label>
+                            <Form.Label>New Password</Form.Label>
                             <Form.Control
                                 type='password'
                                 placeholder='Confirm password'

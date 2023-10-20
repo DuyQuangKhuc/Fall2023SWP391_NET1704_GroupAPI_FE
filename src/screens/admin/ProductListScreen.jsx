@@ -34,7 +34,7 @@ import { firebaseImgs } from '../../upImgFirebase/firebaseImgs'
 import ComUpImg from '../../components/Input/ComUpImg';
 import FormContainer from '../../components/FormContainer';
 
-const VISIBLE_FIELDS = ['productId', 'name', 'imagePath1', 'price', 'uploadDate', 'quantity', 'status'];
+const VISIBLE_FIELDS = [ 'productId', 'name', 'imagePath1', 'price', 'uploadDate', 'quantity', 'status'];
 
 const options = [
     {

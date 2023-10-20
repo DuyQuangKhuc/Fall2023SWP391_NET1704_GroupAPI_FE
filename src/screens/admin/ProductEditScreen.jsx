@@ -20,9 +20,8 @@ const ProductEditScreen = () => {
     const [name, setName] = useState('');
     const [price, setPrice] = useState(0);
     const [imagePath1, setImage] = useState('');
-    const [brand, setBrand] = useState('');
-    const [category, setCategory] = useState('');
-    const [countInStock, setCountInStock] = useState(0);
+    const [durability, setDurability] = useState('');
+    const [quantity, setQuantity] = useState(0);
     const [description, setDescription] = useState('');
 
     const {
@@ -48,10 +47,9 @@ const ProductEditScreen = () => {
                 name,
                 price,
                 imagePath1,
-                brand,
-                category,
+                durability,
                 description,
-                countInStock,
+                quantity,
             }).unwrap(); // NOTE: here we need to unwrap the Promise to catch any rejection in our catch block
             toast.success('Product updated');
             refetch();
@@ -66,9 +64,8 @@ const ProductEditScreen = () => {
             setName(product.name);
             setPrice(product.price);
             setImage(product.imagePath1);
-            setBrand(product.brand);
-            setCategory(product.category);
-            setCountInStock(product.countInStock);
+            setDurability(product.durability);
+            setQuantity(product.quantity);
             setDescription(product.description);
         }
     }, [product]);
@@ -101,7 +98,7 @@ const ProductEditScreen = () => {
                 ) : (
                     <Form onSubmit={submitHandler}>
                         <Form.Group controlId='name'>
-                            <Form.Label>Name</Form.Label>
+                            <Form.Label>Tên</Form.Label>
                             <Form.Control
                                 type='name'
                                 placeholder='Enter name'
@@ -111,7 +108,7 @@ const ProductEditScreen = () => {
                         </Form.Group>
 
                         <Form.Group controlId='price'>
-                            <Form.Label>Price</Form.Label>
+                            <Form.Label>Giá</Form.Label>
                             <Form.Control
                                 type='number'
                                 placeholder='Enter price'
@@ -121,7 +118,7 @@ const ProductEditScreen = () => {
                         </Form.Group>
 
                         <Form.Group controlId='image'>
-                            <Form.Label>Image</Form.Label>
+                            <Form.Label>Ảnh</Form.Label>
                             {/* <Image src= {imagePath1} /> */}
                             <ComUpImg
                                 value={imagePath1}
@@ -135,38 +132,30 @@ const ProductEditScreen = () => {
                             {loadingUpload && <Loader />}
                         </Form.Group>
 
-                        {/* <Form.Group controlId='brand'>
-                            <Form.Label>Brand</Form.Label>
-                            <Form.Control
-                                type='text'
-                                placeholder='Enter brand'
-                                value={brand}
-                                onChange={(e) => setBrand(e.target.value)}
-                            ></Form.Control>
-                        </Form.Group> */}
 
-                                <Form.Group controlId='quantity'>
-                                    <Form.Label>quantity</Form.Label>
+
+                        <Form.Group controlId='quantity'>
+                            <Form.Label>Số lượng</Form.Label>
                             <Form.Control
                                 type='number'
-                                        placeholder='Enter quantity'
-                                value={countInStock}
-                                onChange={(e) => setCountInStock(e.target.value)}
+                                placeholder='Enter quantity'
+                                value={quantity}
+                                onChange={(e) => setQuantity(e.target.value)}
                             ></Form.Control>
                         </Form.Group>
 
-                                <Form.Group controlId='material'>
-                                    <Form.Label>material</Form.Label>
+                        <Form.Group controlId='material'>
+                            <Form.Label>Độ bền</Form.Label>
                             <Form.Control
                                 type='text'
-                                        placeholder='Enter material'
-                                value={category}
-                                onChange={(e) => setCategory(e.target.value)}
+                                placeholder='Enter material'
+                                value={durability}
+                                onChange={(e) => setDurability(e.target.value)}
                             ></Form.Control>
                         </Form.Group>
 
                         <Form.Group controlId='description'>
-                            <Form.Label>Description</Form.Label>
+                            <Form.Label>Mô tả</Form.Label>
                             <Form.Control
                                 type='text'
                                 placeholder='Enter description'

@@ -37,7 +37,7 @@ const ProductScreen = () => {
     const navigate = useNavigate();
 
     const [quantity, setquantity] = useState(1);
-    const [rating, setRating] = useState(0);
+    const [rating, setRating] = useState();
     const [comment, setComment] = useState('');
     const [order] = useState(JSON.parse(localStorage.getItem('getOrder')));
     const [addOrderDetailByAccountIdProductIdQuantity] = useAddOrderDetailByAccountIdProductIdQuantityMutation();
@@ -96,7 +96,7 @@ const ProductScreen = () => {
 
     const filteredComponents = getListAllComponent?.filter(component => component.productId === product?.productId);
 
-    console.log(getListFeedbackByProduct);
+    console.log(getListFeedbackByProduct?.rating);
     return (
         <Container >
             <>
@@ -123,8 +123,8 @@ const ProductScreen = () => {
                                     </ListGroup.Item>
                                     <ListGroup.Item>
                                         <Rating
-                                            value={product.rating}
-                                            text={`${product.numReviews} reviews`}
+                                            value={getListFeedbackByProduct?.length}
+                                            text={`${getListFeedbackByProduct?.length} đánh giá`}
                                         />
                                     </ListGroup.Item>
                                     <ListGroup.Item>Giá: ${product.price}</ListGroup.Item>
