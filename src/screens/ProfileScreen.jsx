@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Form, Button, Row, Col, Container } from 'react-bootstrap';
-import { LinkContainer } from 'react-router-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { FaCheck, FaTimes, AiOutlinePlusCircle, FaPlus, FaWindowMinimize } from 'react-icons/fa';
-
+import { FaCheck, FaTimes, FaPlus, FaWindowMinimize } from 'react-icons/fa';
 import { toast } from 'react-toastify';
-import Message from '../components/Message';
 import Loader from '../components/Loader';
 import { useProfileMutation } from '../slices/usersApiSlice';
-import { useGetListOrderOfUserQuery, useGetMyOrdersQuery, useGetOrderIsUsingByAccountIdQuery } from '../slices/ordersApiSlice';
+import { useGetListOrderOfUserQuery, useGetMyOrdersQuery } from '../slices/ordersApiSlice';
 import { setCredentials } from '../slices/authSlice';
 import { useParams } from 'react-router-dom';
 import { Tabs } from 'antd';
@@ -17,7 +14,7 @@ import { useGetListComponentOfProductQuery, useGetListProductCreatedByUserQuery 
 import ButtonGroup from 'antd/es/button/button-group';
 
 const ProfileScreen = () => {
-
+    const [user, setUser] = useState('');
     const [phone, setPhone] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -63,6 +60,7 @@ const ProfileScreen = () => {
 
 
     console.log('product:', product);
+
     const [updateProfile, { isLoading: loadingUpdateProfile }] =
         useProfileMutation();
 
@@ -100,6 +98,15 @@ const ProfileScreen = () => {
                     <h2>User Profile</h2>
 
                     <Form onSubmit={submitHandler}>
+                        <Form.Group className='my-2' controlId='user'>
+                            <Form.Label>Name</Form.Label>
+                            <Form.Control
+                                type='user'
+                                placeholder='Enter user'
+                                value={user}
+                                onChange={(e) => setUser(e.target.value)}
+                            ></Form.Control>
+                        </Form.Group>
 
                         <Form.Group className='my-2' controlId='email'>
                             <Form.Label>Email Address</Form.Label>

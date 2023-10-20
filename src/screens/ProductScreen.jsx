@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -18,6 +18,7 @@ import {
     useGetProductDetailsQuery,
     useCreateReviewMutation,
     useGetListAllComponentQuery,
+    useGetListFeedbackByProductQuery,
 } from '../slices/productsApiSlice';
 import Rating from '../components/Rating';
 import Loader from '../components/Loader';
@@ -45,7 +46,7 @@ const ProductScreen = () => {
         try {
             const res = await addOrderDetailByAccountIdProductIdQuantity({
                 accountId: order.accountId,
-                productId: product.productId,
+                productId: product?.productId,
                 quantity: quantity,
             }).unwrap();
             console.log(res)
@@ -73,23 +74,29 @@ const ProductScreen = () => {
         try {
             await createReview({
                 accountId: order.accountId,
-                productId: product.productId,
+                productId: product?.productId,
                 rating,
                 comment,
             }).unwrap();
-            toast.success('Review created successfully');
+            toast.success('Đánh giá thành công');
         } catch (err) {
             toast.error("Bạn phải mua sản phẩm");
         }
     };
 
+    const { data: getListFeedbackByProduct, refetch } = useGetListFeedbackByProductQuery(product?.productId);
+    useEffect(() => {
+        if (getListFeedbackByProduct) {
+            const intervalId = setInterval(refetch, 1000); // Refresh every 1 seconds
+            return () => clearInterval(intervalId); // Cleanup the interval on component unmount or 'order' change
+        }
+    }, [getListFeedbackByProduct, refetch]);
+
     const { data: getListAllComponent } = useGetListAllComponentQuery();
 
+    const filteredComponents = getListAllComponent?.filter(component => component.productId === product?.productId);
 
-
-    const filteredComponents = getListAllComponent?.filter(component => component.productId === product.productId);
-
-    console.log(productId);
+    console.log(getListFeedbackByProduct);
     return (
         <Container >
             <>
@@ -298,13 +305,13 @@ const ProductScreen = () => {
                                     </Col>
                                     <Col md={6}>
                                         <h2>Reviews</h2>
-                                        {product?.reviews?.length === 0 && <Message>No Reviews</Message>}
+                                        {/* {getListFeedbackByProduct?.length === 0 && <Message>No Reviews</Message>} */}
                                         <ListGroup variant='flush'>
-                                            {product?.reviews?.map((review) => (
-                                                <ListGroup.Item key={review.productId}>
+                                            {getListFeedbackByProduct?.map((review) => (
+                                                <ListGroup.Item key={review}>
                                                     <strong>{review.name}</strong>
                                                     <Rating value={review.rating} />
-                                                    <p>{review.createdAt.substring(0, 10)}</p>
+                                                    {/* <p>{review?.createdAt.substring(0, 10)}</p> */}
                                                     <p>{review.comment}</p>
                                                 </ListGroup.Item>
                                             ))}

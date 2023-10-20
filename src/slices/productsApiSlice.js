@@ -129,6 +129,12 @@ export const productsApiSlice = apiSlice.injectEndpoints({
             }),
             refetchInterval: 1000,
         }),
+        getListFeedbackByProduct : builder.query({
+            query: (productId) => ({
+                url: `/api/Feedback/List-Feedback-By-Product?productId=${productId}`,
+            }),
+            refetchInterval: 1000,
+        }),
     }),
 });
 
@@ -148,5 +154,6 @@ export const {
     useGetCompleteProductMutation,
     useGetListProductCreatedByUserQuery,
     useGetListComponentOfProductQuery,
-    useGetListAllComponentQuery
+    useGetListAllComponentQuery,
+    useGetListFeedbackByProductQuery
 } = productsApiSlice;
