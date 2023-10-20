@@ -136,7 +136,14 @@ export const productsApiSlice = apiSlice.injectEndpoints({
             refetchInterval: 1000,
         }),
 
-        
+        addComponentIntoProduct : builder.mutation({
+            query: (data) => ({
+                url: `/api/Product/Add-Component-Into-Product?productId=${data.productId}&componentId=${data.componentId}&quantity=${data.quantity}`,
+                method: 'POST',
+            }),
+            refetchInterval: 1000,
+        }),
+
     }),
 });
 
@@ -157,5 +164,6 @@ export const {
     useGetListProductCreatedByUserQuery,
     useGetListComponentOfProductQuery,
     useGetListAllComponentQuery,
-    useGetListFeedbackByProductQuery
+    useGetListFeedbackByProductQuery,
+    useAddComponentIntoProductMutation
 } = productsApiSlice;

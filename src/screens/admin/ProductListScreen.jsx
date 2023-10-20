@@ -13,6 +13,7 @@ import {
     useAddComponentMutation,
     useGetListComponentQuery,
     useGetListComponentCreatedBySystemQuery,
+    useAddComponentIntoProductMutation,
 } from '../../slices/productsApiSlice';
 import { toast } from 'react-toastify';
 import { Modal, notification } from 'antd';
@@ -263,69 +264,89 @@ function ProductListScreen(props) {
     };
 
 
-    const MySelectComponent = () => {
-        const [selectedOption, setSelectedOption] = useState('');
-        const { data: getListComponentCreatedBySystem } = useGetListComponentCreatedBySystemQuery();
+    const MySelectComponent = ({ selectedRowID }) => {
+        const [quantity, setQuantity] = useState(0);
+        const [componentId, setComponentId] = useState('');
 
-        const handleOptionChange = (event) => {
-            setSelectedOption(event.target.value);
+        const { data: getListComponentCreatedBySystem } = useGetListComponentCreatedBySystemQuery();
+        const filteredComponents = getListComponentCreatedBySystem?.filter(component => component.productId === selectedRowID);
+
+        const [addComponentIntoProduct] = useAddComponentIntoProductMutation();
+
+        const submitComponent = async (e) => {
+            e.preventDefault();
+            try {
+                await addComponentIntoProduct({
+                    componentId,
+                    productId: selectedRowID,
+                    quantity,
+                }).unwrap();
+                toast.success('thành công');
+            } catch (err) {
+                toast.error("ERRORR");
+            }
         };
 
-        console.log(getListComponentCreatedBySystem);
+        console.log(selectedRowID);
 
         return (
             <Container>
-            <Form onSubmit={submitHandler}>
-                <Form.Group controlId='price' className='mb-4 mt-3'>
-                    <Form.Label>Số lượng</Form.Label>
-                    <Form.Control
-                        type='number'
-                        placeholder='Nhập số lượng'
-                    // value={price}
-                    // onChange={(e) => setPrice(e.target.value)}
-                    ></Form.Control>
-                </Form.Group>
-                <Form.Group>
-                    <Form.Label>Lựa chọn : </Form.Label>
-                    {getListComponentCreatedBySystem ? (
-                        <Select value={selectedOption} onChange={handleOptionChange}>
-                            {getListComponentCreatedBySystem.map((components) => (
-                                <MenuItem key={components.componentId} value={components.componentId}>
-                                    {components.name}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    ) : (
-                        <p>Loading...</p>
-                    )}
+                <Form onSubmit={submitComponent}>
+                    <Form.Group controlId='price' className='mb-4 mt-3'>
+                        <Form.Label>Số lượng</Form.Label>
+                        <Form.Control
+                            type='number'
+                            placeholder='Nhập số lượng'
+                            value={quantity}
+                            onChange={(e) => setQuantity(e.target.value)}
+                        ></Form.Control>
+                    </Form.Group>
+                    <Form.Group>
+                        <Form.Label>Lựa chọn : </Form.Label>
+                        {getListComponentCreatedBySystem ? (
+                            <Select value={componentId} onChange={(e) => setComponentId(e.target.value)}>
+                                {getListComponentCreatedBySystem.map((components) => (
+                                    <MenuItem key={components.componentId} value={components.componentId}>
+                                        {components.name}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        ) : (
+                            <p>Loading...</p>
+                        )}
 
-                    {isLoading ? (
-                        <Loader />
-                    ) : error ? (
-                        <Message variant='danger'>
-                            {error?.data?.message || error.error}
-                        </Message>
-                    ) : (
-                        <Table>
-                            <tbody>
-                                {getListComponentCreatedBySystem && getListComponentCreatedBySystem
-                                    .filter((data) => data.componentId === selectedOption) // Filter the data based on the selected option
-                                    .map((data, index) => (
-                                        <tr key={index}>
-                                            <td>Tên: {data.name}</td>
-                                            <td>Màu sắc: {data.color}</td>
-                                            <td>Chất liệu: {data.material}</td>
-                                            <td>Mô tả: {data.description}</td>
-                                            <td>Trạng thái: {data.isReplacable}</td>
-                                            <td></td>
-                                        </tr>
-                                    ))}
-                            </tbody>
-                        </Table>
-                    )}
-                </Form.Group>
-                             
-            </Form>
+                        {isLoading ? (
+                            <Loader />
+                        ) : error ? (
+                            <Message variant='danger'>
+                                {error?.data?.message || error.error}
+                            </Message>
+                        ) : (
+                            <Table>
+                                <tbody>
+                                    {getListComponentCreatedBySystem && getListComponentCreatedBySystem
+                                        .filter((data) => data.componentId === componentId) // Filter the data based on the selected option
+                                        .map((data, index) => (
+                                            <tr key={index}>
+                                                <td>Tên: {data.name}</td>
+                                                <td>Màu sắc: {data.color}</td>
+                                                <td>Chất liệu: {data.material}</td>
+                                                <td>Mô tả: {data.description}</td>
+                                                <td>Trạng thái: {data.isReplacable}</td>
+                                                <td></td>
+                                            </tr>
+                                        ))}
+                                </tbody>
+                            </Table>
+                        )}
+                    </Form.Group>
+                    <Button
+                        type='submit'
+                        variant='primary'
+                    >
+                        Tạo
+                    </Button>
+                </Form>
             </Container>
         );
     };
@@ -650,7 +671,7 @@ function ProductListScreen(props) {
                                     </Row>
 
 
-                                    ▻ Thêm thành phần: <MySelectComponent />
+                                    ▻ Thêm thành phần: <MySelectComponent selectedRowID={selectedRow.productId} />
 
 
                                 </DialogContent>
