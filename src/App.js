@@ -37,7 +37,7 @@ const App = () => {
         </Container>
       </main> */}
       <Outlet />
-      {/* <Footer /> */}
+      <Footer />
     </>
   );
 };
