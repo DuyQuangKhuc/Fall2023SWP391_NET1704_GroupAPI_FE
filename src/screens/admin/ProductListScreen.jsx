@@ -12,6 +12,7 @@ import {
     useCreateProductMutation,
     useAddComponentMutation,
     useGetListComponentQuery,
+    useGetListComponentCreatedBySystemQuery,
 } from '../../slices/productsApiSlice';
 import { toast } from 'react-toastify';
 import { Modal, notification } from 'antd';
@@ -34,7 +35,7 @@ import { firebaseImgs } from '../../upImgFirebase/firebaseImgs'
 import ComUpImg from '../../components/Input/ComUpImg';
 import FormContainer from '../../components/FormContainer';
 
-const VISIBLE_FIELDS = [ 'productId', 'name', 'imagePath1', 'price', 'uploadDate', 'quantity', 'status'];
+const VISIBLE_FIELDS = ['productId', 'name', 'imagePath1', 'price', 'uploadDate', 'quantity', 'status'];
 
 const options = [
     {
@@ -57,12 +58,12 @@ function ProductListScreen(props) {
     const { data, isLoading, error, refetch } = useGetProductsQuery({
         pageNumber,
     });
-    useEffect(() => {
-        if (data) {
-            const intervalId = setInterval(refetch, 1000); // Refresh every 1 seconds
-            return () => clearInterval(intervalId); // Cleanup the interval on component unmount or 'order' change
-        }
-    }, [data, refetch]);
+    // useEffect(() => {
+    //     if (data) {
+    //         const intervalId = setInterval(refetch, 1000); // Refresh every 1 seconds
+    //         return () => clearInterval(intervalId); // Cleanup the interval on component unmount or 'order' change
+    //     }
+    // }, [data, refetch]);
 
     const getRowId = (row) => row.productId;
 
@@ -166,15 +167,10 @@ function ProductListScreen(props) {
     const CreateProductMessenger = yup.object({
         name: yup.string().required(textApp.CreateProduct.message.name),
         price: yup.number().min(1, textApp.CreateProduct.message.priceMin).typeError(textApp.CreateProduct.message.price),
-        //price1: yup.string().required(textApp.CreateProduct.message.price).min(1, textApp.CreateProduct.message.priceMin).test('no-dots', textApp.CreateProduct.message.priceDecimal, value => !value.includes('.')),
-        //reducedPrice: yup.number().min(1, textApp.CreateProduct.message.priceMin).typeError(textApp.CreateProduct.message.price),
-        //reducedPrice1: yup.string().required(textApp.CreateProduct.message.price).min(1, textApp.CreateProduct.message.priceMin).test('no-dots', textApp.CreateProduct.message.priceDecimal, value => !value.includes('.')),
         quantity: yup.number().min(1, textApp.CreateProduct.message.quantityMin).typeError(textApp.CreateProduct.message.quantity),
         size: yup.string().required(textApp.CreateProduct.message.size),
         durability: yup.string().required(textApp.CreateProduct.message.durability),
-        //material: yup.array().required(textApp.CreateProduct.message.material),
         description: yup.string().required(textApp.CreateProduct.message.description),
-        //imagePath: yup.array().required(textApp.CreateProduct.message.imagePath),
     })
     const createProductRequestDefault = {
         price: "",
@@ -193,7 +189,7 @@ function ProductListScreen(props) {
         },
         values: createProductRequestDefault
     })
-    const { handleSubmit, register, setFocus, watch, setValue } = methods
+    const { handleSubmit, register, setValue } = methods
 
     function isInteger(number) {
         return typeof number === 'number' && isFinite(number) && Math.floor(number) === number;
@@ -209,15 +205,6 @@ function ProductListScreen(props) {
             });
             return
         }
-
-        // if (data.material.length === 0) {
-        //     api["error"]({
-        //         message: textApp.CreateProduct.Notification.m4.message,
-        //         description:
-        //             textApp.CreateProduct.Notification.m4.description
-        //     });
-        //     return
-        // }
         if (imagePath1.length === 0) {
             api["error"]({
                 message: textApp.CreateProduct.Notification.m5.message,
@@ -275,66 +262,71 @@ function ProductListScreen(props) {
         setValue("price", value, { shouldValidate: true });
     };
 
-    const handleValueChange1 = (e, value) => {
-        console.log(value);
-        setValue("reducedPrice", value, { shouldValidate: true });
-    };
-
-    const handleValueChangeSelect = (e, value) => {
-        if (value.length === 0) {
-            setValue("material", null, { shouldValidate: true });
-        } else {
-            setValue("material", value, { shouldValidate: true });
-        }
-    };
-
 
     const MySelectComponent = () => {
         const [selectedOption, setSelectedOption] = useState('');
-        const { data1 } = useGetListComponentQuery();
+        const { data: getListComponentCreatedBySystem } = useGetListComponentCreatedBySystemQuery();
 
         const handleOptionChange = (event) => {
             setSelectedOption(event.target.value);
         };
 
-        console.log(data1);
+        console.log(getListComponentCreatedBySystem);
 
         return (
-            <>
-                {data1 ? (
-                    <Select value={selectedOption} onChange={handleOptionChange}>
-                        {data1.map((components) => (
-                            <MenuItem key={components.componentId} value={components.componentId}>
-                                {components.name}
-                            </MenuItem>
-                        ))}
-                    </Select>
-                ) : (
-                    <p>Loading...</p>
-                )}
+            <Container>
+            <Form onSubmit={submitHandler}>
+                <Form.Group controlId='price' className='mb-4 mt-3'>
+                    <Form.Label>Số lượng</Form.Label>
+                    <Form.Control
+                        type='number'
+                        placeholder='Nhập số lượng'
+                    // value={price}
+                    // onChange={(e) => setPrice(e.target.value)}
+                    ></Form.Control>
+                </Form.Group>
+                <Form.Group>
+                    <Form.Label>Lựa chọn : </Form.Label>
+                    {getListComponentCreatedBySystem ? (
+                        <Select value={selectedOption} onChange={handleOptionChange}>
+                            {getListComponentCreatedBySystem.map((components) => (
+                                <MenuItem key={components.componentId} value={components.componentId}>
+                                    {components.name}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    ) : (
+                        <p>Loading...</p>
+                    )}
 
-                {isLoading ? (
-                    <Loader />
-                ) : error ? (
-                    <Message variant='danger'>
-                        {error?.data?.message || error.error}
-                    </Message>
-                ) : (
-                    <Table>
-                        <tbody>
-                            {data1 && data1
-                                .filter((data) => data.componentId === selectedOption) // Filter the data based on the selected option
-                                .map((data, index) => (
-                                    <tr key={index}>
-                                        <td>{data.color}</td>
-                                        <td>{data.name}</td>
-                                        <td></td>
-                                    </tr>
-                                ))}
-                        </tbody>
-                    </Table>
-                )}
-            </>
+                    {isLoading ? (
+                        <Loader />
+                    ) : error ? (
+                        <Message variant='danger'>
+                            {error?.data?.message || error.error}
+                        </Message>
+                    ) : (
+                        <Table>
+                            <tbody>
+                                {getListComponentCreatedBySystem && getListComponentCreatedBySystem
+                                    .filter((data) => data.componentId === selectedOption) // Filter the data based on the selected option
+                                    .map((data, index) => (
+                                        <tr key={index}>
+                                            <td>Tên: {data.name}</td>
+                                            <td>Màu sắc: {data.color}</td>
+                                            <td>Chất liệu: {data.material}</td>
+                                            <td>Mô tả: {data.description}</td>
+                                            <td>Trạng thái: {data.isReplacable}</td>
+                                            <td></td>
+                                        </tr>
+                                    ))}
+                            </tbody>
+                        </Table>
+                    )}
+                </Form.Group>
+                             
+            </Form>
+            </Container>
         );
     };
 
@@ -449,7 +441,7 @@ function ProductListScreen(props) {
 
                                     </Form.Group>
                                 </div>
-                                
+
                                 <Form.Group className='mx-auto mt-4 max-w-xl mb-3'>
                                     <ComInput
                                         label={textApp.CreateProduct.label.size}
@@ -658,7 +650,7 @@ function ProductListScreen(props) {
                                     </Row>
 
 
-                                    Thêm: <MySelectComponent />
+                                    ▻ Thêm thành phần: <MySelectComponent />
 
 
                                 </DialogContent>
@@ -685,65 +677,6 @@ function ProductListScreen(props) {
                             </Dialog>
                         )}
                     </Box>
-                    {/* <Table striped bordered hover responsive className='table-sm'>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>NAME</th>
-                                <th>PRICE</th>
-                                <th>CATEGORY</th>
-                                <th>BRAND</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {data.map((product) => (
-                                <tr key={product._id}>
-                                    <td>{product._id}</td>
-                                    <td>{product.name}</td>
-                                    <td>${product.price}</td>
-                                    <td>{product.category}</td>
-                                    <td>{product.brand}</td>
-                                    <td>
-                                        <LinkContainer to={`/admin/product/${product._id}/edit`}>
-                                            <Button variant='light' className='btn-sm mx-2'>
-                                                <FaEdit />
-                                            </Button>
-                                        </LinkContainer>
-                                        <Button
-                                            variant='danger'
-                                            className='btn-sm'
-                                            onClick={() => deleteHandler(product._id)}
-                                        >
-                                            <FaTrash style={{ color: 'white' }} />
-                                        </Button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody> 
-                    </Table> */}
-
-
-                    {/* <div className='flex p-5 justify-center'>
-                        <Table
-                            {...props}
-                            columns={columns}
-                            dataSource={data?.data}
-
-                            scroll={{
-                                x: 1520,
-                                // y: 500,
-                            }}
-
-                            pagination={{
-                                showSizeChanger: true, // Hiển thị dropdown cho phép chọn số lượng dữ liệu
-                                pageSizeOptions: ['10', '20', '50', '100'], // Các tùy chọn số lượng dữ liệu
-                            }}
-                        />
-                        
-                    </div> */}
-
-                    {/* <Paginate pages={data.pages} page={data.page} isAdmin={true} /> */}
                 </>
             )}
         </Container>

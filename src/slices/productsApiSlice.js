@@ -67,9 +67,9 @@ export const productsApiSlice = apiSlice.injectEndpoints({
             refetchInterval: 1000,
         }),
 
-        getListComponent: builder.query({
+        getListComponentCreatedBySystem : builder.query({
             query: () => ({
-                url: `/api/Product/List-Component`,
+                url: `/api/Product/List-Component-Created-By-System`,
             }),
             refetchInterval: 1000,
         }),
@@ -135,6 +135,8 @@ export const productsApiSlice = apiSlice.injectEndpoints({
             }),
             refetchInterval: 1000,
         }),
+
+        
     }),
 });
 
@@ -148,7 +150,7 @@ export const {
     useCreateReviewMutation,
     useGetTopProductsQuery,
     useAddComponentMutation,
-    useGetListComponentQuery,
+    useGetListComponentCreatedBySystemQuery,
     useAddProductDetailCloneMutation,
     useGetListComponentOfProductUserCreatingQuery,
     useGetCompleteProductMutation,
