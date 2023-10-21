@@ -60,12 +60,7 @@ function ProductListScreen(props) {
     const { data, isLoading, error, refetch } = useGetProductsQuery({
         pageNumber,
     });
-    // useEffect(() => {
-    //     if (data) {
-    //         const intervalId = setInterval(refetch, 1000); // Refresh every 1 seconds
-    //         return () => clearInterval(intervalId); // Cleanup the interval on component unmount or 'order' change
-    //     }
-    // }, [data, refetch]);
+    
 
     const getRowId = (row) => row.productId;
 
@@ -298,7 +293,7 @@ function ProductListScreen(props) {
                                 <td>{component?.material}</td>
                                 <td>{component?.color}</td>
                                 <td>{component?.description}</td>
-                                <td>{component?.isReplacable}</td>
+                                <td>{component?.isReplacable && component?.isReplacable === 1 ? "Thay đổi" : component?.isReplacable === 0 ? "Cố định" : ""}</td>
                             </tr>
                         ))}
                     </tbody>
@@ -375,7 +370,7 @@ function ProductListScreen(props) {
                                                 <td>Màu sắc: {data.color}</td>
                                                 <td>Chất liệu: {data.material}</td>
                                                 <td>Mô tả: {data.description}</td>
-                                                <td>Trạng thái: {data.isReplacable}</td>
+                                                <td>Trạng thái: {data?.isReplacable && data?.isReplacable === 1 ? "Thay đổi" : data?.isReplacable === 0 ? "Cố định" : ""}</td>
                                                 <td></td>
                                             </tr>
                                         ))}

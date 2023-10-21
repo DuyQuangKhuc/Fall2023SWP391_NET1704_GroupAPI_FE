@@ -244,7 +244,7 @@ const ProductScreen = () => {
                                                     <td>{component?.material}</td>
                                                     <td>{component?.color}</td>
                                                     <td>{component?.description}</td>
-                                                    <td>{component?.isReplacable}</td>
+                                                    <td>{component?.isReplacable && component?.isReplacable === 1 ? "Thay đổi"  : component?.isReplacable === 0 ? "Cố định" : "" }</td>
 
                                                 </tr>
                                             ))}

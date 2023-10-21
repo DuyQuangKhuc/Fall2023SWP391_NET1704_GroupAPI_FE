@@ -31,7 +31,7 @@ const CartScreen = () => {
         if (getListOrderDetailCloneByOrderIdorderId) {
             const intervalId = setInterval(refetch, 1000); // Refresh every 1 seconds
             return () => clearInterval(intervalId); // Cleanup the interval on component unmount or 'order' change
-        }
+        } 
     }, [getListOrderDetailCloneByOrderIdorderId, refetch]);
 
 
@@ -39,8 +39,8 @@ const CartScreen = () => {
     //     dispatch(removeFromCart(id));
     // };
 
-    const [deleteOrderDetail, { isLoading: loadingDelete,  }] = useDeleteOrderDetailMutation();
- 
+    const [deleteOrderDetail, { isLoading: loadingDelete, }] = useDeleteOrderDetailMutation();
+
 
     const deleteHandler = async (orderDetailId) => {
         if (window.confirm('Are you sure ?')) {
@@ -52,7 +52,7 @@ const CartScreen = () => {
         }
     };
 
-    const [deleteAllOrderDetailInOrder ] = useDeleteAllOrderDetailInOrderMutation();
+    const [deleteAllOrderDetailInOrder] = useDeleteAllOrderDetailInOrderMutation();
 
 
     const deleteAllHandler = async (orderId) => {
@@ -68,13 +68,13 @@ const CartScreen = () => {
     const checkoutHandler = () => {
         navigate('/login?redirect=/payment');
     };
-    console.log(getListOrderDetailCloneByOrderIdorderId)
+
     return (
         <Container>
             <Row className='py-3'>
                 <Col md={8}>
                     <h1 style={{ marginBottom: '20px' }}>Shopping Cart</h1>
-                    {getListOrderDetailCloneByOrderIdorderId === undefined || getListOrderDetailCloneByOrderIdorderId.error ? (
+                    {getListOrderDetailCloneByOrderIdorderId?.length === 0 ? (
                         <Message>
                             Your cart is empty <Link to='/'>Go Back</Link>
                         </Message>
@@ -135,7 +135,7 @@ const CartScreen = () => {
                                 <Button
                                     type='button'
                                     className='btn-block'
-                                    disabled={getListOrderDetailCloneByOrderIdorderId === undefined || getListOrderDetailCloneByOrderIdorderId.error}
+                                    disabled={getListOrderDetailCloneByOrderIdorderId?.length === 0}
                                     onClick={checkoutHandler}
                                 >
                                     Đặt hàng

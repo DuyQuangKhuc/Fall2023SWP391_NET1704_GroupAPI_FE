@@ -22,16 +22,8 @@ const Header = () => {
     const [order] = useState(JSON.parse(localStorage.getItem('getOrder')));
 
 
-    const { data: getListOrderDetailCloneByOrderIdorderId, refetch } = useGetListOrderDetailCloneByOrderIdorderIdQuery(order?.orderId ,{
-        refetchInterval: 1000, // Set the interval in milliseconds (e.g., every 5 seconds)
-        enabled: true, // Enable the automatic refetch
-    });
-    useEffect(() => {
-        if (getListOrderDetailCloneByOrderIdorderId) {
-            const intervalId = setInterval(refetch, 1000); // Refresh every 1 seconds
-            return () => clearInterval(intervalId); // Cleanup the interval on component unmount or 'order' change
-        }
-    }, [getListOrderDetailCloneByOrderIdorderId, refetch]);
+    const { data: getListOrderDetailCloneByOrderIdorderId } = useGetListOrderDetailCloneByOrderIdorderIdQuery(order?.orderId);
+
 
 
     const logoutHandler = async () => {

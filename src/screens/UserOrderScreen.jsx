@@ -21,7 +21,7 @@ const UserOrderScreen = () => {
     const [material, setMaterial] = useState('');
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
-    const [color, setColor] = useState(token.colorPrimary);
+    const [color, setColor] = useState();
     const [isReplacable, setIsReplacable] = useState('');
     const [quantity, setQuantity] = useState('');
     const navigate = useNavigate();
@@ -37,12 +37,12 @@ const UserOrderScreen = () => {
         try {
             if (userInfo?.accountId) {
                 const res = await AddProductDetailClone({
-                    accountId: userInfo.accountId,
+                    accountId: userInfo?.accountId,
                     material,
                     quantity,
                     name,
                     description,
-                    color,
+                    color: 1,
                     isReplacable,
                 }).unwrap()
                 toast.success("Tạo thành công");
@@ -57,7 +57,7 @@ const UserOrderScreen = () => {
 
     const Handler = async () => {
         try {
-            const res = await getCompleteProduct(userInfo.accountId);
+            const res = await getCompleteProduct(userInfo?.accountId);
             toast.success("Tạo thành công");
             navigate('/')
         } catch (err) {
@@ -65,7 +65,7 @@ const UserOrderScreen = () => {
         }
     };
 
-    const { data: listComponent,  refetch } = useGetListComponentOfProductUserCreatingQuery(userInfo.accountId);
+    const { data: listComponent,  refetch } = useGetListComponentOfProductUserCreatingQuery(userInfo?.accountId);
     useEffect(() => {
         if (listComponent) {
             const intervalId = setInterval(refetch, 1000); // Refresh every 1 seconds
@@ -131,7 +131,7 @@ const UserOrderScreen = () => {
                             <Form.Group className='my-3' controlId='quantity'>
                                 <Form.Label>Số lượng</Form.Label>
                                 <Form.Control
-                                    type='quantity'
+                                    type='number'
                                     placeholder='Enter quantity'
                                     value={quantity}
                                     onChange={(e) => setQuantity(e.target.value)}
@@ -223,7 +223,7 @@ const UserOrderScreen = () => {
                                         <p>▣ Chất liệu: {component.material}</p>
                                         <p>▣ Số lượng: {component.quantity}</p>
                                         <p>▣ Màu sắc: {component.color}</p>
-                                        <p>▣ Trạng thái: {component.isReplacable}</p>
+                                        <p>▣ Trạng thái: {component?.isReplacable && component?.isReplacable === 1 ? "Thay đổi" : component?.isReplacable === 0 ? "Cố định" : ""}</p>
                                        
                                     </div>
                                     <p>▣ Mô tả: {component.description}</p>

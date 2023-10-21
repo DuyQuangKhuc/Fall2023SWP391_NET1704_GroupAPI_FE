@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import FormContainer from '../components/FormContainer';
 import CheckoutSteps from '../components/CheckoutSteps';
 import { useAddPaymentPromaxMutation, useGetListPaymentMethodQuery } from '../slices/ordersApiSlice';
+import { toast } from 'react-toastify';
 
 const PaymentScreen = () => {
     const navigate = useNavigate();
@@ -36,6 +37,7 @@ const PaymentScreen = () => {
                 voucherId: 1,
             }).unwrap()
             navigate('/');
+            toast.success("Thanh toán thành công");
         } catch (err) {
             console.log(err);
         }
