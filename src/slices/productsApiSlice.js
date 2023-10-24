@@ -155,9 +155,10 @@ export const productsApiSlice = apiSlice.injectEndpoints({
         }),
 
         cancelProductOfUser : builder.mutation({
-            query: (productId) => ({
-                url: `/api/Product/Cancel-Product-Of-User?productId=${productId}`,
+            query: (data) => ({
+                url: `/api/Product/Cancel-Product-Of-User?productId=${data.productId}`,
                 method: 'PUT',
+                body: data,
             }),
             providesTags: ['Product'],
             refetchInterval: 1000,
@@ -171,6 +172,15 @@ export const productsApiSlice = apiSlice.injectEndpoints({
             }),
             refetchInterval: 1000,
             invalidatesTags: ['Products'],
+        }),
+
+        acceptProductOfUser: builder.mutation({
+            query: (data) => ({
+                url: `/api/Product/Accept-Product-Of-User?productId=${data.productId}`,
+                method: 'PUT',
+                body: data,
+            }),
+            refetchInterval: 1000,
         }),
     }),
 });
@@ -196,5 +206,6 @@ export const {
     useAddComponentIntoProductMutation,
     useAcceptProductOfUserFromAdminMutation,
     useCancelProductOfUserMutation,
-    useAcceptProductOfUserFromUserMutation
+    useAcceptProductOfUserFromUserMutation,
+    useAcceptProductOfUserMutation
 } = productsApiSlice;

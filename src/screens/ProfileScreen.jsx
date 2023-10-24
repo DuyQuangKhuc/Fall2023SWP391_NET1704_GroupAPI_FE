@@ -69,6 +69,10 @@ const ProfileScreen = () => {
 
     const filteredListProductOnlyUser2 = getListProductCreatedByUser?.filter(component => component.isDeleted === 2);
 
+    const filteredListProductOnlyUser4 = getListProductCreatedByUser?.filter(component => component.isDeleted === 4);
+
+    const filteredListProductOnlyUser5 = getListProductCreatedByUser?.filter(component => component.isDeleted === 5);
+
     const isDeletedMapping = {
         0: "Đang chờ duyệt",
         1: "Đang chờ phản hồi",
@@ -260,7 +264,8 @@ const ProfileScreen = () => {
                                             <Tab label="Chờ duyệt" value="1" />
                                             <Tab label="Chờ phản hồi" value="2" />
                                             <Tab label="Chờ xét yêu cầu" value="3" />
-                                            <Tab label="Đã hủy" value="4" />
+                                            <Tab label="Đã hoàn thành" value="4" />
+                                            <Tab label="Đã hủy" value="5" />
                                         </TabList>
                                     </Box>
                                     <TabPanel value="1">
@@ -508,7 +513,111 @@ const ProfileScreen = () => {
                                         </Table>
                                     </TabPanel>
 
-                                    <TabPanel value="4"></TabPanel>
+                                    <TabPanel value="4">
+                                        <Table striped hover responsive className='table-sm'>
+                                            <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th>Mã đơn hàng</th>
+                                                    <th>Ngày tạo đơn</th>
+                                                    <th>Trạng thái</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {filteredListProductOnlyUser4?.map((order, index) => (
+                                                    <React.Fragment key={index}>
+                                                        <tr>
+                                                            <td>
+                                                                <ButtonGroup onClick={() => toggleRow(index)}>
+                                                                    {isRowExpanded(index) ? <FaWindowMinimize /> : <FaPlus />}
+                                                                </ButtonGroup>
+                                                            </td>
+                                                            <td><div style={{ padding: '5px', borderRadius: '5px' }}>{order?.productId}</div></td>
+                                                            <td><div style={{ padding: '5px', borderRadius: '5px' }}>{order.uploadDate}</div></td>
+                                                            <td className='align-middle'>
+                                                                <div style={{
+                                                                    backgroundColor: getTabColor(order.isDeleted),
+                                                                    padding: '5px',
+                                                                    color: '#fff',
+                                                                    borderRadius: '5px',
+                                                                    //width: 'fit-content', 
+                                                                }}
+                                                                >
+                                                                    {isDeletedMapping[order.isDeleted]}
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        {isRowExpanded(index) && (
+                                                            getListAllComponent
+                                                                .filter((id) => id.componentId === order?.productId)
+                                                                .map((id, subIndex) => (
+                                                                    <div key={subIndex}>
+                                                                        <td>{id?.name}</td>
+                                                                        <td>{id?.material}</td>
+                                                                        <td>{id?.description}</td>
+                                                                        <td>{id?.color}</td>
+                                                                        <td>{id?.isReplacable}</td>
+                                                                    </div>
+                                                                ))
+                                                        )}
+                                                    </React.Fragment>
+                                                ))}
+                                            </tbody>
+                                        </Table>
+                                    </TabPanel>
+
+                                    <TabPanel value="5">
+                                        <Table striped hover responsive className='table-sm'>
+                                            <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th>Mã đơn hàng</th>
+                                                    <th>Ngày tạo đơn</th>
+                                                    <th>Trạng thái</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {filteredListProductOnlyUser5?.map((order, index) => (
+                                                    <React.Fragment key={index}>
+                                                        <tr>
+                                                            <td>
+                                                                <ButtonGroup onClick={() => toggleRow(index)}>
+                                                                    {isRowExpanded(index) ? <FaWindowMinimize /> : <FaPlus />}
+                                                                </ButtonGroup>
+                                                            </td>
+                                                            <td><div style={{ padding: '5px', borderRadius: '5px' }}>{order?.productId}</div></td>
+                                                            <td><div style={{ padding: '5px', borderRadius: '5px' }}>{order.uploadDate}</div></td>
+                                                            <td className='align-middle'>
+                                                                <div style={{
+                                                                    backgroundColor: getTabColor(order.isDeleted),
+                                                                    padding: '5px',
+                                                                    color: '#fff',
+                                                                    borderRadius: '5px',
+                                                                    //width: 'fit-content', 
+                                                                }}
+                                                                >
+                                                                    {isDeletedMapping[order.isDeleted]}
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        {isRowExpanded(index) && (
+                                                            getListAllComponent
+                                                                .filter((id) => id.componentId === order?.productId)
+                                                                .map((id, subIndex) => (
+                                                                    <div key={subIndex}>
+                                                                        <td>{id?.name}</td>
+                                                                        <td>{id?.material}</td>
+                                                                        <td>{id?.description}</td>
+                                                                        <td>{id?.color}</td>
+                                                                        <td>{id?.isReplacable}</td>
+                                                                    </div>
+                                                                ))
+                                                        )}
+                                                    </React.Fragment>
+                                                ))}
+                                            </tbody>
+                                        </Table>
+                                    </TabPanel>
                                 </TabContext>
                             </Box>
                         </TabPane>

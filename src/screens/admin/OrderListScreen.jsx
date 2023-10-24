@@ -13,7 +13,7 @@ import TabPanel from '@mui/lab/TabPanel';
 import { useState } from 'react';
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@material-ui/core';
 
-import { useAcceptProductOfUserFromAdminMutation, useCancelProductOfUserMutation } from '../../slices/productsApiSlice';
+import { useAcceptProductOfUserFromAdminMutation, useAcceptProductOfUserMutation, useCancelProductOfUserMutation } from '../../slices/productsApiSlice';
 import { useEffect } from 'react';
 import { toast } from 'react-toastify';
 
@@ -97,6 +97,20 @@ const OrderListScreen = () => {
 
     };
 
+    const [acceptProductOfUser] = useAcceptProductOfUserMutation();
+
+    const submitHandler3 = async (productId) => {
+        try {
+            const res = await acceptProductOfUser({
+                productId: productId,
+            }).unwrap();     
+            toast.success('thành công');
+        } catch (err) {
+            toast.error("lỗi");
+        }
+
+    };
+
     const [cancelProductOfUser] = useCancelProductOfUserMutation();
 
     const submitHandler2 = async (productId) => {
@@ -105,11 +119,11 @@ const OrderListScreen = () => {
                 const res = await cancelProductOfUser({
                     productId: productId,
                 }).unwrap();
-                console.log(productId);
                 toast.success('Xóa thành công');
                 handleClose()
             } catch (err) {
                 toast.error("lỗi");
+                
             }
         }
     };
@@ -125,7 +139,8 @@ const OrderListScreen = () => {
                             <Tab label="Chờ duyệt" value="1" />
                             <Tab label="Chờ phản hồi" value="2" />
                             <Tab label="Xét duyệt lại giá khách hàng đưa ra" value="3" />
-                            <Tab label="Đã hủy" value="4" />
+                            <Tab label="Đã hoàn thành" value="4" />
+                            <Tab label="Đã hủy" value="5" />
                         </TabList>
                     </Box>
                     <TabPanel value="1">
@@ -254,9 +269,10 @@ const OrderListScreen = () => {
                                                     {isDeletedMapping[row.isDeleted]}
                                                 </div>
                                             </TableCell>
-                                            <TableCell><Button variant='outline-success' className='mx-1'>
-                                                <FaCheck style={{ color: 'green' }} />
-                                            </Button>
+                                            <TableCell>
+                                                <Button variant='outline-success' className='mx-1' onClick={() => submitHandler3(row.productId)}>
+                                                    <FaCheck style={{ color: 'green' }} />
+                                                </Button>
 
                                                 <Dialog open={open} onClose={handleClose}>
                                                     <DialogTitle>Thương lượng lại giá</DialogTitle>
@@ -300,6 +316,9 @@ const OrderListScreen = () => {
                     </TabPanel>
 
                     <TabPanel value="4"></TabPanel>
+
+                    <TabPanel value="4"></TabPanel>
+                    
                 </TabContext>
             </Box>
         </Container>
