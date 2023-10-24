@@ -71,7 +71,7 @@ function ProductListScreen(props) {
                 if (field === 'imagePath1') {
                     return {
                         field,
-                        headerName: field.toUpperCase(),
+                        headerName: 'Ảnh',
                         width: 150,
                         sortable: true,
                         filterable: true,
@@ -79,13 +79,35 @@ function ProductListScreen(props) {
                             <div onClick={() => handleCellClick(params)}>
                                 <img src={params.value} alt={params.value} style={{ width: '50px', height: '50px' }} />
                             </div>
-
                         ),
                     };
                 } else {
+                    let headerName;
+                    switch (field) {
+                        case 'productId':
+                            headerName = 'ID';
+                            break;
+                        case 'name':
+                            headerName = 'Tên sản phẩm';
+                            break;
+                        case 'price':
+                            headerName = 'Giá';
+                            break;
+                        case 'uploadDate':
+                            headerName = 'Ngày đăng';
+                            break;
+                        case 'quantity':
+                            headerName = 'Số lượng';
+                            break;
+                        case 'status':
+                            headerName = 'Trạng thái';
+                            break;
+                        default:
+                            headerName = '';
+                    }
                     return {
                         field,
-                        headerName: field.toUpperCase(),
+                        headerName,
                         width: 170,
                         sortable: true,
                         filterable: true,
@@ -670,6 +692,7 @@ function ProductListScreen(props) {
                                 },
                             }}
                             onCellClick={handleCellClick}
+                            
                         />
 
                         {selectedRow && (

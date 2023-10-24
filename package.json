@@ -12,6 +12,7 @@
     "@hookform/resolvers": "^3.3.1",
     "@material-ui/core": "^4.12.4",
     "@mui/icons-material": "^5.14.11",
+    "@mui/lab": "^5.0.0-alpha.149",
     "@mui/x-data-grid-generator": "^6.16.1",
     "@paypal/react-paypal-js": "^8.1.3",
     "@reduxjs/toolkit": "^1.9.7",

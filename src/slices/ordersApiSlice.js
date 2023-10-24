@@ -38,9 +38,9 @@ export const orderApiSlice = apiSlice.injectEndpoints({
             keepUnusedDataFor: 5,
             refetchInterval: 1000,
         }),
-        getOrders: builder.query({
+        getListProductOnlyUser : builder.query({
             query: () => ({
-                url: ORDERS_URL,
+                url: `/api/Product/List-Product-Only-User`,
             }),
             keepUnusedDataFor: 5,
             refetchInterval: 1000,
@@ -134,7 +134,7 @@ export const {
     usePayOrderMutation,
     useGetPaypalClientIdQuery,
     useGetMyOrdersQuery,
-    useGetOrdersQuery,
+    useGetListProductOnlyUserQuery,
     useDeliverOrderMutation,
     useGetOrderIsUsingByAccountIdQuery,
     useAddOrderDetailByAccountIdProductIdQuantityMutation,
@@ -144,5 +144,5 @@ export const {
     useDeleteAllOrderDetailInOrderMutation,
     useGetListPaymentMethodQuery,
     useAddPaymentPromaxMutation,
-    useGetListOrderOfUserQuery
+    useGetListOrderOfUserQuery,
 } = orderApiSlice;

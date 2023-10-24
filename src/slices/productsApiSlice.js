@@ -143,7 +143,35 @@ export const productsApiSlice = apiSlice.injectEndpoints({
             }),
             refetchInterval: 1000,
         }),
+        
+        acceptProductOfUserFromAdmin: builder.mutation({
+            query: (data) => ({
+                url: `/api/Product/Accept-Product-Of-User-From-Admin?productId=${data.productId}&price=${data.price}`,
+                method: 'PUT',
+                body: data,
+            }),
+            refetchInterval: 1000,
+            invalidatesTags: ['Products'],
+        }),
 
+        cancelProductOfUser : builder.mutation({
+            query: (productId) => ({
+                url: `/api/Product/Cancel-Product-Of-User?productId=${productId}`,
+                method: 'PUT',
+            }),
+            providesTags: ['Product'],
+            refetchInterval: 1000,
+        }),
+
+        acceptProductOfUserFromUser: builder.mutation({
+            query: (data) => ({
+                url: `/api/Product/Accept-Product-Of-User-From-User?productId=${data.productId}&price=${data.price}`,
+                method: 'PUT',
+                body: data,
+            }),
+            refetchInterval: 1000,
+            invalidatesTags: ['Products'],
+        }),
     }),
 });
 
@@ -165,5 +193,8 @@ export const {
     useGetListComponentOfProductQuery,
     useGetListAllComponentQuery,
     useGetListFeedbackByProductQuery,
-    useAddComponentIntoProductMutation
+    useAddComponentIntoProductMutation,
+    useAcceptProductOfUserFromAdminMutation,
+    useCancelProductOfUserMutation,
+    useAcceptProductOfUserFromUserMutation
 } = productsApiSlice;
