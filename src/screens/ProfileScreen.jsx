@@ -85,7 +85,7 @@ const ProfileScreen = () => {
             case 1: // Đang chờ phản hồi của khách hàng
                 return '#d1bd26';
             case 2: // Đang chờ phản hồi của khách hàng
-                return 'red';
+                return '#941313';
             case 3: // Đã hoàn thành
                 return 'green';
             case 4: // Đã hoàn thành
@@ -259,7 +259,7 @@ const ProfileScreen = () => {
                                         <TabList onChange={handleChange} aria-label="tabs">
                                             <Tab label="Chờ duyệt" value="1" />
                                             <Tab label="Chờ phản hồi" value="2" />
-                                            <Tab label="Chờ xử lí" value="3" />
+                                            <Tab label="Chờ xét yêu cầu" value="3" />
                                             <Tab label="Đã hủy" value="4" />
                                         </TabList>
                                     </Box>
@@ -412,7 +412,101 @@ const ProfileScreen = () => {
                                         </Table>
                                     </TabPanel>
 
-                                    <TabPanel value="3"></TabPanel>
+                                    <TabPanel value="3">
+                                        <Table striped hover responsive className='table-sm'>
+                                            <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th>Mã đơn hàng</th>
+                                                    <th>Giá</th>
+                                                    <th>Ngày tạo đơn</th>
+                                                    <th>Trạng thái</th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {filteredListProductOnlyUser2?.map((order, index) => (
+                                                    <React.Fragment key={index}>
+                                                        <tr>
+                                                            <td className='align-middle'>
+                                                                <ButtonGroup onClick={() => toggleRow(index)}>
+                                                                    {isRowExpanded(index) ? <FaWindowMinimize /> : <FaPlus />}
+                                                                </ButtonGroup>
+                                                            </td>
+                                                            <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order?.productId}</div></td>
+                                                            <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>${order.price}</div></td>
+                                                            <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order.uploadDate}</div></td>
+                                                            <td className='align-middle'>
+                                                                <div style={{
+                                                                    backgroundColor: getTabColor(order.isDeleted),
+                                                                    padding: '5px',
+                                                                    color: '#fff',
+                                                                    borderRadius: '5px',
+                                                                    //width: 'fit-content', 
+                                                                }}
+                                                                >
+                                                                    {isDeletedMapping[order.isDeleted]}
+                                                                </div>
+                                                            </td>
+                                                            <td >
+                                                                <Button variant='outline-success' className='mx-1'>
+                                                                    <FaCheck style={{ color: 'green' }} />
+                                                                </Button>
+
+                                                                <Dialog open={open} onClose={handleClose}>
+                                                                    <DialogTitle>Thương lượng lại giá</DialogTitle>
+                                                                    <DialogContent>
+                                                                        <DialogContentText>
+                                                                            Đưa ra số tiền mà bạn có thể trả
+                                                                        </DialogContentText>
+                                                                        <TextField
+                                                                            autoFocus
+                                                                            margin="dense"
+                                                                            id="number"
+                                                                            label="Nhập số tiền"
+                                                                            type="number"
+                                                                            fullWidth
+                                                                            value={price}
+                                                                            onChange={(e) => setPrice(e.target.value)}
+                                                                        />
+                                                                    </DialogContent>
+                                                                    <DialogActions>
+                                                                        <Button onClick={handleClose}>Thoát</Button>
+                                                                        <Button onClick={(e) => submitHandler1(e, order.productId)}>Gửi hóa đơn</Button>
+                                                                    </DialogActions>
+                                                                </Dialog>
+
+                                                                <Button variant='outline-warning' className='mx-1' onClick={() => handleClickOpen(order.productId)} >
+                                                                    <FaRegEdit style={{ color: '' }} />
+                                                                </Button>
+
+                                                                <Button
+                                                                    variant="outline-danger"
+                                                                    className='mx-1'
+                                                                    onClick={() => submitHandler2(order.productId)}
+                                                                >
+                                                                    <FaTimes style={{ color: '' }} />
+                                                                </Button>
+                                                            </td>
+                                                        </tr>
+                                                        {isRowExpanded(index) && (
+                                                            getListAllComponent
+                                                                .filter((id) => id.componentId === order?.productId)
+                                                                .map((id, subIndex) => (
+                                                                    <div key={subIndex}>
+                                                                        <td>{id?.name}</td>
+                                                                        <td>{id?.material}</td>
+                                                                        <td>{id?.description}</td>
+                                                                        <td>{id?.color}</td>
+                                                                        <td>{id?.isReplacable}</td>
+                                                                    </div>
+                                                                ))
+                                                        )}
+                                                    </React.Fragment>
+                                                ))}
+                                            </tbody>
+                                        </Table>
+                                    </TabPanel>
 
                                     <TabPanel value="4"></TabPanel>
                                 </TabContext>

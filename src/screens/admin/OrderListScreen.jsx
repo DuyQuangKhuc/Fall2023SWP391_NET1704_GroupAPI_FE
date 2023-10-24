@@ -1,6 +1,6 @@
 import { LinkContainer } from 'react-router-bootstrap';
 import { Table, Button, Container, Col } from 'react-bootstrap';
-import { FaCheck, FaTimes } from 'react-icons/fa';
+import { FaCheck, FaRegEdit, FaTimes } from 'react-icons/fa';
 import Message from '../../components/Message';
 import Loader from '../../components/Loader';
 import { useGetListProductOnlyUserQuery } from '../../slices/ordersApiSlice';
@@ -55,7 +55,7 @@ const OrderListScreen = () => {
             case 1: // Đang chờ phản hồi của khách hàng
                 return '#d1bd26';
             case 2: // Đang chờ phản hồi của khách hàng
-                return 'red';
+                return '#941313';
             case 3: // Đã hoàn thành
                 return 'green';
             case 4: // Đã hoàn thành
@@ -124,7 +124,7 @@ const OrderListScreen = () => {
                         <TabList onChange={handleChange} aria-label="tabs">
                             <Tab label="Chờ duyệt" value="1" />
                             <Tab label="Chờ phản hồi" value="2" />
-                            <Tab label="Chờ xử lí" value="3" />
+                            <Tab label="Xét duyệt lại giá khách hàng đưa ra" value="3" />
                             <Tab label="Đã hủy" value="4" />
                         </TabList>
                     </Box>
@@ -254,6 +254,44 @@ const OrderListScreen = () => {
                                                     {isDeletedMapping[row.isDeleted]}
                                                 </div>
                                             </TableCell>
+                                            <TableCell><Button variant='outline-success' className='mx-1'>
+                                                <FaCheck style={{ color: 'green' }} />
+                                            </Button>
+
+                                                <Dialog open={open} onClose={handleClose}>
+                                                    <DialogTitle>Thương lượng lại giá</DialogTitle>
+                                                    <DialogContent>
+                                                        <DialogContentText>
+                                                            Đề xuất lại giá cho khách hàng
+                                                        </DialogContentText>
+                                                        <TextField
+                                                            autoFocus
+                                                            margin="dense"
+                                                            id="number"
+                                                            label="Nhập số tiền"
+                                                            type="number"
+                                                            fullWidth
+                                                            value={price}
+                                                            onChange={(e) => setPrice(e.target.value)}
+                                                        />
+                                                    </DialogContent>
+                                                    <DialogActions>
+                                                        <Button onClick={handleClose}>Thoát</Button>
+                                                        <Button onClick={(e) => submitHandler1(e, row.productId)}>Gửi hóa đơn</Button>
+                                                    </DialogActions>
+                                                </Dialog>
+
+                                                <Button variant='outline-warning' className='mx-1' onClick={() => handleClickOpen(row.productId)} >
+                                                    <FaRegEdit style={{ color: '' }} />
+                                                </Button>
+
+                                                <Button
+                                                    variant="outline-danger"
+                                                    className='mx-1'
+                                                    onClick={() => submitHandler2(row.productId)}
+                                                >
+                                                    <FaTimes style={{ color: '' }} />
+                                                </Button></TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>
