@@ -38,6 +38,12 @@ const OrderListScreen = () => {
 
     const filteredListProductOnlyUser2 = getListProductOnlyUser?.filter(component => component.isDeleted === 2);
 
+    const filteredListProductOnlyUser3 = getListProductOnlyUser?.filter(component => component.isDeleted === 3);
+
+    const filteredListProductOnlyUser4 = getListProductOnlyUser?.filter(component => component.isDeleted === 4);
+
+    const filteredListProductOnlyUser5 = getListProductOnlyUser?.filter(component => component.isDeleted === 5);
+
 
     const isDeletedMapping = {
         0: "Đang chờ duyệt",
@@ -54,14 +60,14 @@ const OrderListScreen = () => {
                 return '#941313';
             case 1: // Đang chờ phản hồi của khách hàng
                 return '#d1bd26';
-            case 2: // Đang chờ phản hồi của khách hàng
+            case 2: // 
                 return '#941313';
-            case 3: // Đã hoàn thành
-                return 'green';
+            case 3: // 
+                return '#cc8d21';
             case 4: // Đã hoàn thành
                 return 'green';
-            case 5: // Đã hoàn thành
-                return 'green';
+            case 5: // Đã hủy
+                return '#9c9583';
             default:
                 return 'default';
         }
@@ -139,8 +145,9 @@ const OrderListScreen = () => {
                             <Tab label="Chờ duyệt" value="1" />
                             <Tab label="Chờ phản hồi" value="2" />
                             <Tab label="Xét duyệt lại giá khách hàng đưa ra" value="3" />
-                            <Tab label="Đã hoàn thành" value="4" />
-                            <Tab label="Đã hủy" value="5" />
+                            <Tab label="Đơn hàng chưa thanh toán" value="4" />
+                            <Tab label="Đã hoàn thành" value="5" />
+                            <Tab label="Đã hủy" value="6" />
                         </TabList>
                     </Box>
                     <TabPanel value="1">
@@ -315,10 +322,101 @@ const OrderListScreen = () => {
                         </TableContainer>
                     </TabPanel>
 
-                    <TabPanel value="4"></TabPanel>
+                    <TabPanel value="4">
+                        <TableContainer>
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>Mã đơn hàng</TableCell>
+                                        <TableCell>ID Tài khoản đặt hàng</TableCell>
+                                        <TableCell>Tổng số tiền</TableCell>
+                                        <TableCell>Ngày đặt hàng</TableCell>
+                                        <TableCell>Trạng thái</TableCell>
+                                        <TableCell></TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {filteredListProductOnlyUser3?.map((row) => (
+                                        <TableRow hover role="checkbox" tabIndex={-1} key={row.productId}>
+                                            <TableCell>{row.productId}</TableCell>
+                                            <TableCell>{row.name}</TableCell>
+                                            <TableCell>${row.price}</TableCell>
+                                            <TableCell>{row.uploadDate}</TableCell>
+                                            <TableCell >
+                                                <div style={{ backgroundColor: getTabColor(row.isDeleted), padding: '5px', color: '#fff', borderRadius: '5px', width: 'fit-content' }}>
+                                                    {isDeletedMapping[row.isDeleted]}
+                                                </div>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    </TabPanel>
 
-                    <TabPanel value="4"></TabPanel>
-                    
+                    <TabPanel value="5">
+                        <TableContainer>
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>Mã đơn hàng</TableCell>
+                                        <TableCell>ID Tài khoản đặt hàng</TableCell>
+                                        <TableCell>Tổng số tiền</TableCell>
+                                        <TableCell>Ngày đặt hàng</TableCell>
+                                        <TableCell>Trạng thái</TableCell>
+                                        <TableCell></TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {filteredListProductOnlyUser4?.map((row) => (
+                                        <TableRow hover role="checkbox" tabIndex={-1} key={row.productId}>
+                                            <TableCell>{row.productId}</TableCell>
+                                            <TableCell>{row.name}</TableCell>
+                                            <TableCell>${row.price}</TableCell>
+                                            <TableCell>{row.uploadDate}</TableCell>
+                                            <TableCell >
+                                                <div style={{ backgroundColor: getTabColor(row.isDeleted), padding: '5px', color: '#fff', borderRadius: '5px', width: 'fit-content' }}>
+                                                    {isDeletedMapping[row.isDeleted]}
+                                                </div>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    </TabPanel>
+
+                    <TabPanel value="6">
+                        <TableContainer>
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>Mã đơn hàng</TableCell>
+                                        <TableCell>ID Tài khoản đặt hàng</TableCell>
+                                        <TableCell>Tổng số tiền</TableCell>
+                                        <TableCell>Ngày đặt hàng</TableCell>
+                                        <TableCell>Trạng thái</TableCell>
+                                        <TableCell></TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {filteredListProductOnlyUser5?.map((row) => (
+                                        <TableRow hover role="checkbox" tabIndex={-1} key={row.productId}>
+                                            <TableCell>{row.productId}</TableCell>
+                                            <TableCell>{row.name}</TableCell>
+                                            <TableCell>${row.price}</TableCell>
+                                            <TableCell>{row.uploadDate}</TableCell>
+                                            <TableCell >
+                                                <div style={{ backgroundColor: getTabColor(row.isDeleted), padding: '5px', color: '#fff', borderRadius: '5px', width: 'fit-content' }}>
+                                                    {isDeletedMapping[row.isDeleted]}
+                                                </div>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    </TabPanel>
                 </TabContext>
             </Box>
         </Container>

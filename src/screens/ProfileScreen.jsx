@@ -69,6 +69,8 @@ const ProfileScreen = () => {
 
     const filteredListProductOnlyUser2 = getListProductCreatedByUser?.filter(component => component.isDeleted === 2);
 
+    const filteredListProductOnlyUser3 = getListProductCreatedByUser?.filter(component => component.isDeleted === 3);
+
     const filteredListProductOnlyUser4 = getListProductCreatedByUser?.filter(component => component.isDeleted === 4);
 
     const filteredListProductOnlyUser5 = getListProductCreatedByUser?.filter(component => component.isDeleted === 5);
@@ -86,16 +88,16 @@ const ProfileScreen = () => {
         switch (status) {
             case 0: // Đang chờ duyệt
                 return '#941313';
-            case 1: // Đang chờ phản hồi của khách hàng
+            case 1: // Đang chờ phản hồi 
                 return '#d1bd26';
-            case 2: // Đang chờ phản hồi của khách hàng
+            case 2: // 
                 return '#941313';
-            case 3: // Đã hoàn thành
-                return 'green';
+            case 3: // 
+                return '#cc8d21';
             case 4: // Đã hoàn thành
                 return 'green';
-            case 5: // Đã hoàn thành
-                return 'green';
+            case 5: // Đã hủy
+                return '#9c9583';
             default:
                 return 'default';
         }
@@ -264,8 +266,9 @@ const ProfileScreen = () => {
                                             <Tab label="Chờ duyệt" value="1" />
                                             <Tab label="Chờ phản hồi" value="2" />
                                             <Tab label="Chờ xét yêu cầu" value="3" />
-                                            <Tab label="Đã hoàn thành" value="4" />
-                                            <Tab label="Đã hủy" value="5" />
+                                            <Tab label="Đơn hàng chưa thanh toán" value="4" />
+                                            <Tab label="Đã thanh toán" value="5" />
+                                            <Tab label="Đã hủy" value="6" />
                                         </TabList>
                                     </Box>
                                     <TabPanel value="1">
@@ -519,12 +522,13 @@ const ProfileScreen = () => {
                                                 <tr>
                                                     <th></th>
                                                     <th>Mã đơn hàng</th>
+                                                    <th>Giá</th>
                                                     <th>Ngày tạo đơn</th>
                                                     <th>Trạng thái</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {filteredListProductOnlyUser4?.map((order, index) => (
+                                                {filteredListProductOnlyUser3?.map((order, index) => (
                                                     <React.Fragment key={index}>
                                                         <tr>
                                                             <td>
@@ -532,8 +536,9 @@ const ProfileScreen = () => {
                                                                     {isRowExpanded(index) ? <FaWindowMinimize /> : <FaPlus />}
                                                                 </ButtonGroup>
                                                             </td>
-                                                            <td><div style={{ padding: '5px', borderRadius: '5px' }}>{order?.productId}</div></td>
-                                                            <td><div style={{ padding: '5px', borderRadius: '5px' }}>{order.uploadDate}</div></td>
+                                                            <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order?.productId}</div></td>
+                                                            <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>${order.price}</div></td>
+                                                            <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order.uploadDate}</div></td>
                                                             <td className='align-middle'>
                                                                 <div style={{
                                                                     backgroundColor: getTabColor(order.isDeleted),
@@ -572,6 +577,62 @@ const ProfileScreen = () => {
                                                 <tr>
                                                     <th></th>
                                                     <th>Mã đơn hàng</th>
+                                                    <th>Giá</th>
+                                                    <th>Ngày tạo đơn</th>
+                                                    <th>Trạng thái</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {filteredListProductOnlyUser4?.map((order, index) => (
+                                                    <React.Fragment key={index}>
+                                                        <tr>
+                                                            <td>
+                                                                <ButtonGroup onClick={() => toggleRow(index)}>
+                                                                    {isRowExpanded(index) ? <FaWindowMinimize /> : <FaPlus />}
+                                                                </ButtonGroup>
+                                                            </td>
+                                                            <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order?.productId}</div></td>
+                                                            <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>${order.price}</div></td>
+                                                            <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order.uploadDate}</div></td>
+                                                            <td className='align-middle'>
+                                                                <div style={{
+                                                                    backgroundColor: getTabColor(order.isDeleted),
+                                                                    padding: '5px',
+                                                                    color: '#fff',
+                                                                    borderRadius: '5px',
+                                                                    //width: 'fit-content', 
+                                                                }}
+                                                                >
+                                                                    {isDeletedMapping[order.isDeleted]}
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        {isRowExpanded(index) && (
+                                                            getListAllComponent
+                                                                .filter((id) => id.componentId === order?.productId)
+                                                                .map((id, subIndex) => (
+                                                                    <div key={subIndex}>
+                                                                        <td>{id?.name}</td>
+                                                                        <td>{id?.material}</td>
+                                                                        <td>{id?.description}</td>
+                                                                        <td>{id?.color}</td>
+                                                                        <td>{id?.isReplacable}</td>
+                                                                    </div>
+                                                                ))
+                                                        )}
+                                                    </React.Fragment>
+                                                ))}
+                                            </tbody>
+                                        </Table>
+                                    </TabPanel>
+
+                                    <TabPanel value="6">
+                                        <Table striped hover responsive className='table-sm'>
+                                            <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th>Mã đơn hàng</th>
+                                                    <th>Giá</th>
                                                     <th>Ngày tạo đơn</th>
                                                     <th>Trạng thái</th>
                                                 </tr>
@@ -585,8 +646,9 @@ const ProfileScreen = () => {
                                                                     {isRowExpanded(index) ? <FaWindowMinimize /> : <FaPlus />}
                                                                 </ButtonGroup>
                                                             </td>
-                                                            <td><div style={{ padding: '5px', borderRadius: '5px' }}>{order?.productId}</div></td>
-                                                            <td><div style={{ padding: '5px', borderRadius: '5px' }}>{order.uploadDate}</div></td>
+                                                            <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order?.productId}</div></td>
+                                                            <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>${order.price}</div></td>
+                                                            <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order.uploadDate}</div></td>
                                                             <td className='align-middle'>
                                                                 <div style={{
                                                                     backgroundColor: getTabColor(order.isDeleted),
