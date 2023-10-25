@@ -72,22 +72,33 @@ const Header = () => {
                     <Navbar.Toggle aria-controls='basic-navbar-nav' />
                     <Navbar.Collapse id='basic-navbar-nav'>
                         <Nav className='ms-auto'>
-                            <SearchBox className="ms-32" />
-                            <LinkContainer to='/cart'>
-                                <Nav.Link>
-                                    <FaShoppingCart /> Đơn hàng
-                                    { getListOrderDetailCloneByOrderIdorderId?.length > 0 && (
-                                        <Badge pill bg='success' style={{ marginLeft: '5px' }}>
-                                            { getListOrderDetailCloneByOrderIdorderId?.reduce((a, c) => a + c.quantity, 0)}
-                                        </Badge>
-                                    )}
-                                </Nav.Link>
-                            </LinkContainer>
-                            <LinkContainer onClick={deleteHandler} to='/order'>
-                                <Nav.Link>
-                                    <MdAddShoppingCart /> Đặt riêng
-                                </Nav.Link>
-                            </LinkContainer>
+                            
+                            {userInfo && userInfo.role === 4 && (
+                                <SearchBox className="ms-32" />
+                            )}
+                            
+                            {userInfo && userInfo.role === 4 && (
+                                <LinkContainer to='/cart'>
+                                    <Nav.Link>
+                                        <FaShoppingCart /> Đơn hàng
+                                        {getListOrderDetailCloneByOrderIdorderId?.length > 0 && (
+                                            <Badge pill bg='success' style={{ marginLeft: '5px' }}>
+                                                {getListOrderDetailCloneByOrderIdorderId?.reduce((a, c) => a + c.quantity, 0)}
+                                            </Badge>
+                                        )}
+                                    </Nav.Link>
+                                </LinkContainer>
+                            )}
+
+
+                            {userInfo && userInfo.role === 4 && (
+                                <LinkContainer onClick={deleteHandler} to='/order'>
+                                    <Nav.Link>
+                                        <MdAddShoppingCart /> Đặt riêng
+                                    </Nav.Link>
+                                </LinkContainer>
+                            )}
+                            
                             {userInfo && userInfo?.role === 4 ? (
                                 <NavDropdown title={userInfo?.email} id='username'>
                                     <LinkContainer to={`/profile/${userInfo.accountId}`}>
