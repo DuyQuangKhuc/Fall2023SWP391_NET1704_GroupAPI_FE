@@ -5,7 +5,7 @@ import { FaCheck, FaTimes, FaPlus, FaWindowMinimize, FaRegEdit } from 'react-ico
 import { toast } from 'react-toastify';
 import Loader from '../components/Loader';
 import { useUpdateUserMutation } from '../slices/usersApiSlice';
-import { useGetListOrderOfUserQuery, useGetMyOrdersQuery } from '../slices/ordersApiSlice';
+import { useAcceptPriceFromProductOfUserMutation, useGetListOrderOfUserQuery, useGetListPaymentMethodQuery, useGetMyOrdersQuery } from '../slices/ordersApiSlice';
 import { setCredentials } from '../slices/authSlice';
 import { useParams } from 'react-router-dom';
 import { Tabs } from 'antd';
@@ -80,7 +80,7 @@ const ProfileScreen = () => {
         1: "Đang chờ phản hồi",
         2: "Đang chờ chấp thuận",
         3: "Chưa thanh toán",
-        4: "Đã hoàn thành",
+        4: "Đã thanh toán",
         5: "Đã hủy"
     };
 
@@ -104,6 +104,7 @@ const ProfileScreen = () => {
     };
 
     const [open, setOpen] = React.useState(false);
+    const [open1, setOpen1] = React.useState(false);
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -112,6 +113,15 @@ const ProfileScreen = () => {
     const handleClose = () => {
         setOpen(false);
     };
+
+    const handleClickOpen1 = () => {
+        setOpen1(true);
+    };
+
+    const handleClose1 = () => {
+        setOpen1(false);
+    };
+
 
     //-----------------------------đang chờ duyệt
     const [price, setPrice] = useState('');
@@ -158,11 +168,9 @@ const ProfileScreen = () => {
     const { data: getListAllComponent } = useGetListAllComponentQuery();
     // const filteredComponents = getListAllComponent?.filter(component => component.productId === product.productId);
 
-
+    
 
     const [updateUser, { isLoading: loadingUpdateProfile }] = useUpdateUserMutation(accountId);
-
-
     useEffect(() => {
         setPhone(userInfo.phone);
         setEmail(userInfo.email);
@@ -189,6 +197,28 @@ const ProfileScreen = () => {
             } catch (err) {
                 toast.error("lỗi");
             }
+        }
+    };
+
+    const [paymentMethodId, setPaymentMethod] = useState('');
+    const [address, setAddress] = useState('');
+
+    const { data: getListPaymentMethod } = useGetListPaymentMethodQuery();
+
+    const [acceptPriceFromProductOfUser] = useAcceptPriceFromProductOfUserMutation();
+
+    const submitHandlerPriceFromProduct = async (e, productId) => {
+        e.preventDefault();
+        try {
+            const res = await acceptPriceFromProductOfUser({
+                productId: productId,
+                paymentMethodId,
+                address,
+            }).unwrap()
+            toast.success("Thanh toán thành công");
+            handleClose1()
+        } catch (err) {
+            console.log(err);
         }
     };
 
@@ -361,9 +391,51 @@ const ProfileScreen = () => {
                                                                 </div>
                                                             </td>
                                                             <td >
-                                                                <Button variant='outline-success' className='mx-1'>
+                                                                <Button variant='outline-success' className='mx-1' onClick={() => handleClickOpen1(order.productId)} >
                                                                     <FaCheck style={{ color: 'green' }} />
                                                                 </Button>
+
+                                                                <Dialog open={open1} onClose={handleClose1}>
+                                                                    <DialogTitle>Thanh toán</DialogTitle>
+                                                                    <DialogContent>
+                                                                        <Form>
+                                                                            <Form.Group style={{ display: 'flex', justifyContent: 'space-between' }} >
+                                                                                <Col md={6}>
+                                                                                    <DialogContentText as='legend' >Thông tin địa chỉ giao hàng</DialogContentText>
+                                                                                    <Form.Group className='my-2' controlId='address'>
+                                                                                        <Form.Label>Address</Form.Label>
+                                                                                        <Form.Control
+                                                                                            type='text'
+                                                                                            placeholder='Enter address'
+                                                                                            value={address}
+                                                                                            required
+                                                                                            onChange={(e) => setAddress(e.target.value)}
+                                                                                        ></Form.Control>
+                                                                                    </Form.Group>
+
+                                                                                </Col>
+                                                                                <Col md={5}>
+                                                                                    <DialogContentText as='legend' >Lựa chọn thanh toán</DialogContentText>
+                                                                                    {getListPaymentMethod && Array?.isArray(getListPaymentMethod) && getListPaymentMethod?.map((payment) => (
+                                                                                        <Form.Check
+                                                                                            key={payment.paymentMethodId}
+                                                                                            className='my-2'
+                                                                                            type='radio'
+                                                                                            label={payment.name}
+                                                                                            name='paymentMethod'
+                                                                                            checked={paymentMethodId === payment.paymentMethodId}
+                                                                                            onChange={() => setPaymentMethod(payment.paymentMethodId)}
+                                                                                        />
+                                                                                    ))}
+                                                                                </Col>
+                                                                            </Form.Group>                                   
+                                                                        </Form>
+                                                                    </DialogContent>
+                                                                    <DialogActions>
+                                                                        <Button onClick={handleClose1}>Thoát</Button>
+                                                                        <Button onClick={(e) => submitHandlerPriceFromProduct(e, order.productId)}> Thanh toán</Button>
+                                                                    </DialogActions>
+                                                                </Dialog>
 
                                                                 <Dialog open={open} onClose={handleClose}>
                                                                     <DialogTitle>Thương lượng lại giá</DialogTitle>

@@ -125,6 +125,15 @@ export const orderApiSlice = apiSlice.injectEndpoints({
             refetchInterval: 1000,
         }),
 
+        acceptPriceFromProductOfUser : builder.mutation({
+            query: (data) => ({
+                url: `/api/Payment/Accept-Price-From-Product-Of-User?productId=${data.productId}&paymentMethodId=${data.paymentMethodId}&address=${data.address}`,
+                method: 'POST',
+                body: data,
+            }),
+            refetchInterval: 1000,
+        }),
+
     }),
 });
 
@@ -145,4 +154,5 @@ export const {
     useGetListPaymentMethodQuery,
     useAddPaymentPromaxMutation,
     useGetListOrderOfUserQuery,
+    useAcceptPriceFromProductOfUserMutation
 } = orderApiSlice;
