@@ -130,10 +130,10 @@ const CartScreen = () => {
                                 <h2>
                                     Tổng {getListOrderDetailCloneByOrderIdorderId?.reduce((acc, item) => acc + item.quantity, 0)} đơn hàng
                                 </h2>
-                                Số tiền : $
-                                {getListOrderDetailCloneByOrderIdorderId
+                                Số tiền : 
+                                {formatCurrency(getListOrderDetailCloneByOrderIdorderId
                                     ?.reduce((acc, item) => acc + item.quantity * item.price, 0)
-                                }
+                                )}
                             </ListGroup.Item>
                             <ListGroup.Item>
                                 <Button
