@@ -203,18 +203,12 @@ const ProductScreen = () => {
                                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                     <Timeline className='review'
                                         items={[
-                                            {
-                                                color: 'green',
-                                                children: `Màu sắc: ${product.color} `,
-                                            },
+                                           
                                             {
                                                 color: 'green',
                                                 children: `Kích cỡ: ${product.size} `,
                                             },
-                                            {
-                                                color: 'green',
-                                                children: `Vật liệu: ${product.material} `,
-                                            },
+                                            
                                             {
                                                 color: 'gray',
                                                 children: (

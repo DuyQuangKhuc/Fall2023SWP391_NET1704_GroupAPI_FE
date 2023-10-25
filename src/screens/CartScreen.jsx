@@ -37,7 +37,7 @@ const CartScreen = () => {
 
     function formatCurrency(number) {
         // Sử dụng hàm toLocaleString() để định dạng số thành chuỗi với ngăn cách hàng nghìn và mặc định là USD.
-        return number.toLocaleString('en-US', {
+        return number?.toLocaleString('en-US', {
             style: 'currency',
             currency: 'VND',
         });
@@ -130,10 +130,7 @@ const CartScreen = () => {
                                 <h2>
                                     Tổng {getListOrderDetailCloneByOrderIdorderId?.reduce((acc, item) => acc + item.quantity, 0)} đơn hàng
                                 </h2>
-                                Số tiền : 
-                                {formatCurrency(getListOrderDetailCloneByOrderIdorderId
-                                    ?.reduce((acc, item) => acc + item.quantity * item.price, 0)
-                                )}
+                                Số tiền : {formatCurrency(getListOrderDetailCloneByOrderIdorderId?.reduce((acc, item) => acc + item.quantity * item.price, 0))}
                             </ListGroup.Item>
                             <ListGroup.Item>
                                 <Button
