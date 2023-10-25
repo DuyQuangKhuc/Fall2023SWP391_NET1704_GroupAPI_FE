@@ -528,46 +528,7 @@ const ProfileScreen = () => {
                                                                     {isDeletedMapping[order.isDeleted]}
                                                                 </div>
                                                             </td>
-                                                            <td >
-                                                                <Button variant='outline-success' className='mx-1'>
-                                                                    <FaCheck style={{ color: 'green' }} />
-                                                                </Button>
-
-                                                                <Dialog open={open} onClose={handleClose}>
-                                                                    <DialogTitle>Thương lượng lại giá</DialogTitle>
-                                                                    <DialogContent>
-                                                                        <DialogContentText>
-                                                                            Đưa ra số tiền mà bạn có thể trả
-                                                                        </DialogContentText>
-                                                                        <TextField
-                                                                            autoFocus
-                                                                            margin="dense"
-                                                                            id="number"
-                                                                            label="Nhập số tiền"
-                                                                            type="number"
-                                                                            fullWidth
-                                                                            value={price}
-                                                                            onChange={(e) => setPrice(e.target.value)}
-                                                                        />
-                                                                    </DialogContent>
-                                                                    <DialogActions>
-                                                                        <Button onClick={handleClose}>Thoát</Button>
-                                                                        <Button onClick={(e) => submitHandler1(e, order.productId)}>Gửi hóa đơn</Button>
-                                                                    </DialogActions>
-                                                                </Dialog>
-
-                                                                <Button variant='outline-warning' className='mx-1' onClick={() => handleClickOpen(order.productId)} >
-                                                                    <FaRegEdit style={{ color: '' }} />
-                                                                </Button>
-
-                                                                <Button
-                                                                    variant="outline-danger"
-                                                                    className='mx-1'
-                                                                    onClick={() => submitHandler2(order.productId)}
-                                                                >
-                                                                    <FaTimes style={{ color: '' }} />
-                                                                </Button>
-                                                            </td>
+                                                
                                                         </tr>
                                                         {isRowExpanded(index) && (
                                                             getListAllComponent
@@ -597,6 +558,7 @@ const ProfileScreen = () => {
                                                     <th>Giá</th>
                                                     <th>Ngày tạo đơn</th>
                                                     <th>Trạng thái</th>
+                                                    <th></th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -622,6 +584,61 @@ const ProfileScreen = () => {
                                                                 >
                                                                     {isDeletedMapping[order.isDeleted]}
                                                                 </div>
+                                                            </td>
+                                                            <td >
+                                                                <Button variant='outline-success' className='mx-1' onClick={() => handleClickOpen1(order.productId)} >
+                                                                    <FaCheck style={{ color: 'green' }} />
+                                                                </Button>
+
+                                                                <Dialog open={open1} onClose={handleClose1}>
+                                                                    <DialogTitle>Thanh toán</DialogTitle>
+                                                                    <DialogContent>
+                                                                        <Form>
+                                                                            <Form.Group style={{ display: 'flex', justifyContent: 'space-between' }} >
+                                                                                <Col md={6}>
+                                                                                    <DialogContentText as='legend' >Thông tin địa chỉ giao hàng</DialogContentText>
+                                                                                    <Form.Group className='my-2' controlId='address'>
+                                                                                        <Form.Label>Address</Form.Label>
+                                                                                        <Form.Control
+                                                                                            type='text'
+                                                                                            placeholder='Enter address'
+                                                                                            value={address}
+                                                                                            required
+                                                                                            onChange={(e) => setAddress(e.target.value)}
+                                                                                        ></Form.Control>
+                                                                                    </Form.Group>
+
+                                                                                </Col>
+                                                                                <Col md={5}>
+                                                                                    <DialogContentText as='legend' >Lựa chọn thanh toán</DialogContentText>
+                                                                                    {getListPaymentMethod && Array?.isArray(getListPaymentMethod) && getListPaymentMethod?.map((payment) => (
+                                                                                        <Form.Check
+                                                                                            key={payment.paymentMethodId}
+                                                                                            className='my-2'
+                                                                                            type='radio'
+                                                                                            label={payment.name}
+                                                                                            name='paymentMethod'
+                                                                                            checked={paymentMethodId === payment.paymentMethodId}
+                                                                                            onChange={() => setPaymentMethod(payment.paymentMethodId)}
+                                                                                        />
+                                                                                    ))}
+                                                                                </Col>
+                                                                            </Form.Group>
+                                                                        </Form>
+                                                                    </DialogContent>
+                                                                    <DialogActions>
+                                                                        <Button onClick={handleClose1}>Thoát</Button>
+                                                                        <Button onClick={(e) => submitHandlerPriceFromProduct(e, order.productId)}> Thanh toán</Button>
+                                                                    </DialogActions>
+                                                                </Dialog>
+
+                                                                <Button
+                                                                    variant="outline-danger"
+                                                                    className='mx-1'
+                                                                    onClick={() => submitHandler2(order.productId)}
+                                                                >
+                                                                    <FaTimes style={{ color: '' }} />
+                                                                </Button>
                                                             </td>
                                                         </tr>
                                                         {isRowExpanded(index) && (
