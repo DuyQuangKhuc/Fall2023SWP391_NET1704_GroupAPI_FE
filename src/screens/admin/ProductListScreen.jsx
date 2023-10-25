@@ -142,6 +142,7 @@ function ProductListScreen(props) {
         if (window.confirm('Are you sure')) {
             try {
                 await deleteProduct(productId);
+                handleCloseDialog()
                 refetch();
             } catch (err) {
                 toast.error(err?.data?.message || err.error);
@@ -156,6 +157,7 @@ function ProductListScreen(props) {
         if (window.confirm('Are you sure you want to create a new product?')) {
             try {
                 await createProduct();
+                handleCancel()
                 refetch();
             } catch (err) {
                 toast.error(err?.data?.message || err.error);

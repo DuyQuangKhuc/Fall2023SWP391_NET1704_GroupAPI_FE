@@ -46,6 +46,13 @@ const ProfileScreen = () => {
             setExpandedRows([...expandedRows, index]);
         }
     };
+    function formatCurrency(number) {
+        // Sử dụng hàm toLocaleString() để định dạng số thành chuỗi với ngăn cách hàng nghìn và mặc định là USD.
+        return number.toLocaleString('en-US', {
+            style: 'currency',
+            currency: 'VND',
+        });
+    }
 
     // Function to check if a row is expanded
     const isRowExpanded = (index) => expandedRows.includes(index);
@@ -376,7 +383,7 @@ const ProfileScreen = () => {
                                                                 </ButtonGroup>
                                                             </td>
                                                             <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order?.productId}</div></td>
-                                                            <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>${order.price}</div></td>
+                                                            <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{formatCurrency(order.price)}</div></td>
                                                             <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order.uploadDate}</div></td>
                                                             <td className='align-middle'>
                                                                 <div style={{
@@ -514,7 +521,7 @@ const ProfileScreen = () => {
                                                                 </ButtonGroup>
                                                             </td>
                                                             <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order?.productId}</div></td>
-                                                            <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>${order.price}</div></td>
+                                                            <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{formatCurrency(order.price)}</div></td>
                                                             <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order.uploadDate}</div></td>
                                                             <td className='align-middle'>
                                                                 <div style={{
@@ -571,7 +578,7 @@ const ProfileScreen = () => {
                                                                 </ButtonGroup>
                                                             </td>
                                                             <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order?.productId}</div></td>
-                                                            <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>${order.price}</div></td>
+                                                            <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{formatCurrency(order.price)}</div></td>
                                                             <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order.uploadDate}</div></td>
                                                             <td className='align-middle'>
                                                                 <div style={{
@@ -681,7 +688,7 @@ const ProfileScreen = () => {
                                                                 </ButtonGroup>
                                                             </td>
                                                             <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order?.productId}</div></td>
-                                                            <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>${order.price}</div></td>
+                                                            <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{formatCurrency(order.price)}</div></td>
                                                             <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order.uploadDate}</div></td>
                                                             <td className='align-middle'>
                                                                 <div style={{
@@ -736,7 +743,7 @@ const ProfileScreen = () => {
                                                                 </ButtonGroup>
                                                             </td>
                                                             <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order?.productId}</div></td>
-                                                            <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>${order.price}</div></td>
+                                                            <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{formatCurrency(order.price)}</div></td>
                                                             <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order.uploadDate}</div></td>
                                                             <td className='align-middle'>
                                                                 <div style={{
@@ -788,7 +795,7 @@ const ProfileScreen = () => {
                                         <tr key={index}>
                                             <td>{order.orderId}</td>
                                             <td>{order.orderDate}</td>
-                                            <td>${order.totalPrice}</td>
+                                            <td>{formatCurrency(order.totalPrice)}</td>
                                             <td>
                                                 {order.status === 1 ? (
                                                     <FaCheck style={{ color: 'green' }} />
