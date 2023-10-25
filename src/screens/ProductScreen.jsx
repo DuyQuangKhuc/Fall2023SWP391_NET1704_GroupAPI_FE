@@ -108,7 +108,7 @@ const ProductScreen = () => {
         <Container >
             <>
                 <Link className='btn btn-light my-3' to='/'>
-                    Go Back
+                    Quay lại
                 </Link>
                 {isLoading ? (
                     <Loader />

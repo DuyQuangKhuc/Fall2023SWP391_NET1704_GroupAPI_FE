@@ -43,7 +43,7 @@ const HomeScreen = () => {
                         <ProductCarousel />
                     ) : (
                         <Link to='/' className='btn btn-light mb-4'>
-                            Go Back
+                            Quay lại
                         </Link>
                     )}
                     {isLoading ? (
@@ -55,7 +55,7 @@ const HomeScreen = () => {
                     ) : (
                         <>
                             <Meta />
-                            <h1>Latest Products</h1>
+                            <h1>Danh sách sản phẩm</h1>
                             <Row>
                                 {/* {data.products.map((product) => ( */}
                                 {data.map((product) => (
