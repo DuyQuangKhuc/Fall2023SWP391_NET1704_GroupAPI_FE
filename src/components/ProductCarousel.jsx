@@ -6,6 +6,14 @@ import { useGetTopProductsQuery } from '../slices/productsApiSlice';
 const ProductCarousel = () => {
     const { data: products, isLoading, error } = useGetTopProductsQuery();
 
+    function formatCurrency(number) {
+        // Sử dụng hàm toLocaleString() để định dạng số thành chuỗi với ngăn cách hàng nghìn và mặc định là USD.
+        return number.toLocaleString('en-US', {
+            style: 'currency',
+            currency: 'VND',
+        });
+    }
+
     return isLoading ? null : error ? (
         <Message variant='danger'>{error?.data?.message || error.error}</Message>
     ) : (
@@ -16,7 +24,7 @@ const ProductCarousel = () => {
                         <Image src={product.imagePath1} alt={product.name} fluid style={{ width: '510px', height: '510px' }} />
                         <Carousel.Caption className='carousel-caption'>
                             <h2 className='text-white text-right'>
-                                {product.name} (${product.price})
+                                {product.name} - {formatCurrency(product.price)}
                             </h2>
                         </Carousel.Caption>
                     </Link>

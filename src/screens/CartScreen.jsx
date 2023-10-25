@@ -35,9 +35,13 @@ const CartScreen = () => {
     }, [getListOrderDetailCloneByOrderIdorderId, refetch]);
 
 
-    // const removeFromCartHandler = (id) => {
-    //     dispatch(removeFromCart(id));
-    // };
+    function formatCurrency(number) {
+        // Sử dụng hàm toLocaleString() để định dạng số thành chuỗi với ngăn cách hàng nghìn và mặc định là USD.
+        return number.toLocaleString('en-US', {
+            style: 'currency',
+            currency: 'VND',
+        });
+    }
 
     const [deleteOrderDetail, { isLoading: loadingDelete, }] = useDeleteOrderDetailMutation();
 

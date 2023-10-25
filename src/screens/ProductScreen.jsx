@@ -57,6 +57,13 @@ const ProductScreen = () => {
         }
     };
 
+    function formatCurrency(number) {
+        // Sử dụng hàm toLocaleString() để định dạng số thành chuỗi với ngăn cách hàng nghìn và mặc định là USD.
+        return number.toLocaleString('en-US', {
+            style: 'currency',
+            currency: 'VND',
+        });
+    }
 
     const {
         data: product,
@@ -127,7 +134,7 @@ const ProductScreen = () => {
                                             text={`${getListFeedbackByProduct?.length} đánh giá`}
                                         />
                                     </ListGroup.Item>
-                                    <ListGroup.Item>Giá: ${product.price}</ListGroup.Item>
+                                    <ListGroup.Item>Giá: {formatCurrency(product.price)}</ListGroup.Item>
                                     <ListGroup.Item>
                                         Mô tả: {product.description}
                                     </ListGroup.Item>
@@ -140,7 +147,7 @@ const ProductScreen = () => {
                                             <Row>
                                                 <Col>Giá:</Col>
                                                 <Col>
-                                                    <strong>${product.price}</strong>
+                                                    <strong>{formatCurrency(product.price)}</strong>
                                                 </Col>
                                             </Row>
                                         </ListGroup.Item>
@@ -244,7 +251,7 @@ const ProductScreen = () => {
                                                     <td>{component?.material}</td>
                                                     <td>{component?.color}</td>
                                                     <td>{component?.description}</td>
-                                                    <td>{component?.isReplacable && component?.isReplacable === 1 ? "Thay đổi"  : component?.isReplacable === 0 ? "Cố định" : "" }</td>
+                                                    <td>{component?.isReplacable && component?.isReplacable === 1 ? "Thay đổi" : component?.isReplacable === 0 ? "Cố định" : ""}</td>
 
                                                 </tr>
                                             ))}
