@@ -104,7 +104,7 @@ const CartScreen = () => {
                                         <Col md={3} className='mt-2'>
                                             <Link to={`/product/${item.productId}`}>{item.name}</Link>
                                         </Col>
-                                        <Col md={2} className='mt-2'>${item.price}</Col>
+                                        <Col md={2} className='mt-2'>{formatCurrency(item.price)}</Col>
                                         <Col md={2} className='mt-2'>Số lượng: {item.quantity}</Col>
                                         <Col md={2}>
                                             <Button
