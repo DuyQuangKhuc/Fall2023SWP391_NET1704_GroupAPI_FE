@@ -61,6 +61,13 @@ function ProductListScreen(props) {
         pageNumber,
     });
     
+    function formatCurrency(number) {
+        // Sử dụng hàm toLocaleString() để định dạng số thành chuỗi với ngăn cách hàng nghìn và mặc định là USD.
+        return number.toLocaleString('en-US', {
+            style: 'currency',
+            currency: 'VND',
+        });
+    }
 
     const getRowId = (row) => row.productId;
 
@@ -713,7 +720,7 @@ function ProductListScreen(props) {
                                                         text={`${selectedRow.numReviews} reviews`}
                                                     />
                                                 </ListGroup.Item>
-                                                <ListGroup.Item>Giá: ${selectedRow.price}</ListGroup.Item>
+                                                        <ListGroup.Item>Giá: {formatCurrency(selectedRow.price)}</ListGroup.Item>
                                                 <ListGroup.Item>
                                                     Mô tả: {selectedRow.description}
                                                 </ListGroup.Item>

@@ -73,6 +73,14 @@ const OrderListScreen = () => {
         }
     };
 
+    function formatCurrency(number) {
+        // Sử dụng hàm toLocaleString() để định dạng số thành chuỗi với ngăn cách hàng nghìn và mặc định là USD.
+        return number.toLocaleString('en-US', {
+            style: 'currency',
+            currency: 'VND',
+        });
+    }
+
     const [open, setOpen] = React.useState(false);
 
     const handleClickOpen = () => {
@@ -237,7 +245,7 @@ const OrderListScreen = () => {
                                         <TableRow hover role="checkbox" tabIndex={-1} key={row.productId}>
                                             <TableCell>{row.productId}</TableCell>
                                             <TableCell>{row.name}</TableCell>
-                                            <TableCell>${row.price}</TableCell>
+                                            <TableCell>{formatCurrency(row.price)}</TableCell>
                                             <TableCell>{row.uploadDate}</TableCell>
                                             <TableCell >
                                                 <div style={{ backgroundColor: getTabColor(row.isDeleted), padding: '5px', color: '#fff', borderRadius: '5px', width: 'fit-content' }}>
@@ -269,7 +277,7 @@ const OrderListScreen = () => {
                                         <TableRow key={row.productId}>
                                             <TableCell>{row.productId}</TableCell>
                                             <TableCell>{row.name}</TableCell>
-                                            <TableCell>${row.price}</TableCell>
+                                            <TableCell>{formatCurrency(row.price)}</TableCell>
                                             <TableCell>{row.uploadDate}</TableCell>
                                             <TableCell >
                                                 <div style={{ backgroundColor: getTabColor(row.isDeleted), padding: '5px', color: '#fff', borderRadius: '5px', width: 'fit-content' }}>
@@ -340,7 +348,7 @@ const OrderListScreen = () => {
                                         <TableRow hover role="checkbox" tabIndex={-1} key={row.productId}>
                                             <TableCell>{row.productId}</TableCell>
                                             <TableCell>{row.name}</TableCell>
-                                            <TableCell>${row.price}</TableCell>
+                                            <TableCell>{formatCurrency(row.price)}</TableCell>
                                             <TableCell>{row.uploadDate}</TableCell>
                                             <TableCell >
                                                 <div style={{ backgroundColor: getTabColor(row.isDeleted), padding: '5px', color: '#fff', borderRadius: '5px', width: 'fit-content' }}>
@@ -372,7 +380,7 @@ const OrderListScreen = () => {
                                         <TableRow hover role="checkbox" tabIndex={-1} key={row.productId}>
                                             <TableCell>{row.productId}</TableCell>
                                             <TableCell>{row.name}</TableCell>
-                                            <TableCell>${row.price}</TableCell>
+                                            <TableCell>{formatCurrency(row.price)}</TableCell>
                                             <TableCell>{row.uploadDate}</TableCell>
                                             <TableCell >
                                                 <div style={{ backgroundColor: getTabColor(row.isDeleted), padding: '5px', color: '#fff', borderRadius: '5px', width: 'fit-content' }}>
@@ -404,7 +412,7 @@ const OrderListScreen = () => {
                                         <TableRow hover role="checkbox" tabIndex={-1} key={row.productId}>
                                             <TableCell>{row.productId}</TableCell>
                                             <TableCell>{row.name}</TableCell>
-                                            <TableCell>${row.price}</TableCell>
+                                            <TableCell>{formatCurrency(row.price)}</TableCell>
                                             <TableCell>{row.uploadDate}</TableCell>
                                             <TableCell >
                                                 <div style={{ backgroundColor: getTabColor(row.isDeleted), padding: '5px', color: '#fff', borderRadius: '5px', width: 'fit-content' }}>
