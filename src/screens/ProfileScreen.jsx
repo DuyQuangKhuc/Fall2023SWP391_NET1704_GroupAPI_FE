@@ -233,11 +233,11 @@ const ProfileScreen = () => {
         <Container className='my-3'>
             <Row>
                 <Col md={3}>
-                    <h2>User Profile</h2>
+                    <h2>Trang cá nhân</h2>
 
                     <Form onSubmit={submitHandler}>
                         <Form.Group className='my-2' controlId='user'>
-                            <Form.Label>Name</Form.Label>
+                            <Form.Label>Tên</Form.Label>
                             <Form.Control
                                 type='user'
                                 placeholder='Enter user'
@@ -247,7 +247,7 @@ const ProfileScreen = () => {
                         </Form.Group>
 
                         <Form.Group className='my-2' controlId='email'>
-                            <Form.Label>Email Address</Form.Label>
+                            <Form.Label>Địa chỉ email</Form.Label>
                             <Form.Control
                                 type='email'
                                 placeholder='Enter email'
@@ -257,7 +257,7 @@ const ProfileScreen = () => {
                         </Form.Group>
 
                         <Form.Group className='my-2' controlId='phone'>
-                            <Form.Label>Phone</Form.Label>
+                            <Form.Label>Số điện thoại</Form.Label>
                             <Form.Control
                                 type='phone'
                                 placeholder='Enter phone'
@@ -267,7 +267,7 @@ const ProfileScreen = () => {
                         </Form.Group>
 
                         <Form.Group className='my-2' controlId='password'>
-                            <Form.Label>Password</Form.Label>
+                            <Form.Label>Mật khẩu</Form.Label>
                             <Form.Control
                                 type='password'
                                 placeholder='Enter password'
@@ -278,7 +278,7 @@ const ProfileScreen = () => {
                         </Form.Group>
 
                         <Form.Group className='my-2' controlId='confirmPassword'>
-                            <Form.Label>New Password</Form.Label>
+                            <Form.Label>Xác nhận mật khẩu</Form.Label>
                             <Form.Control
                                 type='password'
                                 placeholder='Confirm password'
@@ -288,7 +288,7 @@ const ProfileScreen = () => {
                         </Form.Group>
 
                         <Button type='submit' variant='primary'>
-                            Update
+                            Cập nhập
                         </Button>
                         {loadingUpdateProfile && <Loader />}
                     </Form>
