@@ -35,6 +35,7 @@ import { PayPalScriptProvider } from '@paypal/react-paypal-js';
 import Dasboard from './dasboard/Dasboard';
 import UserOrderScreen from './screens/UserOrderScreen';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import VoucherScreen from './screens/VoucherScreen';
 
 
 
@@ -50,6 +51,7 @@ const router = createBrowserRouter(
       />
       <Route path='/product/:productId' element={<ProductScreen />} />
       <Route path='/cart' element={<CartScreen />} />
+      <Route path='/voucher' element={<VoucherScreen />} />
       <Route path='/order' element={<UserOrderScreen />} />
       <Route path='/login' element={<LoginScreen />} />
       <Route path='/register' element={<RegisterScreen />} />

@@ -1,5 +1,5 @@
 import { Navbar, Nav, Container, NavDropdown, Badge } from 'react-bootstrap';
-import { FaShoppingCart, FaUser, } from 'react-icons/fa';
+import { FaShoppingCart, FaTicketAlt, FaUser, } from 'react-icons/fa';
 import { LinkContainer } from 'react-router-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -11,6 +11,7 @@ import { MdAddShoppingCart } from "react-icons/md";
 import { useState } from 'react';
 import { useGetAddProductUserAutomaticMutation, useGetListOrderDetailCloneByOrderIdorderIdQuery } from '../slices/ordersApiSlice';
 import { useEffect } from 'react';
+import { AirplaneTicketTwoTone, CountertopsTwoTone } from '@mui/icons-material';
 
 const Header = () => {
     const { cartItems } = useSelector((state) => state.cart);
@@ -76,6 +77,14 @@ const Header = () => {
                             {userInfo && userInfo.role === 4 && (
                                 <SearchBox className="ms-32" />
                             )}
+
+                            {userInfo && userInfo.role === 4 && (
+                                <LinkContainer to='/voucher'>
+                                    <Nav.Link>
+                                        <FaTicketAlt/> Đổi voucher
+                                    </Nav.Link>
+                                </LinkContainer>
+                            )}
                             
                             {userInfo && userInfo.role === 4 && (
                                 <LinkContainer to='/cart'>
@@ -89,7 +98,6 @@ const Header = () => {
                                     </Nav.Link>
                                 </LinkContainer>
                             )}
-
 
                             {userInfo && userInfo.role === 4 && (
                                 <LinkContainer onClick={deleteHandler} to='/order'>
