@@ -10,7 +10,7 @@ import { setCredentials } from '../slices/authSlice';
 import { useParams } from 'react-router-dom';
 import { Tabs } from 'antd';
 import TabPane from 'antd/es/tabs/TabPane';
-import { useAcceptProductOfUserFromUserMutation, useCancelProductOfUserMutation, useGetListAllComponentQuery, useGetListProductCreatedByUserQuery } from '../slices/productsApiSlice';
+import { useAcceptProductOfUserFromUserMutation, useCancelProductOfUserMutation, useGetListAllComponentQuery, useGetListProductCreatedByUserQuery, useGetVoucherOfUserQuery } from '../slices/productsApiSlice';
 import ButtonGroup from 'antd/es/button/button-group';
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
@@ -18,6 +18,8 @@ import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from '@material-ui/core';
+import VoucherUser from '../components/VoucherUser';
+import { Grid } from '@material-ui/core';
 
 const ProfileScreen = () => {
     const [name, setUser] = useState('');
@@ -59,7 +61,7 @@ const ProfileScreen = () => {
 
     const { id: accountId } = useParams();
 
-    const { data: orders, isLoading, error } = useGetMyOrdersQuery(accountId);
+    const { data: orders, } = useGetMyOrdersQuery(accountId);
 
 
     const { data: getListProductCreatedByUser, refetch } = useGetListProductCreatedByUserQuery(accountId);
@@ -167,7 +169,7 @@ const ProfileScreen = () => {
             }
         }
     };
-//----------------------------------------------
+    //----------------------------------------------
     const { data: getListOrderOfUser } = useGetListOrderOfUserQuery(accountId);
 
     const [product] = useState(JSON.parse(localStorage.getItem('ListProductCreatedByUser')));
@@ -175,7 +177,7 @@ const ProfileScreen = () => {
     const { data: getListAllComponent } = useGetListAllComponentQuery();
     // const filteredComponents = getListAllComponent?.filter(component => component.productId === product.productId);
 
-    
+
 
     const [updateUser, { isLoading: loadingUpdateProfile }] = useUpdateUserMutation(accountId);
     useEffect(() => {
@@ -229,589 +231,612 @@ const ProfileScreen = () => {
         }
     };
 
+    const { data: getVoucherOfUser, refetch: getVoucherOfUserRefetch } = useGetVoucherOfUserQuery(userInfo?.accountId);
+    useEffect(() => {
+        if (getVoucherOfUser) {
+            const intervalId = setInterval(getVoucherOfUserRefetch, 1000); // Refresh every 1 seconds
+            return () => clearInterval(intervalId); // Cleanup the interval on component unmount or 'order' change
+        }
+    }, [getVoucherOfUser, getVoucherOfUserRefetch]);
+
     return (
-        <Container className='my-3'>
-            <Row>
-                <Col md={3}>
-                    <h2>Trang cá nhân</h2>
+        <div className=" max-w-full max-h-full  bg-repeat" style={{
+            backgroundImage: "url('https://img.rawpixel.com/s3fs-private/rawpixel_images/website_content/v1016-a-02-ksh6oqdp.jpg?w=800&dpr=1&fit=default&crop=default&q=65&vib=3&con=3&usm=15&bg=F4F4F3&ixlib=js-2.2.1&s=8bf67d33cc68e3f340e23db016c234dd')",
+            backgroundSize: 'cover',
+            backgroundPosition: 'center center',
+            backgroundRepeat: 'no-repeat',
 
-                    <Form onSubmit={submitHandler}>
-                        <Form.Group className='my-2' controlId='user'>
-                            <Form.Label>Tên</Form.Label>
-                            <Form.Control
-                                type='user'
-                                placeholder='Enter user'
-                                value={name}
-                                onChange={(e) => setUser(e.target.value)}
-                            ></Form.Control>
-                        </Form.Group>
+        }}>
+            <Container>
+                <Row >
+                    <Col md={3} className='mt-3'>
+                        <h2>Trang cá nhân</h2>
 
-                        <Form.Group className='my-2' controlId='email'>
-                            <Form.Label>Địa chỉ email</Form.Label>
-                            <Form.Control
-                                type='email'
-                                placeholder='Enter email'
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                            ></Form.Control>
-                        </Form.Group>
+                        <Form onSubmit={submitHandler} className='mb-3'>
+                            <Form.Group className='my-2' controlId='user'>
+                                <Form.Label>Tên</Form.Label>
+                                <Form.Control
+                                    type='user'
+                                    placeholder='Enter user'
+                                    value={name}
+                                    onChange={(e) => setUser(e.target.value)}
+                                ></Form.Control>
+                            </Form.Group>
 
-                        <Form.Group className='my-2' controlId='phone'>
-                            <Form.Label>Số điện thoại</Form.Label>
-                            <Form.Control
-                                type='phone'
-                                placeholder='Enter phone'
-                                value={phone}
-                                onChange={(e) => setPhone(e.target.value)}
-                            ></Form.Control>
-                        </Form.Group>
+                            <Form.Group className='my-2' controlId='email'>
+                                <Form.Label>Địa chỉ email</Form.Label>
+                                <Form.Control
+                                    type='email'
+                                    placeholder='Enter email'
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                ></Form.Control>
+                            </Form.Group>
 
-                        <Form.Group className='my-2' controlId='password'>
-                            <Form.Label>Mật khẩu</Form.Label>
-                            <Form.Control
-                                type='password'
-                                placeholder='Enter password'
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                required
-                            ></Form.Control>
-                        </Form.Group>
+                            <Form.Group className='my-2' controlId='phone'>
+                                <Form.Label>Số điện thoại</Form.Label>
+                                <Form.Control
+                                    type='phone'
+                                    placeholder='Enter phone'
+                                    value={phone}
+                                    onChange={(e) => setPhone(e.target.value)}
+                                ></Form.Control>
+                            </Form.Group>
 
-                        <Form.Group className='my-2' controlId='confirmPassword'>
-                            <Form.Label>Xác nhận mật khẩu</Form.Label>
-                            <Form.Control
-                                type='password'
-                                placeholder='Confirm password'
-                                value={confirmPassword}
-                                onChange={(e) => setConfirmPassword(e.target.value)}
-                            ></Form.Control>
-                        </Form.Group>
+                            <Form.Group className='my-2' controlId='password'>
+                                <Form.Label>Mật khẩu</Form.Label>
+                                <Form.Control
+                                    type='password'
+                                    placeholder='Enter password'
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    required
+                                ></Form.Control>
+                            </Form.Group>
 
-                        <Button type='submit' variant='primary'>
-                            Cập nhập
-                        </Button>
-                        {loadingUpdateProfile && <Loader />}
-                    </Form>
-                </Col>
-                <Col md={9}>
-                    <Tabs defaultActiveKey='1'>
-                        <TabPane tab=<h4>Lịch sử đặt hàng</h4> key='1'>
-                            <Box sx={{ width: '100%', typography: 'body1' }}>
-                                <TabContext value={value}>
-                                    <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                                        <TabList onChange={handleChange} aria-label="tabs">
-                                            <Tab label="Chờ duyệt" value="1" />
-                                            <Tab label="Chờ phản hồi" value="2" />
-                                            <Tab label="Chờ xét yêu cầu" value="3" />
-                                            <Tab label="Đơn hàng chưa thanh toán" value="4" />
-                                            <Tab label="Đã thanh toán" value="5" />
-                                            <Tab label="Đã hủy" value="6" />
-                                        </TabList>
-                                    </Box>
-                                    <TabPanel value="1">
-                                        <Table striped hover responsive className='table-sm'>
-                                            <thead>
-                                                <tr>
-                                                    <th></th>
-                                                    <th>Mã đơn hàng</th>
-                                                    <th>Ngày tạo đơn</th>
-                                                    <th>Trạng thái</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {filteredListProductOnlyUser?.map((order, index) => (
-                                                    <React.Fragment key={index}>
-                                                        <tr>
-                                                            <td>
-                                                                <ButtonGroup onClick={() => toggleRow(index)}>
-                                                                    {isRowExpanded(index) ? <FaWindowMinimize /> : <FaPlus />}
-                                                                </ButtonGroup>
-                                                            </td>
-                                                            <td><div style={{ padding: '5px', borderRadius: '5px' }}>{order?.productId}</div></td>
-                                                            <td><div style={{  padding: '5px', borderRadius: '5px'}}>{order.uploadDate}</div></td>
-                                                            <td className='align-middle'>
-                                                                <div  style={{
-                                                                    backgroundColor: getTabColor(order.isDeleted), 
-                                                                    padding: '5px', 
-                                                                    color: '#fff', 
-                                                                    borderRadius: '5px', 
-                                                                    //width: 'fit-content', 
-                                                                     }}
+                            <Form.Group className='my-2' controlId='confirmPassword'>
+                                <Form.Label>Xác nhận mật khẩu</Form.Label>
+                                <Form.Control
+                                    type='password'
+                                    placeholder='Confirm password'
+                                    value={confirmPassword}
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                ></Form.Control>
+                            </Form.Group>
+
+                            <Button type='submit' variant='primary'>
+                                Cập nhập
+                            </Button>
+                            {loadingUpdateProfile && <Loader />}
+                        </Form>
+                    </Col>
+                    <Col md={9} className='mt-3'>
+                        <Tabs defaultActiveKey='1'>
+                            <TabPane tab=<h4>Phiếu giảm giá đang có</h4> key='1'>
+                                {getVoucherOfUser?.map((voucher) => (
+                                    <Grid key={voucher.voucherId} md={10} className='p-3'>
+                                        <VoucherUser voucher={voucher} />
+                                    </Grid>
+                                ))}
+                            </TabPane>
+                            <TabPane tab=<h4>Lịch sử đặt hàng</h4> key='2'>
+                                <Box sx={{ width: '100%', typography: 'body1' }}>
+                                    <TabContext value={value}>
+                                        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                                            <TabList onChange={handleChange} aria-label="tabs">
+                                                <Tab label="Chờ duyệt" value="1" />
+                                                <Tab label="Chờ phản hồi" value="2" />
+                                                <Tab label="Chờ xét yêu cầu" value="3" />
+                                                <Tab label="Đơn hàng chưa thanh toán" value="4" />
+                                                <Tab label="Đã thanh toán" value="5" />
+                                                <Tab label="Đã hủy" value="6" />
+                                            </TabList>
+                                        </Box>
+                                        <TabPanel value="1">
+                                            <Table striped hover responsive className='table-sm'>
+                                                <thead>
+                                                    <tr>
+                                                        <th></th>
+                                                        <th>Mã đơn hàng</th>
+                                                        <th>Ngày tạo đơn</th>
+                                                        <th>Trạng thái</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {filteredListProductOnlyUser?.map((order, index) => (
+                                                        <React.Fragment key={index}>
+                                                            <tr>
+                                                                <td>
+                                                                    <ButtonGroup onClick={() => toggleRow(index)}>
+                                                                        {isRowExpanded(index) ? <FaWindowMinimize /> : <FaPlus />}
+                                                                    </ButtonGroup>
+                                                                </td>
+                                                                <td><div style={{ padding: '5px', borderRadius: '5px' }}>{order?.productId}</div></td>
+                                                                <td><div style={{ padding: '5px', borderRadius: '5px' }}>{order.uploadDate}</div></td>
+                                                                <td className='align-middle'>
+                                                                    <div style={{
+                                                                        backgroundColor: getTabColor(order.isDeleted),
+                                                                        padding: '5px',
+                                                                        color: '#fff',
+                                                                        borderRadius: '5px',
+                                                                        //width: 'fit-content', 
+                                                                    }}
                                                                     >
-                                                                    {isDeletedMapping[order.isDeleted]}
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                        {isRowExpanded(index) && (
-                                                            getListAllComponent
-                                                                .filter((id) => id.componentId === order?.productId)
-                                                                .map((id, subIndex) => (
-                                                                    <div key={subIndex}>
-                                                                        <td>{id?.name}</td>
-                                                                        <td>{id?.material}</td>
-                                                                        <td>{id?.description}</td>
-                                                                        <td>{id?.color}</td>
-                                                                        <td>{id?.isReplacable}</td>
+                                                                        {isDeletedMapping[order.isDeleted]}
                                                                     </div>
-                                                                ))
-                                                        )}
-                                                    </React.Fragment>
-                                                ))}
-                                            </tbody>
-                                        </Table>
-                                    </TabPanel>
+                                                                </td>
+                                                            </tr>
+                                                            {isRowExpanded(index) && (
+                                                                getListAllComponent
+                                                                    .filter((id) => id.componentId === order?.productId)
+                                                                    .map((id, subIndex) => (
+                                                                        <div key={subIndex}>
+                                                                            <td>{id?.name}</td>
+                                                                            <td>{id?.material}</td>
+                                                                            <td>{id?.description}</td>
+                                                                            <td>{id?.color}</td>
+                                                                            <td>{id?.isReplacable}</td>
+                                                                        </div>
+                                                                    ))
+                                                            )}
+                                                        </React.Fragment>
+                                                    ))}
+                                                </tbody>
+                                            </Table>
+                                        </TabPanel>
 
-                                    <TabPanel value="2">
-                                        <Table striped hover responsive className='table-sm'>
-                                            <thead>
-                                                <tr>
-                                                    <th></th>
-                                                    <th>Mã đơn hàng</th>
-                                                    <th>Giá</th>
-                                                    <th>Ngày tạo đơn</th>                            
-                                                    <th>Trạng thái</th>
-                                                    <th></th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {filteredListProductOnlyUser1?.map((order, index) => (
-                                                    <React.Fragment key={index}>
-                                                        <tr>
-                                                            <td className='align-middle'>
-                                                                <ButtonGroup onClick={() => toggleRow(index)}>
-                                                                    {isRowExpanded(index) ? <FaWindowMinimize /> : <FaPlus />}
-                                                                </ButtonGroup>
-                                                            </td>
-                                                            <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order?.productId}</div></td>
-                                                            <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{formatCurrency(order.price)}</div></td>
-                                                            <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order.uploadDate}</div></td>
-                                                            <td className='align-middle'>
-                                                                <div style={{
-                                                                    backgroundColor: getTabColor(order.isDeleted),
-                                                                    padding: '5px',
-                                                                    color: '#fff',
-                                                                    borderRadius: '5px',
-                                                                    //width: 'fit-content', 
-                                                                }}
-                                                                >
-                                                                    {isDeletedMapping[order.isDeleted]}
-                                                                </div>
-                                                            </td>
-                                                            <td >
-                                                                <Button variant='outline-success' className='mx-1' onClick={() => handleClickOpen1(order.productId)} >
-                                                                    <FaCheck style={{ color: 'green' }} />
-                                                                </Button>
-
-                                                                <Dialog open={open1} onClose={handleClose1}>
-                                                                    <DialogTitle>Thanh toán</DialogTitle>
-                                                                    <DialogContent>
-                                                                        <Form>
-                                                                            <Form.Group style={{ display: 'flex', justifyContent: 'space-between' }} >
-                                                                                <Col md={6}>
-                                                                                    <DialogContentText as='legend' >Thông tin địa chỉ giao hàng</DialogContentText>
-                                                                                    <Form.Group className='my-2' controlId='address'>
-                                                                                        <Form.Label>Address</Form.Label>
-                                                                                        <Form.Control
-                                                                                            type='text'
-                                                                                            placeholder='Enter address'
-                                                                                            value={address}
-                                                                                            required
-                                                                                            onChange={(e) => setAddress(e.target.value)}
-                                                                                        ></Form.Control>
-                                                                                    </Form.Group>
-
-                                                                                </Col>
-                                                                                <Col md={5}>
-                                                                                    <DialogContentText as='legend' >Lựa chọn thanh toán</DialogContentText>
-                                                                                    {getListPaymentMethod && Array?.isArray(getListPaymentMethod) && getListPaymentMethod?.map((payment) => (
-                                                                                        <Form.Check
-                                                                                            key={payment.paymentMethodId}
-                                                                                            className='my-2'
-                                                                                            type='radio'
-                                                                                            label={payment.name}
-                                                                                            name='paymentMethod'
-                                                                                            checked={paymentMethodId === payment.paymentMethodId}
-                                                                                            onChange={() => setPaymentMethod(payment.paymentMethodId)}
-                                                                                        />
-                                                                                    ))}
-                                                                                </Col>
-                                                                            </Form.Group>                                   
-                                                                        </Form>
-                                                                    </DialogContent>
-                                                                    <DialogActions>
-                                                                        <Button onClick={handleClose1}>Thoát</Button>
-                                                                        <Button onClick={(e) => submitHandlerPriceFromProduct(e, order.productId)}> Thanh toán</Button>
-                                                                    </DialogActions>
-                                                                </Dialog>
-
-                                                                <Dialog open={open} onClose={handleClose}>
-                                                                    <DialogTitle>Thương lượng lại giá</DialogTitle>
-                                                                    <DialogContent>
-                                                                        <DialogContentText>
-                                                                            Đưa ra số tiền mà bạn có thể trả
-                                                                        </DialogContentText>
-                                                                        <TextField
-                                                                            autoFocus
-                                                                            margin="dense"
-                                                                            id="number"
-                                                                            label="Nhập số tiền"
-                                                                            type="number"
-                                                                            fullWidth
-                                                                            value={price}
-                                                                            onChange={(e) => setPrice(e.target.value)}
-                                                                        />
-                                                                    </DialogContent>
-                                                                    <DialogActions>
-                                                                        <Button onClick={handleClose}>Thoát</Button>
-                                                                        <Button onClick={(e) => submitHandler1(e, order.productId)}>Gửi hóa đơn</Button>
-                                                                    </DialogActions>
-                                                                </Dialog>
-
-                                                                <Button variant='outline-warning' className='mx-1' onClick={() => handleClickOpen(order.productId)} >
-                                                                    <FaRegEdit style={{ color: '' }} />
-                                                                </Button>
-
-                                                                <Button
-                                                                    variant="outline-danger"
-                                                                    className='mx-1'
-                                                                    onClick={() => submitHandler2(order.productId)}
-                                                                >
-                                                                    <FaTimes style={{ color: '' }} />
-                                                                </Button>
-                                                            </td>
-                                                        </tr>
-                                                        {isRowExpanded(index) && (
-                                                            getListAllComponent
-                                                                .filter((id) => id.componentId === order?.productId)
-                                                                .map((id, subIndex) => (
-                                                                    <div key={subIndex}>
-                                                                        <td>{id?.name}</td>
-                                                                        <td>{id?.material}</td>
-                                                                        <td>{id?.description}</td>
-                                                                        <td>{id?.color}</td>
-                                                                        <td>{id?.isReplacable}</td>
+                                        <TabPanel value="2">
+                                            <Table striped hover responsive className='table-sm'>
+                                                <thead>
+                                                    <tr>
+                                                        <th></th>
+                                                        <th>Mã đơn hàng</th>
+                                                        <th>Giá</th>
+                                                        <th>Ngày tạo đơn</th>
+                                                        <th>Trạng thái</th>
+                                                        <th></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {filteredListProductOnlyUser1?.map((order, index) => (
+                                                        <React.Fragment key={index}>
+                                                            <tr>
+                                                                <td className='align-middle'>
+                                                                    <ButtonGroup onClick={() => toggleRow(index)}>
+                                                                        {isRowExpanded(index) ? <FaWindowMinimize /> : <FaPlus />}
+                                                                    </ButtonGroup>
+                                                                </td>
+                                                                <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order?.productId}</div></td>
+                                                                <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{formatCurrency(order.price)}</div></td>
+                                                                <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order.uploadDate}</div></td>
+                                                                <td className='align-middle'>
+                                                                    <div style={{
+                                                                        backgroundColor: getTabColor(order.isDeleted),
+                                                                        padding: '5px',
+                                                                        color: '#fff',
+                                                                        borderRadius: '5px',
+                                                                        //width: 'fit-content', 
+                                                                    }}
+                                                                    >
+                                                                        {isDeletedMapping[order.isDeleted]}
                                                                     </div>
-                                                                ))
-                                                        )}
-                                                    </React.Fragment>
-                                                ))}
-                                            </tbody>
-                                        </Table>
-                                    </TabPanel>
+                                                                </td>
+                                                                <td >
+                                                                    <Button variant='outline-success' className='mx-1' onClick={() => handleClickOpen1(order.productId)} >
+                                                                        <FaCheck style={{ color: 'green' }} />
+                                                                    </Button>
 
-                                    <TabPanel value="3">
-                                        <Table striped hover responsive className='table-sm'>
-                                            <thead>
-                                                <tr>
-                                                    <th></th>
-                                                    <th>Mã đơn hàng</th>
-                                                    <th>Giá</th>
-                                                    <th>Ngày tạo đơn</th>
-                                                    <th>Trạng thái</th>
-                                                    <th></th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {filteredListProductOnlyUser2?.map((order, index) => (
-                                                    <React.Fragment key={index}>
-                                                        <tr>
-                                                            <td className='align-middle'>
-                                                                <ButtonGroup onClick={() => toggleRow(index)}>
-                                                                    {isRowExpanded(index) ? <FaWindowMinimize /> : <FaPlus />}
-                                                                </ButtonGroup>
-                                                            </td>
-                                                            <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order?.productId}</div></td>
-                                                            <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{formatCurrency(order.price)}</div></td>
-                                                            <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order.uploadDate}</div></td>
-                                                            <td className='align-middle'>
-                                                                <div style={{
-                                                                    backgroundColor: getTabColor(order.isDeleted),
-                                                                    padding: '5px',
-                                                                    color: '#fff',
-                                                                    borderRadius: '5px',
-                                                                    //width: 'fit-content', 
-                                                                }}
-                                                                >
-                                                                    {isDeletedMapping[order.isDeleted]}
-                                                                </div>
-                                                            </td>
-                                                
-                                                        </tr>
-                                                        {isRowExpanded(index) && (
-                                                            getListAllComponent
-                                                                .filter((id) => id.componentId === order?.productId)
-                                                                .map((id, subIndex) => (
-                                                                    <div key={subIndex}>
-                                                                        <td>{id?.name}</td>
-                                                                        <td>{id?.material}</td>
-                                                                        <td>{id?.description}</td>
-                                                                        <td>{id?.color}</td>
-                                                                        <td>{id?.isReplacable}</td>
+                                                                    <Dialog open={open1} onClose={handleClose1}>
+                                                                        <DialogTitle>Thanh toán</DialogTitle>
+                                                                        <DialogContent>
+                                                                            <Form>
+                                                                                <Form.Group style={{ display: 'flex', justifyContent: 'space-between' }} >
+                                                                                    <Col md={6}>
+                                                                                        <DialogContentText as='legend' >Thông tin địa chỉ giao hàng</DialogContentText>
+                                                                                        <Form.Group className='my-2' controlId='address'>
+                                                                                            <Form.Label>Address</Form.Label>
+                                                                                            <Form.Control
+                                                                                                type='text'
+                                                                                                placeholder='Enter address'
+                                                                                                value={address}
+                                                                                                required
+                                                                                                onChange={(e) => setAddress(e.target.value)}
+                                                                                            ></Form.Control>
+                                                                                        </Form.Group>
+
+                                                                                    </Col>
+                                                                                    <Col md={5}>
+                                                                                        <DialogContentText as='legend' >Lựa chọn thanh toán</DialogContentText>
+                                                                                        {getListPaymentMethod && Array?.isArray(getListPaymentMethod) && getListPaymentMethod?.map((payment) => (
+                                                                                            <Form.Check
+                                                                                                key={payment.paymentMethodId}
+                                                                                                className='my-2'
+                                                                                                type='radio'
+                                                                                                label={payment.name}
+                                                                                                name='paymentMethod'
+                                                                                                checked={paymentMethodId === payment.paymentMethodId}
+                                                                                                onChange={() => setPaymentMethod(payment.paymentMethodId)}
+                                                                                            />
+                                                                                        ))}
+                                                                                    </Col>
+                                                                                </Form.Group>
+                                                                            </Form>
+                                                                        </DialogContent>
+                                                                        <DialogActions>
+                                                                            <Button onClick={handleClose1}>Thoát</Button>
+                                                                            <Button onClick={(e) => submitHandlerPriceFromProduct(e, order.productId)}> Thanh toán</Button>
+                                                                        </DialogActions>
+                                                                    </Dialog>
+
+                                                                    <Dialog open={open} onClose={handleClose}>
+                                                                        <DialogTitle>Thương lượng lại giá</DialogTitle>
+                                                                        <DialogContent>
+                                                                            <DialogContentText>
+                                                                                Đưa ra số tiền mà bạn có thể trả
+                                                                            </DialogContentText>
+                                                                            <TextField
+                                                                                autoFocus
+                                                                                margin="dense"
+                                                                                id="number"
+                                                                                label="Nhập số tiền"
+                                                                                type="number"
+                                                                                fullWidth
+                                                                                value={price}
+                                                                                onChange={(e) => setPrice(e.target.value)}
+                                                                            />
+                                                                        </DialogContent>
+                                                                        <DialogActions>
+                                                                            <Button onClick={handleClose}>Thoát</Button>
+                                                                            <Button onClick={(e) => submitHandler1(e, order.productId)}>Gửi hóa đơn</Button>
+                                                                        </DialogActions>
+                                                                    </Dialog>
+
+                                                                    <Button variant='outline-warning' className='mx-1' onClick={() => handleClickOpen(order.productId)} >
+                                                                        <FaRegEdit style={{ color: '' }} />
+                                                                    </Button>
+
+                                                                    <Button
+                                                                        variant="outline-danger"
+                                                                        className='mx-1'
+                                                                        onClick={() => submitHandler2(order.productId)}
+                                                                    >
+                                                                        <FaTimes style={{ color: '' }} />
+                                                                    </Button>
+                                                                </td>
+                                                            </tr>
+                                                            {isRowExpanded(index) && (
+                                                                getListAllComponent
+                                                                    .filter((id) => id.componentId === order?.productId)
+                                                                    .map((id, subIndex) => (
+                                                                        <div key={subIndex}>
+                                                                            <td>{id?.name}</td>
+                                                                            <td>{id?.material}</td>
+                                                                            <td>{id?.description}</td>
+                                                                            <td>{id?.color}</td>
+                                                                            <td>{id?.isReplacable}</td>
+                                                                        </div>
+                                                                    ))
+                                                            )}
+                                                        </React.Fragment>
+                                                    ))}
+                                                </tbody>
+                                            </Table>
+                                        </TabPanel>
+
+                                        <TabPanel value="3">
+                                            <Table striped hover responsive className='table-sm'>
+                                                <thead>
+                                                    <tr>
+                                                        <th></th>
+                                                        <th>Mã đơn hàng</th>
+                                                        <th>Giá</th>
+                                                        <th>Ngày tạo đơn</th>
+                                                        <th>Trạng thái</th>
+                                                        <th></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {filteredListProductOnlyUser2?.map((order, index) => (
+                                                        <React.Fragment key={index}>
+                                                            <tr>
+                                                                <td className='align-middle'>
+                                                                    <ButtonGroup onClick={() => toggleRow(index)}>
+                                                                        {isRowExpanded(index) ? <FaWindowMinimize /> : <FaPlus />}
+                                                                    </ButtonGroup>
+                                                                </td>
+                                                                <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order?.productId}</div></td>
+                                                                <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{formatCurrency(order.price)}</div></td>
+                                                                <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order.uploadDate}</div></td>
+                                                                <td className='align-middle'>
+                                                                    <div style={{
+                                                                        backgroundColor: getTabColor(order.isDeleted),
+                                                                        padding: '5px',
+                                                                        color: '#fff',
+                                                                        borderRadius: '5px',
+                                                                        //width: 'fit-content', 
+                                                                    }}
+                                                                    >
+                                                                        {isDeletedMapping[order.isDeleted]}
                                                                     </div>
-                                                                ))
-                                                        )}
-                                                    </React.Fragment>
-                                                ))}
-                                            </tbody>
-                                        </Table>
-                                    </TabPanel>
+                                                                </td>
 
-                                    <TabPanel value="4">
-                                        <Table striped hover responsive className='table-sm'>
-                                            <thead>
-                                                <tr>
-                                                    <th></th>
-                                                    <th>Mã đơn hàng</th>
-                                                    <th>Giá</th>
-                                                    <th>Ngày tạo đơn</th>
-                                                    <th>Trạng thái</th>
-                                                    <th></th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {filteredListProductOnlyUser3?.map((order, index) => (
-                                                    <React.Fragment key={index}>
-                                                        <tr>
-                                                            <td>
-                                                                <ButtonGroup onClick={() => toggleRow(index)}>
-                                                                    {isRowExpanded(index) ? <FaWindowMinimize /> : <FaPlus />}
-                                                                </ButtonGroup>
-                                                            </td>
-                                                            <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order?.productId}</div></td>
-                                                            <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{formatCurrency(order.price)}</div></td>
-                                                            <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order.uploadDate}</div></td>
-                                                            <td className='align-middle'>
-                                                                <div style={{
-                                                                    backgroundColor: getTabColor(order.isDeleted),
-                                                                    padding: '5px',
-                                                                    color: '#fff',
-                                                                    borderRadius: '5px',
-                                                                    //width: 'fit-content', 
-                                                                }}
-                                                                >
-                                                                    {isDeletedMapping[order.isDeleted]}
-                                                                </div>
-                                                            </td>
-                                                            <td >
-                                                                <Button variant='outline-success' className='mx-1' onClick={() => handleClickOpen1(order.productId)} >
-                                                                    <FaCheck style={{ color: 'green' }} />
-                                                                </Button>
+                                                            </tr>
+                                                            {isRowExpanded(index) && (
+                                                                getListAllComponent
+                                                                    .filter((id) => id.componentId === order?.productId)
+                                                                    .map((id, subIndex) => (
+                                                                        <div key={subIndex}>
+                                                                            <td>{id?.name}</td>
+                                                                            <td>{id?.material}</td>
+                                                                            <td>{id?.description}</td>
+                                                                            <td>{id?.color}</td>
+                                                                            <td>{id?.isReplacable}</td>
+                                                                        </div>
+                                                                    ))
+                                                            )}
+                                                        </React.Fragment>
+                                                    ))}
+                                                </tbody>
+                                            </Table>
+                                        </TabPanel>
 
-                                                                <Dialog open={open1} onClose={handleClose1}>
-                                                                    <DialogTitle>Thanh toán</DialogTitle>
-                                                                    <DialogContent>
-                                                                        <Form>
-                                                                            <Form.Group style={{ display: 'flex', justifyContent: 'space-between' }} >
-                                                                                <Col md={6}>
-                                                                                    <DialogContentText as='legend' >Thông tin địa chỉ giao hàng</DialogContentText>
-                                                                                    <Form.Group className='my-2' controlId='address'>
-                                                                                        <Form.Label>Address</Form.Label>
-                                                                                        <Form.Control
-                                                                                            type='text'
-                                                                                            placeholder='Enter address'
-                                                                                            value={address}
-                                                                                            required
-                                                                                            onChange={(e) => setAddress(e.target.value)}
-                                                                                        ></Form.Control>
-                                                                                    </Form.Group>
-
-                                                                                </Col>
-                                                                                <Col md={5}>
-                                                                                    <DialogContentText as='legend' >Lựa chọn thanh toán</DialogContentText>
-                                                                                    {getListPaymentMethod && Array?.isArray(getListPaymentMethod) && getListPaymentMethod?.map((payment) => (
-                                                                                        <Form.Check
-                                                                                            key={payment.paymentMethodId}
-                                                                                            className='my-2'
-                                                                                            type='radio'
-                                                                                            label={payment.name}
-                                                                                            name='paymentMethod'
-                                                                                            checked={paymentMethodId === payment.paymentMethodId}
-                                                                                            onChange={() => setPaymentMethod(payment.paymentMethodId)}
-                                                                                        />
-                                                                                    ))}
-                                                                                </Col>
-                                                                            </Form.Group>
-                                                                        </Form>
-                                                                    </DialogContent>
-                                                                    <DialogActions>
-                                                                        <Button onClick={handleClose1}>Thoát</Button>
-                                                                        <Button onClick={(e) => submitHandlerPriceFromProduct(e, order.productId)}> Thanh toán</Button>
-                                                                    </DialogActions>
-                                                                </Dialog>
-
-                                                                <Button
-                                                                    variant="outline-danger"
-                                                                    className='mx-1'
-                                                                    onClick={() => submitHandler2(order.productId)}
-                                                                >
-                                                                    <FaTimes style={{ color: '' }} />
-                                                                </Button>
-                                                            </td>
-                                                        </tr>
-                                                        {isRowExpanded(index) && (
-                                                            getListAllComponent
-                                                                .filter((id) => id.componentId === order?.productId)
-                                                                .map((id, subIndex) => (
-                                                                    <div key={subIndex}>
-                                                                        <td>{id?.name}</td>
-                                                                        <td>{id?.material}</td>
-                                                                        <td>{id?.description}</td>
-                                                                        <td>{id?.color}</td>
-                                                                        <td>{id?.isReplacable}</td>
+                                        <TabPanel value="4">
+                                            <Table striped hover responsive className='table-sm'>
+                                                <thead>
+                                                    <tr>
+                                                        <th></th>
+                                                        <th>Mã đơn hàng</th>
+                                                        <th>Giá</th>
+                                                        <th>Ngày tạo đơn</th>
+                                                        <th>Trạng thái</th>
+                                                        <th></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {filteredListProductOnlyUser3?.map((order, index) => (
+                                                        <React.Fragment key={index}>
+                                                            <tr>
+                                                                <td>
+                                                                    <ButtonGroup onClick={() => toggleRow(index)}>
+                                                                        {isRowExpanded(index) ? <FaWindowMinimize /> : <FaPlus />}
+                                                                    </ButtonGroup>
+                                                                </td>
+                                                                <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order?.productId}</div></td>
+                                                                <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{formatCurrency(order.price)}</div></td>
+                                                                <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order.uploadDate}</div></td>
+                                                                <td className='align-middle'>
+                                                                    <div style={{
+                                                                        backgroundColor: getTabColor(order.isDeleted),
+                                                                        padding: '5px',
+                                                                        color: '#fff',
+                                                                        borderRadius: '5px',
+                                                                        //width: 'fit-content', 
+                                                                    }}
+                                                                    >
+                                                                        {isDeletedMapping[order.isDeleted]}
                                                                     </div>
-                                                                ))
-                                                        )}
-                                                    </React.Fragment>
-                                                ))}
-                                            </tbody>
-                                        </Table>
-                                    </TabPanel>
+                                                                </td>
+                                                                <td >
+                                                                    <Button variant='outline-success' className='mx-1' onClick={() => handleClickOpen1(order.productId)} >
+                                                                        <FaCheck style={{ color: 'green' }} />
+                                                                    </Button>
 
-                                    <TabPanel value="5">
-                                        <Table striped hover responsive className='table-sm'>
-                                            <thead>
-                                                <tr>
-                                                    <th></th>
-                                                    <th>Mã đơn hàng</th>
-                                                    <th>Giá</th>
-                                                    <th>Ngày tạo đơn</th>
-                                                    <th>Trạng thái</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {filteredListProductOnlyUser4?.map((order, index) => (
-                                                    <React.Fragment key={index}>
-                                                        <tr>
-                                                            <td>
-                                                                <ButtonGroup onClick={() => toggleRow(index)}>
-                                                                    {isRowExpanded(index) ? <FaWindowMinimize /> : <FaPlus />}
-                                                                </ButtonGroup>
-                                                            </td>
-                                                            <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order?.productId}</div></td>
-                                                            <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{formatCurrency(order.price)}</div></td>
-                                                            <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order.uploadDate}</div></td>
-                                                            <td className='align-middle'>
-                                                                <div style={{
-                                                                    backgroundColor: getTabColor(order.isDeleted),
-                                                                    padding: '5px',
-                                                                    color: '#fff',
-                                                                    borderRadius: '5px',
-                                                                    //width: 'fit-content', 
-                                                                }}
-                                                                >
-                                                                    {isDeletedMapping[order.isDeleted]}
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                        {isRowExpanded(index) && (
-                                                            getListAllComponent
-                                                                .filter((id) => id.componentId === order?.productId)
-                                                                .map((id, subIndex) => (
-                                                                    <div key={subIndex}>
-                                                                        <td>{id?.name}</td>
-                                                                        <td>{id?.material}</td>
-                                                                        <td>{id?.description}</td>
-                                                                        <td>{id?.color}</td>
-                                                                        <td>{id?.isReplacable}</td>
-                                                                    </div>
-                                                                ))
-                                                        )}
-                                                    </React.Fragment>
-                                                ))}
-                                            </tbody>
-                                        </Table>
-                                    </TabPanel>
+                                                                    <Dialog open={open1} onClose={handleClose1}>
+                                                                        <DialogTitle>Thanh toán</DialogTitle>
+                                                                        <DialogContent>
+                                                                            <Form>
+                                                                                <Form.Group style={{ display: 'flex', justifyContent: 'space-between' }} >
+                                                                                    <Col md={6}>
+                                                                                        <DialogContentText as='legend' >Thông tin địa chỉ giao hàng</DialogContentText>
+                                                                                        <Form.Group className='my-2' controlId='address'>
+                                                                                            <Form.Label>Address</Form.Label>
+                                                                                            <Form.Control
+                                                                                                type='text'
+                                                                                                placeholder='Enter address'
+                                                                                                value={address}
+                                                                                                required
+                                                                                                onChange={(e) => setAddress(e.target.value)}
+                                                                                            ></Form.Control>
+                                                                                        </Form.Group>
 
-                                    <TabPanel value="6">
-                                        <Table striped hover responsive className='table-sm'>
-                                            <thead>
-                                                <tr>
-                                                    <th></th>
-                                                    <th>Mã đơn hàng</th>
-                                                    <th>Giá</th>
-                                                    <th>Ngày tạo đơn</th>
-                                                    <th>Trạng thái</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {filteredListProductOnlyUser5?.map((order, index) => (
-                                                    <React.Fragment key={index}>
-                                                        <tr>
-                                                            <td>
-                                                                <ButtonGroup onClick={() => toggleRow(index)}>
-                                                                    {isRowExpanded(index) ? <FaWindowMinimize /> : <FaPlus />}
-                                                                </ButtonGroup>
-                                                            </td>
-                                                            <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order?.productId}</div></td>
-                                                            <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{formatCurrency(order.price)}</div></td>
-                                                            <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order.uploadDate}</div></td>
-                                                            <td className='align-middle'>
-                                                                <div style={{
-                                                                    backgroundColor: getTabColor(order.isDeleted),
-                                                                    padding: '5px',
-                                                                    color: '#fff',
-                                                                    borderRadius: '5px',
-                                                                    //width: 'fit-content', 
-                                                                }}
-                                                                >
-                                                                    {isDeletedMapping[order.isDeleted]}
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                        {isRowExpanded(index) && (
-                                                            getListAllComponent
-                                                                .filter((id) => id.componentId === order?.productId)
-                                                                .map((id, subIndex) => (
-                                                                    <div key={subIndex}>
-                                                                        <td>{id?.name}</td>
-                                                                        <td>{id?.material}</td>
-                                                                        <td>{id?.description}</td>
-                                                                        <td>{id?.color}</td>
-                                                                        <td>{id?.isReplacable}</td>
+                                                                                    </Col>
+                                                                                    <Col md={5}>
+                                                                                        <DialogContentText as='legend' >Lựa chọn thanh toán</DialogContentText>
+                                                                                        {getListPaymentMethod && Array?.isArray(getListPaymentMethod) && getListPaymentMethod?.map((payment) => (
+                                                                                            <Form.Check
+                                                                                                key={payment.paymentMethodId}
+                                                                                                className='my-2'
+                                                                                                type='radio'
+                                                                                                label={payment.name}
+                                                                                                name='paymentMethod'
+                                                                                                checked={paymentMethodId === payment.paymentMethodId}
+                                                                                                onChange={() => setPaymentMethod(payment.paymentMethodId)}
+                                                                                            />
+                                                                                        ))}
+                                                                                    </Col>
+                                                                                </Form.Group>
+                                                                            </Form>
+                                                                        </DialogContent>
+                                                                        <DialogActions>
+                                                                            <Button onClick={handleClose1}>Thoát</Button>
+                                                                            <Button onClick={(e) => submitHandlerPriceFromProduct(e, order.productId)}> Thanh toán</Button>
+                                                                        </DialogActions>
+                                                                    </Dialog>
+
+                                                                    <Button
+                                                                        variant="outline-danger"
+                                                                        className='mx-1'
+                                                                        onClick={() => submitHandler2(order.productId)}
+                                                                    >
+                                                                        <FaTimes style={{ color: '' }} />
+                                                                    </Button>
+                                                                </td>
+                                                            </tr>
+                                                            {isRowExpanded(index) && (
+                                                                getListAllComponent
+                                                                    .filter((id) => id.componentId === order?.productId)
+                                                                    .map((id, subIndex) => (
+                                                                        <div key={subIndex}>
+                                                                            <td>{id?.name}</td>
+                                                                            <td>{id?.material}</td>
+                                                                            <td>{id?.description}</td>
+                                                                            <td>{id?.color}</td>
+                                                                            <td>{id?.isReplacable}</td>
+                                                                        </div>
+                                                                    ))
+                                                            )}
+                                                        </React.Fragment>
+                                                    ))}
+                                                </tbody>
+                                            </Table>
+                                        </TabPanel>
+
+                                        <TabPanel value="5">
+                                            <Table striped hover responsive className='table-sm'>
+                                                <thead>
+                                                    <tr>
+                                                        <th></th>
+                                                        <th>Mã đơn hàng</th>
+                                                        <th>Giá</th>
+                                                        <th>Ngày tạo đơn</th>
+                                                        <th>Trạng thái</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {filteredListProductOnlyUser4?.map((order, index) => (
+                                                        <React.Fragment key={index}>
+                                                            <tr>
+                                                                <td>
+                                                                    <ButtonGroup onClick={() => toggleRow(index)}>
+                                                                        {isRowExpanded(index) ? <FaWindowMinimize /> : <FaPlus />}
+                                                                    </ButtonGroup>
+                                                                </td>
+                                                                <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order?.productId}</div></td>
+                                                                <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{formatCurrency(order.price)}</div></td>
+                                                                <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order.uploadDate}</div></td>
+                                                                <td className='align-middle'>
+                                                                    <div style={{
+                                                                        backgroundColor: getTabColor(order.isDeleted),
+                                                                        padding: '5px',
+                                                                        color: '#fff',
+                                                                        borderRadius: '5px',
+                                                                        //width: 'fit-content', 
+                                                                    }}
+                                                                    >
+                                                                        {isDeletedMapping[order.isDeleted]}
                                                                     </div>
-                                                                ))
-                                                        )}
-                                                    </React.Fragment>
-                                                ))}
-                                            </tbody>
-                                        </Table>
-                                    </TabPanel>
-                                </TabContext>
-                            </Box>
-                        </TabPane>
-                        <TabPane tab=<h4>Lịch sử mua hàng</h4> key='2'>
-                            <Table striped hover responsive className='table-sm'>
-                                <thead>
-                                    <tr>
-                                        <th>Mã đơn hàng</th>
-                                        <th>Ngày mua hàng</th>
-                                        <th>Tổng số tiền</th>
-                                        <th>Thanh toán</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {getListOrderOfUser && getListOrderOfUser?.map((order, index) => (
-                                        <tr key={index}>
-                                            <td>{order.orderId}</td>
-                                            <td>{order.orderDate}</td>
-                                            <td>{formatCurrency(order.totalPrice)}</td>
-                                            <td>
-                                                {order.status === 1 ? (
-                                                    <FaCheck style={{ color: 'green' }} />
-                                                ) : (
-                                                    <FaTimes style={{ color: 'red' }} />
-                                                )}
-                                            </td>
+                                                                </td>
+                                                            </tr>
+                                                            {isRowExpanded(index) && (
+                                                                getListAllComponent
+                                                                    .filter((id) => id.componentId === order?.productId)
+                                                                    .map((id, subIndex) => (
+                                                                        <div key={subIndex}>
+                                                                            <td>{id?.name}</td>
+                                                                            <td>{id?.material}</td>
+                                                                            <td>{id?.description}</td>
+                                                                            <td>{id?.color}</td>
+                                                                            <td>{id?.isReplacable}</td>
+                                                                        </div>
+                                                                    ))
+                                                            )}
+                                                        </React.Fragment>
+                                                    ))}
+                                                </tbody>
+                                            </Table>
+                                        </TabPanel>
+
+                                        <TabPanel value="6">
+                                            <Table striped hover responsive className='table-sm'>
+                                                <thead>
+                                                    <tr>
+                                                        <th></th>
+                                                        <th>Mã đơn hàng</th>
+                                                        <th>Giá</th>
+                                                        <th>Ngày tạo đơn</th>
+                                                        <th>Trạng thái</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {filteredListProductOnlyUser5?.map((order, index) => (
+                                                        <React.Fragment key={index}>
+                                                            <tr>
+                                                                <td>
+                                                                    <ButtonGroup onClick={() => toggleRow(index)}>
+                                                                        {isRowExpanded(index) ? <FaWindowMinimize /> : <FaPlus />}
+                                                                    </ButtonGroup>
+                                                                </td>
+                                                                <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order?.productId}</div></td>
+                                                                <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{formatCurrency(order.price)}</div></td>
+                                                                <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order.uploadDate}</div></td>
+                                                                <td className='align-middle'>
+                                                                    <div style={{
+                                                                        backgroundColor: getTabColor(order.isDeleted),
+                                                                        padding: '5px',
+                                                                        color: '#fff',
+                                                                        borderRadius: '5px',
+                                                                        //width: 'fit-content', 
+                                                                    }}
+                                                                    >
+                                                                        {isDeletedMapping[order.isDeleted]}
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                            {isRowExpanded(index) && (
+                                                                getListAllComponent
+                                                                    .filter((id) => id.componentId === order?.productId)
+                                                                    .map((id, subIndex) => (
+                                                                        <div key={subIndex}>
+                                                                            <td>{id?.name}</td>
+                                                                            <td>{id?.material}</td>
+                                                                            <td>{id?.description}</td>
+                                                                            <td>{id?.color}</td>
+                                                                            <td>{id?.isReplacable}</td>
+                                                                        </div>
+                                                                    ))
+                                                            )}
+                                                        </React.Fragment>
+                                                    ))}
+                                                </tbody>
+                                            </Table>
+                                        </TabPanel>
+                                    </TabContext>
+                                </Box>
+                            </TabPane>
+                            <TabPane tab=<h4>Lịch sử mua hàng</h4> key='3'>
+                                <Table striped hover responsive className='table-sm'>
+                                    <thead>
+                                        <tr>
+                                            <th>Mã đơn hàng</th>
+                                            <th>Ngày mua hàng</th>
+                                            <th>Tổng số tiền</th>
+                                            <th>Thanh toán</th>
+                                            <th></th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </Table>
-                        </TabPane>
-                    </Tabs>
-                </Col>
-            </Row>
-        </Container>
+                                    </thead>
+                                    <tbody>
+                                        {getListOrderOfUser && getListOrderOfUser?.map((order, index) => (
+                                            <tr key={index}>
+                                                <td>{order.orderId}</td>
+                                                <td>{order.orderDate}</td>
+                                                <td>{formatCurrency(order.totalPrice)}</td>
+                                                <td>
+                                                    {order.status === 1 ? (
+                                                        <FaCheck style={{ color: 'green' }} />
+                                                    ) : (
+                                                        <FaTimes style={{ color: 'red' }} />
+                                                    )}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </Table>
+                            </TabPane>
+                        </Tabs>
+                    </Col>
+                </Row>
+            </Container>
+        </div>
     );
 };
 

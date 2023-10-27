@@ -26,7 +26,7 @@ const UserOrderScreen = () => {
     const [quantity, setQuantity] = useState('');
     const navigate = useNavigate();
     const { userInfo } = useSelector((state) => state.auth);
-    console.log(token.colorPrimary)
+    
 
     const [AddProductDetailClone, { isLoading: loadingaddComponent }] = useAddProductDetailCloneMutation();
 
@@ -46,6 +46,7 @@ const UserOrderScreen = () => {
                     isReplacable,
                 }).unwrap()
                 toast.success("Tạo thành công");
+                console.log(color)
             }
         } catch (err) {
             toast.error("Lỗi");
@@ -154,14 +155,13 @@ const UserOrderScreen = () => {
                                 <Form.Group className='my-3' controlId='color' style={{ display: 'flex', justifyContent: 'space-between' }}>
                                     <div >
                                         <Form.Label >Màu sắc</Form.Label>
-                                        {/* <Form.Control
+                                        <Form.Control
                                         style={{ display: 'flex' }}
                                         type='color'
-                                        placeholder='Confirm color'
                                         value={color}
                                         onChange={(e) => setColor(e.target.value)}
-                                    ></Form.Control> */}
-                                        <ColorPicker style={{ display: 'flex' }} size="large" value={color} onChange={setColor} />
+                                    ></Form.Control>
+                                        {/* <ColorPicker style={{ display: 'flex' }} size="large" value={color} onChange={setColor} /> */}
                                     </div>
 
                                     <div >

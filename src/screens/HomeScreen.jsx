@@ -10,8 +10,7 @@ import ProductCarousel from '../components/ProductCarousel';
 import Meta from '../components/Meta';
 import { useGetOrderIsUsingByAccountIdQuery } from '../slices/ordersApiSlice';
 import { useEffect } from 'react';
-import { useState } from 'react';
-import FloatButton from '../components/FloatButton';
+import { useSelector } from 'react-redux';
 
 const HomeScreen = () => {
     const { pageNumber, keyword } = useParams();
@@ -20,8 +19,8 @@ const HomeScreen = () => {
         keyword,
         pageNumber,
     });
-    const [user] = useState(JSON.parse(localStorage.getItem('userInfo')));
-    const { data: getOrder } = useGetOrderIsUsingByAccountIdQuery(user?.accountId);
+    const { userInfo } = useSelector((state) => state.auth);
+    const { data: getOrder } = useGetOrderIsUsingByAccountIdQuery(userInfo?.accountId);
     useEffect(() => {
         if (getOrder) {
             localStorage.setItem('getOrder', JSON.stringify(getOrder));

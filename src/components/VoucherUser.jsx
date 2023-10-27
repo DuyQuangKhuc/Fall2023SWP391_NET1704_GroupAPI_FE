@@ -14,7 +14,7 @@ import { toast } from 'react-toastify';
 import { useEffect } from 'react';
 import { useGetAccountByIdQuery } from '../slices/usersApiSlice';
 
-const Voucher = ({ voucher }) => {
+const VoucherUser = ({ voucher }) => {
 
     const [voucherId, setVoucherId] = useState('');
     const [quantity, setQuantity] = useState('');
@@ -22,22 +22,7 @@ const Voucher = ({ voucher }) => {
 
     const { userInfo } = useSelector((state) => state.auth);
 
-    const [buyVoucher] = useBuyVoucherMutation();
 
-    const submitHandlerbuyVoucher = async (e) => {
-        e.preventDefault();
-        try {
-            const res = await buyVoucher({
-                accountId: userInfo.accountId,
-                voucherId: voucher.voucherId,
-                quantity: 1,
-            }).unwrap()
-            toast.success("Đổi thành công");
-
-        } catch (err) {
-            console.log(err);
-        }
-    };
 
     return (
         <Card sx={{ display: 'flex' }}>
@@ -50,25 +35,21 @@ const Voucher = ({ voucher }) => {
             <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                 <CardContent sx={{ flex: '5 0 auto' }}>
                     <Typography component="div" variant="h5"  >
-                        Giảm {voucher.value}%  
-                    </Typography>
-                    <Typography variant="subtitle1" color="text.secondary" component="div">
-                        Cần {voucher.price} điểm
+                        Giảm {voucher.value}%
                     </Typography>
                 </CardContent>
                 <Box sx={{ display: 'flex', alignItems: 'center', pl: 20, pb: 1 }}>
-                    <IconButton sx={{ backgroundColor: '#f2eceb' }} onClick={submitHandlerbuyVoucher}>
-                        <ShoppingBagTwoToneIcon sx={{ height: 38, width: 38 }} />
+                    <IconButton sx={{ backgroundColor: '#f2eceb' }} >
                         <Typography >
-                            Đổi
+                            Đang Có {voucher.quantity} phiếu
                         </Typography>
                     </IconButton>
-                    
+
                 </Box>
             </Box>
-            
+
         </Card>
     );
 };
 
-export default Voucher;
+export default VoucherUser;
