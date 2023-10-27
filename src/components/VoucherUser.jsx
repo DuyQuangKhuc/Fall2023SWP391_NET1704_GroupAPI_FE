@@ -26,19 +26,14 @@ const VoucherUser = ({ voucher }) => {
 
     return (
         <Card sx={{ display: 'flex' }}>
-            <CardMedia
-                component="img"
-                sx={{ width: 360 }}
-                image="https://ngaymoi24h.vn/upload/images/AN-09-04/An-05-05/voucher.png"
-                alt="voucher"
-            />
+            
             <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                 <CardContent sx={{ flex: '5 0 auto' }}>
                     <Typography component="div" variant="h5"  >
                         Giảm {voucher.value}%
                     </Typography>
                 </CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', pl: 20, pb: 1 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', pl: 1, pb: 1 }}>
                     <IconButton sx={{ backgroundColor: '#f2eceb' }} >
                         <Typography >
                             Đang Có {voucher.quantity} phiếu
@@ -47,6 +42,12 @@ const VoucherUser = ({ voucher }) => {
 
                 </Box>
             </Box>
+            <CardMedia
+                component="img"
+                sx={{ width: 310 }}
+                image="https://ngaymoi24h.vn/upload/images/AN-09-04/An-05-05/voucher.png"
+                alt="voucher"
+            />
 
         </Card>
     );

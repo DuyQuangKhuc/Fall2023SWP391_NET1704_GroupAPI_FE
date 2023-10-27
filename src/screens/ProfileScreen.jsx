@@ -313,11 +313,13 @@ const ProfileScreen = () => {
                     <Col md={9} className='mt-3'>
                         <Tabs defaultActiveKey='1'>
                             <TabPane tab=<h4>Phiếu giảm giá đang có</h4> key='1'>
-                                {getVoucherOfUser?.map((voucher) => (
-                                    <Grid key={voucher.voucherId} md={10} className='p-3'>
-                                        <VoucherUser voucher={voucher} />
-                                    </Grid>
-                                ))}
+                                <Row>
+                                    {getVoucherOfUser?.map((voucher) => (
+                                        <Grid key={voucher.voucherId} md={6} className='p-3'>
+                                            <VoucherUser voucher={voucher} />
+                                        </Grid>
+                                    ))}
+                                </Row>
                             </TabPane>
                             <TabPane tab=<h4>Lịch sử đặt hàng</h4> key='2'>
                                 <Box sx={{ width: '100%', typography: 'body1' }}>
