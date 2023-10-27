@@ -7,17 +7,8 @@ import CardMedia from '@mui/material/CardMedia';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import ShoppingBagTwoToneIcon from '@mui/icons-material/ShoppingBagTwoTone';
-const Voucher = ({ product }) => {
+const Voucher = ({ voucher }) => {
 
-    const theme = useTheme();
-
-    function formatCurrency(number) {
-        // Sử dụng hàm toLocaleString() để định dạng số thành chuỗi với ngăn cách hàng nghìn và mặc định là USD.
-        return number.toLocaleString('en-US', {
-            style: 'currency',
-            currency: 'VND',
-        });
-    }
     return (
         <Card sx={{ display: 'flex' }}>
             <CardMedia
@@ -29,25 +20,20 @@ const Voucher = ({ product }) => {
             <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                 <CardContent sx={{ flex: '5 0 auto' }}>
                     <Typography component="div" variant="h5"  >
-                        Giảm       
+                        Giảm {voucher.value}%  
                     </Typography>
                     <Typography variant="subtitle1" color="text.secondary" component="div">
-                        Cần      điểm
+                        Cần {voucher.price} điểm
                     </Typography>
                 </CardContent>
                 <Box sx={{ display: 'flex', alignItems: 'center', pl: 20, pb: 1 }}>
-                    {/* <IconButton aria-label="previous">
-                        {theme.direction === 'rtl' ? <SkipNextIcon /> : <SkipPreviousIcon />}
-                    </IconButton> */}
                     <IconButton sx={{ backgroundColor: '#f2eceb' }}>
                         <ShoppingBagTwoToneIcon sx={{ height: 38, width: 38 }} />
                         <Typography >
                             Đổi
                         </Typography>
                     </IconButton>
-                    {/* <IconButton aria-label="next">
-                        {theme.direction === 'rtl' ? <SkipPreviousIcon /> : <SkipNextIcon />}
-                    </IconButton> */}
+                    
                 </Box>
             </Box>
             

@@ -182,6 +182,14 @@ export const productsApiSlice = apiSlice.injectEndpoints({
             }),
             refetchInterval: 1000,
         }),
+
+        getVoucher: builder.query({
+            query: () => ({
+                url: `/api/Voucher/List-Voucher`,
+            }),
+            keepUnusedDataFor: 5,
+            refetchInterval: 1000,
+        }),
     }),
 });
 
@@ -207,5 +215,6 @@ export const {
     useAcceptProductOfUserFromAdminMutation,
     useCancelProductOfUserMutation,
     useAcceptProductOfUserFromUserMutation,
-    useAcceptProductOfUserMutation
+    useAcceptProductOfUserMutation,
+    useGetVoucherQuery,
 } = productsApiSlice;
