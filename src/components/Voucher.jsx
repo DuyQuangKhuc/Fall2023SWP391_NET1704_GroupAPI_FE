@@ -28,14 +28,14 @@ const Voucher = ({ product }) => {
             />
             <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                 <CardContent sx={{ flex: '5 0 auto' }}>
-                    <Typography component="div" variant="h5" style={{  }}>
-                        Live From Space
+                    <Typography component="div" variant="h5"  >
+                        Giảm       
                     </Typography>
                     <Typography variant="subtitle1" color="text.secondary" component="div">
-                        Mac Miller
+                        Cần      điểm
                     </Typography>
                 </CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'end' , pb: 1 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', pl: 20, pb: 1 }}>
                     {/* <IconButton aria-label="previous">
                         {theme.direction === 'rtl' ? <SkipNextIcon /> : <SkipPreviousIcon />}
                     </IconButton> */}
