@@ -35,7 +35,9 @@ const PaymentScreen = () => {
             }).unwrap()
             navigate('/');
             toast.success("Thanh toán thành công");
+            window.location.reload();
         } catch (err) {
+            toast.error("Thất bại, hãy nhập đủ thông tin");
             console.log(err);
         }
     };
@@ -125,7 +127,6 @@ const PaymentScreen = () => {
                                                 checked={voucherId === 1}
                                                 name='radioOptions'
                                                 onChange={() => setVoucherId(1)}
-
                                             />
 
                                             <Form.Check
@@ -133,11 +134,12 @@ const PaymentScreen = () => {
                                                 label='Dùng phiếu giảm giá'
                                                 name='radioOptions'
                                                 checked={voucherId !== 1}
+
                                             />
                                             <Col>
                                                 <label htmlFor="voucherId" className='ms-2 me-3 mt-1'>▻ Lựa chọn phiếu giảm giá: </label>
-                                                {getVoucherOfUser ? (
-                                                    <Select value={voucherId} id="voucherId" label="Lựa chọn phiếu giảm giá" onChange={(e) => setVoucherId(e.target.value)}>
+                                                {getVoucherOfUser?.length > 0 ? (
+                                                    <Select value={voucherId} onChange={(e) => setVoucherId(e.target.value)}>
                                                         {/* <MenuItem value="1" ><Col><h5 className='mt-2'>▻ Không sử dụng phiếu giảm giá</h5></Col></MenuItem>  */}
                                                         {getVoucherOfUser?.map((voucher) => (
                                                             <MenuItem md={4} key={voucher.voucherId} value={voucher.voucherId}>
@@ -149,7 +151,7 @@ const PaymentScreen = () => {
                                                     </Select>
 
                                                 ) : (
-                                                    <p>Bạn không có phiếu giảm giá nào</p>
+                                                    <p className='ms-2 me-3 mt-1'>Bạn không có phiếu giảm giá nào</p>
                                                 )}
                                             </Col>
                                         </Row>

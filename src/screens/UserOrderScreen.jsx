@@ -33,7 +33,6 @@ const UserOrderScreen = () => {
     console.log(userInfo?.accountId)
 
     const submitHandler = async (e) => {
-        e.preventDefault();
         try {
             if (userInfo?.accountId) {
                 const res = await AddProductDetailClone({
@@ -42,10 +41,10 @@ const UserOrderScreen = () => {
                     quantity,
                     name,
                     description,
-                    color: 1,
+                    color,
                     isReplacable,
                 }).unwrap()
-                toast.success("Tạo thành công");
+                toast.success("Tạo thành công");         
                 console.log(color)
             }
         } catch (err) {
@@ -134,6 +133,7 @@ const UserOrderScreen = () => {
                                         type='number'
                                         placeholder='Enter quantity'
                                         value={quantity}
+                                        min={1}
                                         onChange={(e) => setQuantity(e.target.value)}
                                         required
                                     ></Form.Control>
