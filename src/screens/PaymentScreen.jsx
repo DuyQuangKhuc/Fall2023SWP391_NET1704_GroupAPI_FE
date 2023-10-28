@@ -7,7 +7,7 @@ import CheckoutSteps from '../components/CheckoutSteps';
 import { useAddPaymentPromaxMutation, useGetListOrderDetailCloneByOrderIdorderIdQuery, useGetListPaymentMethodQuery } from '../slices/ordersApiSlice';
 import { toast } from 'react-toastify';
 import { useGetVoucherOfUserQuery } from '../slices/productsApiSlice';
-import { Box, CardContent, CardMedia, Grid, IconButton, MenuItem, Select, Typography } from '@material-ui/core';
+import { Box, CardContent, CardMedia, Grid, IconButton, InputLabel, MenuItem, Select, Typography } from '@material-ui/core';
 import VoucherUser from '../components/VoucherUser';
 
 const PaymentScreen = () => {
@@ -31,7 +31,7 @@ const PaymentScreen = () => {
                 orderId: order.orderId,
                 paymentMethodId,
                 address,
-                voucherId: 1,
+                voucherId,
             }).unwrap()
             navigate('/');
             toast.success("Thanh toán thành công");
@@ -66,7 +66,7 @@ const PaymentScreen = () => {
     }, [getVoucherOfUser, getVoucherOfUserRefetch]);
 
 
-    
+
 
     return (
         <Container>
@@ -119,11 +119,26 @@ const PaymentScreen = () => {
                                     </ListGroup.Item>
                                     <ListGroup.Item>
                                         <Row>
-                                            <Col className='mt-2'>Dùng phiếu giảm giá: </Col>
+                                            <Form.Check
+                                                type='radio'
+                                                label='Không sử dụng phiếu giảm giá'
+                                                checked={voucherId === 1}
+                                                name='radioOptions'
+                                                onChange={() => setVoucherId(1)}
+
+                                            />
+
+                                            <Form.Check
+                                                type='radio'
+                                                label='Dùng phiếu giảm giá'
+                                                name='radioOptions'
+                                                checked={voucherId !== 1}
+                                            />
                                             <Col>
+                                                <label htmlFor="voucherId" className='ms-2 me-3 mt-1'>▻ Lựa chọn phiếu giảm giá: </label>
                                                 {getVoucherOfUser ? (
-                                                    <Select defaultValue="1" value={voucherId} onChange={(e) => setVoucherId(e.target.value)}>
-                                                        <MenuItem value="1" ><Col><h5 className='mt-2'>▻ Không sử dụng phiếu giảm giá</h5></Col></MenuItem> {/* "None" option */}
+                                                    <Select value={voucherId} id="voucherId" label="Lựa chọn phiếu giảm giá" onChange={(e) => setVoucherId(e.target.value)}>
+                                                        {/* <MenuItem value="1" ><Col><h5 className='mt-2'>▻ Không sử dụng phiếu giảm giá</h5></Col></MenuItem>  */}
                                                         {getVoucherOfUser?.map((voucher) => (
                                                             <MenuItem md={4} key={voucher.voucherId} value={voucher.voucherId}>
                                                                 <Grid className='my-1'>
@@ -132,27 +147,29 @@ const PaymentScreen = () => {
                                                             </MenuItem>
                                                         ))}
                                                     </Select>
+
                                                 ) : (
                                                     <p>Bạn không có phiếu giảm giá nào</p>
                                                 )}
-
                                             </Col>
                                         </Row>
                                     </ListGroup.Item>
                                     <ListGroup.Item>
                                         <Row>
                                             <Col>Giảm còn</Col>
-                                            <Col>{formatCurrency((getListOrderDetailCloneByOrderIdorderId?.reduce((acc, item) => acc + item.quantity * item.price, 0)) * (1 - (getVoucherOfUser?.filter((voucher) => voucher.voucherId === voucherId))/100 ))}</Col>
+                                            <Col>{formatCurrency((getListOrderDetailCloneByOrderIdorderId?.reduce((acc, item) => acc + item.quantity * item.price, 0)) * (1 - (getVoucherOfUser?.filter((voucher) => voucher.voucherId === voucherId)) / 100))}</Col>
                                         </Row>
                                     </ListGroup.Item>
+
+                                    <Button type='submit' variant='primary'>
+                                        Thanh toán
+                                    </Button>
                                 </ListGroup>
                             </Card>
                         </Col>
                     </Form.Group>
 
-                    <Button type='submit' variant='primary'>
-                        Thanh toán
-                    </Button>
+
                 </Form>
 
             </Row>
