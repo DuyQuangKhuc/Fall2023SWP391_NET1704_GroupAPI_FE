@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-vars */
+import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -15,24 +16,37 @@ import FormContainer from '../components/FormContainer';
 import Loader from '../components/Loader';
 import { Card, Select } from 'antd';
 import { ColorPicker, theme } from 'antd';
+import { Option } from 'antd/es/mentions';
+import { BlockPicker } from 'react-color';
+import { ButtonBase, ButtonGroup } from '@material-ui/core';
 
 const UserOrderScreen = () => {
-    const { token } = theme.useToken();
+
     const [material, setMaterial] = useState('');
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
-    const [color, setColor] = useState();
-    const [isReplacable, setIsReplacable] = useState('');
+    const [color, setColor] = React.useState('#555555');
+    const [isReplacable, setIsReplacable] = useState(1);
     const [quantity, setQuantity] = useState('');
     const navigate = useNavigate();
     const { userInfo } = useSelector((state) => state.auth);
-    
+    const [showPicker, setShowPicker] = React.useState(false);
+
+    const handleTogglePicker = () => {
+        setShowPicker(!showPicker);
+    };
+    const handleChangeColor = (selectedColor) => {
+        setColor(selectedColor.hex);
+    };
 
     const [AddProductDetailClone, { isLoading: loadingaddComponent }] = useAddProductDetailCloneMutation();
 
     console.log(userInfo?.accountId)
 
+    const encodedColor = encodeURIComponent(color);
+
     const submitHandler = async (e) => {
+        e.preventDefault();
         try {
             if (userInfo?.accountId) {
                 const res = await AddProductDetailClone({
@@ -40,11 +54,11 @@ const UserOrderScreen = () => {
                     material,
                     quantity,
                     name,
-                    description,
-                    color,
+                    description : 'không',
+                    color: encodedColor,
                     isReplacable,
                 }).unwrap()
-                toast.success("Tạo thành công");         
+                toast.success("Tạo thành công");
                 console.log(color)
             }
         } catch (err) {
@@ -73,6 +87,31 @@ const UserOrderScreen = () => {
         }
     }, [listComponent, refetch]);
 
+    const [nameCustom, setCustom] = useState(null);
+    const [customValue, setCustomValue] = useState(null);
+
+    const handleSelectChange = (value) => {
+        // Check if the selected value is the custom value
+        if (value === 'custom') {
+            // Enable custom value input mode
+            setCustom(null);
+            setCustomValue('');
+        } else {
+            // Disable custom value input mode and set the selected value
+            setCustom(value);
+            setCustomValue(null);
+        }
+    };
+
+    const handleCustomValueChange = (event) => {
+        setCustomValue(event.target.value);
+    };
+
+    const handleCustomValueBlur = () => {
+        // Set the custom value as the selected value
+        setCustom(customValue);
+        setCustomValue(null);
+    };
 
     return (
         <div className=" max-w-full  bg-repeat" style={{
@@ -88,13 +127,14 @@ const UserOrderScreen = () => {
                         <FormContainer>
                             <Form onSubmit={submitHandler}>
                                 <Form.Group className='my-3' controlId='name'>
-                                    <Form.Label className="font-semibold">Tên thành phần</Form.Label>
+                                    <Form.Label className="font-semibold">Tên bộ phận</Form.Label>
                                     <Select
                                         showSearch
                                         style={{
                                             width: 295,
                                         }}
-                                        placeholder="Search to Select"
+                                        size="large"
+                                        placeholder="Chọn"
                                         optionFilterProp="children"
                                         filterOption={(input, option) => (option?.label ?? '').includes(input)}
                                         filterSort={(optionA, optionB) =>
@@ -125,18 +165,20 @@ const UserOrderScreen = () => {
                                         ]}
                                         value={name}
                                         onChange={(value) => setName(value)}
+
                                     />
                                 </Form.Group>
                                 <Form.Group className='my-3' controlId='quantity'>
                                     <Form.Label>Số lượng</Form.Label>
                                     <Form.Control
                                         type='number'
-                                        placeholder='Enter quantity'
+                                        placeholder='Nhập số lượng'
                                         value={quantity}
                                         min={1}
                                         onChange={(e) => setQuantity(e.target.value)}
                                         required
                                     ></Form.Control>
+
 
                                 </Form.Group>
 
@@ -144,7 +186,7 @@ const UserOrderScreen = () => {
                                     <Form.Label>Chất liệu</Form.Label>
                                     <Form.Control
                                         type='material'
-                                        placeholder='Enter material'
+                                        placeholder='Nhập chất liệu'
                                         value={material}
                                         onChange={(e) => setMaterial(e.target.value)}
                                         required
@@ -155,27 +197,44 @@ const UserOrderScreen = () => {
                                 <Form.Group className='my-3' controlId='color' style={{ display: 'flex', justifyContent: 'space-between' }}>
                                     <div >
                                         <Form.Label >Màu sắc</Form.Label>
-                                        <Form.Control
-                                        style={{ display: 'flex' }}
-                                        type='color'
-                                        value={color}
-                                        onChange={(e) => setColor(e.target.value)}
-                                    ></Form.Control>
+                                        {/* <input
+                                            style={{ display: 'flex' }}
+                                            type='color'
+                                            value={color}
+                                            onChange={(e) => setColor(e.target.value)}>
+                                        </input> */}
+                                        <div
+                                            style={{
+                                                backgroundColor: `${color}`,
+                                                width: 100,
+                                                height: 50,
+                                                border: "2px solid white",
+                                            }}
+                                            onClick={handleTogglePicker}
+                                        ></div>
+                                        <p></p>
+                                        {showPicker && (
+                                            <BlockPicker
+                                                color={color}
+                                                onChange={handleChangeColor}
+                                            />
+                                        )}
                                         {/* <ColorPicker style={{ display: 'flex' }} size="large" value={color} onChange={setColor} /> */}
                                     </div>
 
                                     <div >
-                                        <Form.Label className='my-1'>Trạng thái</Form.Label>
+                                        <Form.Label className='my-1'>Bộ phận</Form.Label>
                                         <Form.Check
                                             type='radio'
-                                            label='Thay đổi'
+                                            label='Tháo rời'
                                             checked={isReplacable === 1}
                                             name='radioOptions'
-                                            onChange={() => setIsReplacable(1)}
+                                            onChange={() => setIsReplacable(1)} 
                                         />
                                         <Form.Check
                                             type='radio'
                                             label='Cố định'
+                                        
                                             checked={isReplacable === 0}
                                             name='radioOptions'
                                             onChange={() => setIsReplacable(0)}
@@ -187,7 +246,7 @@ const UserOrderScreen = () => {
                                     <Form.Label>Mô tả</Form.Label>
                                     <Form.Control
                                         as='textarea'
-                                        placeholder='Enter description'
+                                        placeholder=''
                                         value={description}
                                         onChange={(e) => setDescription(e.target.value)}
                                     ></Form.Control>
@@ -221,7 +280,14 @@ const UserOrderScreen = () => {
                                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                         <p>▣ Chất liệu: {component.material}</p>
                                         <p>▣ Số lượng: {component.quantity}</p>
-                                        <p>▣ Màu sắc: {component.color}</p>
+                                        <p style={{ display: 'flex'}}>▣ Màu sắc: <div
+                                            style={{
+                                                marginLeft: '10px',
+                                                backgroundColor: `${component.color}`,
+                                                width: 50,
+                                                height: 28,     
+                                            }}
+                                        ></div></p>
                                         <p>▣ Trạng thái: {component?.isReplacable && component?.isReplacable === 1 ? "Thay đổi" : component?.isReplacable === 0 ? "Cố định" : ""}</p>
 
                                     </div>

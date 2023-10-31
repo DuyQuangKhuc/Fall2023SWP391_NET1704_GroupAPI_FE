@@ -29,7 +29,7 @@ export const productsApiSlice = apiSlice.injectEndpoints({
 
         AddProductDetailClone: builder.mutation({
             query: (data) => ({
-                url: `/api/Product/Add-Product-Detail-Manual?accountId=${data.accountId}&name=${data.name}&material=${data.material}&description=${data.description}&color=${data.color}&isReplacable=${data.isReplacable}&quantity=${data.quantity}`,
+                url: `/api/Product/Add-Product-Detail-Manual?accountId=${data.accountId}&name=${data.name}&material=${data.material}&description=${data.description}&color=${data?.color}&isReplacable=${data.isReplacable}&quantity=${data.quantity}`,
                 method: 'POST',
             }),
             //  invalidatesTags: ['Product'],

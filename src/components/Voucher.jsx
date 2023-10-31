@@ -11,8 +11,6 @@ import { useSelector } from 'react-redux';
 import { useBuyVoucherMutation } from '../slices/productsApiSlice';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
-import { useEffect } from 'react';
-import { useGetAccountByIdQuery } from '../slices/usersApiSlice';
 
 const Voucher = ({ voucher }) => {
 

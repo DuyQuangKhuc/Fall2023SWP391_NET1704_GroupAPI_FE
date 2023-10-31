@@ -13,7 +13,7 @@ import VoucherUser from '../components/VoucherUser';
 const PaymentScreen = () => {
     const navigate = useNavigate();
     const { userInfo } = useSelector((state) => state.auth);
-    const [voucherId, setVoucherId] = useState('');
+    const [voucherId, setVoucherId] = useState(1);
 
     const [paymentMethodId, setPaymentMethod] = useState('');
     const [address, setAddress] = useState('');
@@ -134,7 +134,6 @@ const PaymentScreen = () => {
                                                 label='Dùng phiếu giảm giá'
                                                 name='radioOptions'
                                                 checked={voucherId !== 1}
-
                                             />
                                             <Col>
                                                 <label htmlFor="voucherId" className='ms-2 me-3 mt-1'>▻ Lựa chọn phiếu giảm giá: </label>
