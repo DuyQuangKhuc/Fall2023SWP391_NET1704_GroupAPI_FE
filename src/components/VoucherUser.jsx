@@ -1,32 +1,14 @@
 import * as React from 'react';
-import { useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import ShoppingBagTwoToneIcon from '@mui/icons-material/ShoppingBagTwoTone';
-import { useSelector } from 'react-redux';
-import { useBuyVoucherMutation } from '../slices/productsApiSlice';
-import { useState } from 'react';
-import { toast } from 'react-toastify';
-import { useEffect } from 'react';
-import { useGetAccountByIdQuery } from '../slices/usersApiSlice';
 
 const VoucherUser = ({ voucher }) => {
-
-    const [voucherId, setVoucherId] = useState('');
-    const [quantity, setQuantity] = useState('');
-
-
-    const { userInfo } = useSelector((state) => state.auth);
-
-
-
     return (
-        <Card sx={{ display: 'flex' }}>
-            
+        <Card sx={{ display: 'flex' }}>           
             <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                 <CardContent sx={{ flex: '5 0 auto' }}>
                     <Typography component="div" variant="h5"  >
