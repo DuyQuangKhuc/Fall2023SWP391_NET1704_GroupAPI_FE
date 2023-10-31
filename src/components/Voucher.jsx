@@ -33,6 +33,7 @@ const Voucher = ({ voucher }) => {
             toast.success("Đổi thành công");
 
         } catch (err) {
+            toast.error("Bạn không có đủ điểm để đổi");
             console.log(err);
         }
     };
