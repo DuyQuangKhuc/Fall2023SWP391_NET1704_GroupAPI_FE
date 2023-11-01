@@ -119,7 +119,7 @@ const ProductEditScreen = () => {
 
                         <Form.Group controlId='image'>
                             <Form.Label>Ảnh</Form.Label>
-                            {/* <Image src= {imagePath1} /> */}
+                            <Image src={product.imagePath1 || imagePath1} />
                             <ComUpImg
                                 value={imagePath1}
                                 onChange={setImage}

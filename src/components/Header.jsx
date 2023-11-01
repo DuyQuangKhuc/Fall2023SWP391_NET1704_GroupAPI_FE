@@ -74,7 +74,7 @@ const Header = () => {
                     <Navbar.Collapse id='basic-navbar-nav'>
                         <Nav className='ms-auto'>
                             
-                            {userInfo && userInfo.role === 4 && (
+                            {userInfo && userInfo.role === 4  && (
                                 <SearchBox className="ms-32" />
                             )}
 

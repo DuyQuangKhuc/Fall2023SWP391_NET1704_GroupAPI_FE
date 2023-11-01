@@ -375,8 +375,13 @@ function ProductListScreen(props) {
                         {getListComponentCreatedBySystem ? (
                             <Select value={componentId} onChange={(e) => setComponentId(e.target.value)}>
                                 {getListComponentCreatedBySystem.map((components) => (
-                                    <MenuItem key={components.componentId} value={components.componentId}>
-                                        {components.name}
+                                    <MenuItem key={components.componentId} value={components.componentId} >
+                                        {components.name} - Chất liệu: {components.material} - Màu: <div style={{
+                                            marginLeft: '10px',
+                                            backgroundColor: `${components.color}`,
+                                            width: 50,
+                                            height: 28,
+                                        }}></div>                  
                                     </MenuItem>
                                 ))}
                             </Select>
@@ -398,7 +403,12 @@ function ProductListScreen(props) {
                                         .map((data, index) => (
                                             <tr key={index}>
                                                 <td>Tên: {data.name}</td>
-                                                <td>Màu sắc: {data.color}</td>
+                                                <td>Màu sắc: <div style={{
+                                                    marginLeft: '10px',
+                                                    backgroundColor: `${data.color}`,
+                                                    width: 50,
+                                                    height: 28,
+                                                }}></div>        </td>
                                                 <td>Chất liệu: {data.material}</td>
                                                 <td>Mô tả: {data.description}</td>
                                                 <td>Trạng thái: {data?.isReplacable && data?.isReplacable === 1 ? "Thay đổi" : data?.isReplacable === 0 ? "Cố định" : ""}</td>

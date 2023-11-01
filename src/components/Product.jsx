@@ -1,6 +1,7 @@
-import { Card } from 'react-bootstrap';
+import { Button, Card } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import Rating from './Rating';
+import { FaShoppingCart } from 'react-icons/fa';
 
 const Product = ({ product }) => {
 
@@ -26,12 +27,18 @@ const Product = ({ product }) => {
 
                 <Card.Text as='div'>
                     <Rating
-                        value={product.rating}
-                        text={`${product.numReviews} đánh giá`}
+                        value={product.ratingAverage}
+                        text={`${product.feedBackQuantity && product.feedBackQuantity > 0 ? product.feedBackQuantity : '0' } đánh giá`}
                     />
                 </Card.Text>
-
-                <Card.Text as='h3'>{formatCurrency(product.price)}</Card.Text>
+                
+                    <Card.Text as='h3' className='mt-3'>Giá :  {formatCurrency(product.price)}</Card.Text>
+                <div style={{ display: 'flex', }}>
+                    <Card.Text as='div'>Số lượng: {product.quantity && product.quantity > 0 ? product.quantity : <span style={{ color: 'red', }}>Hết hàng</span>}</Card.Text>
+                    <Link to={`/product/${product.productId}`}>
+                    <FaShoppingCart as='div' style={{ height: 20, width: 38, marginLeft: '100px', }} />
+                    </Link>
+                </div>
             </Card.Body>
         </Card>
     );

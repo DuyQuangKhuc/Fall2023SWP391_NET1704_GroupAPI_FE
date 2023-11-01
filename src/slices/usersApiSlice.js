@@ -16,12 +16,12 @@ export const userApiSlice = apiSlice.injectEndpoints({
                 body: data,
             }),
         }),
-        // logout: builder.mutation({
-        //     query: () => ({
-        //         url: `${USERS_URL}/logout`,
-        //         method: 'POST',
-        //     }),
-        // }),
+        logout: builder.mutation({
+            query: () => ({
+                url: `/logout`,
+                method: 'POST',
+            }),
+        }),
         profile: builder.mutation({
             query: (data) => ({
                 url: `/api/Account/Update-Account?id=${data.id}`,
@@ -36,18 +36,18 @@ export const userApiSlice = apiSlice.injectEndpoints({
             providesTags: ['User'],
             keepUnusedDataFor: 5,
         }),
-        // deleteUser: builder.mutation({
-        //     query: (userId) => ({
-        //         url: `${USERS_URL}/${userId}`,
-        //         method: 'DELETE',
-        //     }),
-        // }),
-        // getUserDetails: builder.query({
-        //     query: (id) => ({
-        //         url: `${USERS_URL}/${id}`,
-        //     }),
-        //     keepUnusedDataFor: 5,
-        // }),
+        deleteUser: builder.mutation({
+            query: (userId) => ({
+                url: ``,
+                method: 'DELETE',
+            }),
+        }),
+        getUserDetails: builder.query({
+            query: (id) => ({
+                url: ``,
+            }),
+            keepUnusedDataFor: 5,
+        }),
         updateUser: builder.mutation({
             query: (data) => ({
                 url: `/api/Account/Update-Account?id=${data.accountId}`,

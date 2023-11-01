@@ -18,13 +18,15 @@ import { Card, Select } from 'antd';
 import { ColorPicker, theme } from 'antd';
 import { Option } from 'antd/es/mentions';
 import { BlockPicker } from 'react-color';
-import { ButtonBase, ButtonGroup } from '@material-ui/core';
+import { ButtonBase, ButtonGroup, TextField } from '@material-ui/core';
+import { Autocomplete } from '@mui/lab';
+import { createFilterOptions } from '@mui/base';
 
 const UserOrderScreen = () => {
 
     const [material, setMaterial] = useState('');
     const [name, setName] = useState('');
-    const [description, setDescription] = useState('');
+    const [description, setDescription] = useState('không');
     const [color, setColor] = React.useState('#555555');
     const [isReplacable, setIsReplacable] = useState(1);
     const [quantity, setQuantity] = useState('');
@@ -54,7 +56,7 @@ const UserOrderScreen = () => {
                     material,
                     quantity,
                     name,
-                    description : 'không',
+                    description,
                     color: encodedColor,
                     isReplacable,
                 }).unwrap()
@@ -111,6 +113,26 @@ const UserOrderScreen = () => {
         // Set the custom value as the selected value
         setCustom(customValue);
         setCustomValue(null);
+    };
+
+    const [suggestions, setSuggestions] = useState([]);
+
+    const handleMaterialChange = (e) => {
+        const value = e.target.value;
+        setMaterial(value);
+        setSuggestions(getFilteredOptions(value));
+    };
+
+    const handleSuggestionClick = (option) => {
+        setMaterial(option);
+        setSuggestions([]);
+    };
+
+    const getFilteredOptions = (value) => {
+        const filteredOptions = ['gỗ', 'sắc', 'nhôm'].filter((option) =>
+            option.toLowerCase().includes(value.toLowerCase())
+        );
+        return filteredOptions;
     };
 
     return (
@@ -177,6 +199,7 @@ const UserOrderScreen = () => {
                                         min={1}
                                         onChange={(e) => setQuantity(e.target.value)}
                                         required
+                                        autoComplete="off"
                                     ></Form.Control>
 
 
@@ -184,13 +207,32 @@ const UserOrderScreen = () => {
 
                                 <Form.Group className='my-3' controlId='material'>
                                     <Form.Label>Chất liệu</Form.Label>
-                                    <Form.Control
+                                    {/* <Form.Control
                                         type='material'
-                                        placeholder='Nhập chất liệu'
+                                        placeholder='Ví dụ như gỗ, sắc, nhôm, ....'
                                         value={material}
                                         onChange={(e) => setMaterial(e.target.value)}
                                         required
-                                    ></Form.Control>
+                                    ></Form.Control> */}
+                                    <Form.Control
+                                        type="text"
+                                        placeholder="Ví dụ như gỗ, sắc, nhôm, ...."
+                                        value={material}
+                                        onChange={handleMaterialChange}
+                                        required
+                                        autoComplete="off"
+                                    />
+                                    {suggestions.length > 0 && (
+                                        <ul className="autocomplete-options">
+                                            {suggestions.map((option, index) => (
+                                                <li key={index} onClick={() => handleSuggestionClick(option)}>
+                                                    {option}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )}
+
+
                                 </Form.Group>
 
 
@@ -229,12 +271,12 @@ const UserOrderScreen = () => {
                                             label='Tháo rời'
                                             checked={isReplacable === 1}
                                             name='radioOptions'
-                                            onChange={() => setIsReplacable(1)} 
+                                            onChange={() => setIsReplacable(1)}
                                         />
                                         <Form.Check
                                             type='radio'
                                             label='Cố định'
-                                        
+
                                             checked={isReplacable === 0}
                                             name='radioOptions'
                                             onChange={() => setIsReplacable(0)}
@@ -261,7 +303,7 @@ const UserOrderScreen = () => {
                     </Col>
                     <Col >
 
-                        <Card title="Danh sách đã tạo"
+                        <Card title="Danh sách đã thêm"
                             extra={
                                 <Button onClick={Handler}  >
                                     Hoàn thiện sản phẩm
@@ -280,15 +322,15 @@ const UserOrderScreen = () => {
                                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                         <p>▣ Chất liệu: {component.material}</p>
                                         <p>▣ Số lượng: {component.quantity}</p>
-                                        <p style={{ display: 'flex'}}>▣ Màu sắc: <div
+                                        <p style={{ display: 'flex' }}>▣ Màu sắc: <div
                                             style={{
                                                 marginLeft: '10px',
                                                 backgroundColor: `${component.color}`,
                                                 width: 50,
-                                                height: 28,     
+                                                height: 28,
                                             }}
                                         ></div></p>
-                                        <p>▣ Trạng thái: {component?.isReplacable && component?.isReplacable === 1 ? "Thay đổi" : component?.isReplacable === 0 ? "Cố định" : ""}</p>
+                                        <p>▣ Bộ phận: {component?.isReplacable && component?.isReplacable === 1 ? "Tháo rời" : component?.isReplacable === 0 ? "Cố định" : ""}</p>
 
                                     </div>
                                     <p>▣ Mô tả: {component.description}</p>

@@ -29,7 +29,7 @@ const UserListScreen = () => {
     // Otherwise filter will be applied on fields such as the hidden column id
     const columns = React.useMemo(
         () =>
-            VISIBLE_FIELDS.map((field) => {
+            VISIBLE_FIELDS?.map((field) => {
                 if (field === 'role') {
                     return {
                         field,

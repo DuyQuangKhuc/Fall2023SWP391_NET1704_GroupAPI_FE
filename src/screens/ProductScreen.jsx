@@ -69,7 +69,14 @@ const ProductScreen = () => {
         data: product,
         isLoading,
         error,
+        refetch: productRefetch
     } = useGetProductDetailsQuery(productId);
+    useEffect(() => {
+        if (product) {
+            const intervalId = setInterval(productRefetch, 1000); // Refresh every 1 seconds
+            return () => clearInterval(intervalId); // Cleanup the interval on component unmount or 'order' change
+        }
+    }, [product, productRefetch]);
 
     const { userInfo } = useSelector((state) => state.auth);
 
@@ -112,228 +119,261 @@ const ProductScreen = () => {
             backgroundRepeat: 'no-repeat',
 
         }}>
-        <Container >
-            <>
-                <Link className='btn btn-light my-3' to='/'>
-                    Quay lại
-                </Link>
-                {isLoading ? (
-                    <Loader />
-                ) : error ? (
-                    <Message variant='danger'>
-                        {error?.data?.message || error.error}
-                    </Message>
-                ) : (
-                    <>
-                        <Meta title={product.name} description={product.description} />
-                        <Row>
-                            <Col md={6}>
-                                <Image src={product.imagePath1} alt={product.name} style={{ height: "400px" }} className='mb-3' fluid />
-                            </Col>
-                            <Col md={3}>
-                                <ListGroup variant='flush'>
-                                    <ListGroup.Item>
-                                        <h3>{product.name}</h3>
-                                    </ListGroup.Item>
-                                    <ListGroup.Item>
-                                        <Rating
-                                            value={getListFeedbackByProduct?.length}
-                                            text={`${getListFeedbackByProduct?.length} đánh giá`}
-                                        />
-                                    </ListGroup.Item>
-                                    <ListGroup.Item>Giá: {formatCurrency(product.price)}</ListGroup.Item>
-                                    <ListGroup.Item>
-                                        Mô tả: {product.description}
-                                    </ListGroup.Item>
-                                </ListGroup>
-                            </Col>
-                            <Col md={3}>
-                                <Card>
+            <Container >
+                <>
+                    <Link className='btn btn-light my-3' to='/'>
+                        Quay lại
+                    </Link>
+                    {isLoading ? (
+                        <Loader />
+                    ) : error ? (
+                        <Message variant='danger'>
+                            {error?.data?.message || error.error}
+                        </Message>
+                    ) : (
+                        <>
+                            <Meta title={product.name} description={product.description} />
+                            <Row>
+                                <Col md={6}>
+                                    <Image src={product.imagePath1} alt={product.name} style={{ height: "400px" }} className='mb-3' fluid />
+                                </Col>
+                                <Col md={3}>
                                     <ListGroup variant='flush'>
                                         <ListGroup.Item>
-                                            <Row>
-                                                <Col>Giá:</Col>
-                                                <Col>
-                                                    <strong>{formatCurrency(product.price)}</strong>
-                                                </Col>
-                                            </Row>
+                                            <h3>{product.name}</h3>
                                         </ListGroup.Item>
                                         <ListGroup.Item>
-                                            <Row>
-                                                <Col>Tình trạng:</Col>
-                                                <Col>
-                                                    {product.quantity > 0 ? `Còn ${product.quantity} sản phẩm` : 'Hết hàng'}
-                                                </Col>
-                                            </Row>
+                                            <Rating
+                                                value={product.ratingAverage}
+                                                text={`${product.feedBackQuantity && product.feedBackQuantity > 0 ? product.feedBackQuantity : '0'} đánh giá`}
+                                            />
                                         </ListGroup.Item>
-
-                                        {/* quantity Select */}
-                                        {product.quantity > 0 && (
+                                        <ListGroup.Item>Giá: {formatCurrency(product.price)}</ListGroup.Item>
+                                        <ListGroup.Item>
+                                            Mô tả: {product.description}
+                                        </ListGroup.Item>
+                                    </ListGroup>
+                                </Col>
+                                <Col md={3}>
+                                    <Card>
+                                        <ListGroup variant='flush'>
                                             <ListGroup.Item>
                                                 <Row>
-                                                    <Col>Số lượng mua:</Col>
+                                                    <Col>Giá:</Col>
                                                     <Col>
-                                                        <Form.Control
-                                                            as='select'
-                                                            value={quantity}
-                                                            onChange={(e) => setquantity(Number(e.target.value))}
-                                                        >
-                                                            {[...Array(product.quantity).keys()].map(
-                                                                (x) => (
-                                                                    <option key={x + 1} value={x + 1}>
-                                                                        {x + 1}
-                                                                    </option>
-                                                                )
-                                                            )}
-                                                        </Form.Control>
+                                                        <strong>{formatCurrency(product.price)}</strong>
                                                     </Col>
                                                 </Row>
                                             </ListGroup.Item>
-                                        )}
+                                            <ListGroup.Item>
+                                                <Row>
+                                                    <Col>Tình trạng:</Col>
+                                                    <Col>
+                                                        {product.quantity > 0 ? `Còn ${product.quantity} sản phẩm` : 'Hết hàng'}
+                                                    </Col>
+                                                </Row>
+                                            </ListGroup.Item>
 
-                                        <ListGroup.Item>
-                                            <Button
-                                                className='btn-block'
-                                                type='button'
-                                                disabled={product.quantity === 0}
-                                                onClick={addToCartHandler}
-                                            >
-                                                Thêm vào giỏ hàng
-                                            </Button>
-                                        </ListGroup.Item>
-                                    </ListGroup>
-                                </Card>
-                            </Col>
-                        </Row>
-                        <Tabs defaultActiveKey='1'>
-                            <TabPane tab=<h5>Chi tiết sản phẩm</h5> key='1' >
-                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                    <Timeline className='review'
-                                        items={[
-                                           
-                                            {
-                                                color: 'green',
-                                                children: `Kích cỡ: ${product.size} `,
-                                            },
-                                            
-                                            {
-                                                color: 'gray',
-                                                children: (
-                                                    <>
-                                                        <p>Độ bền: {product.durability}</p>
-                                                    </>
-                                                ),
-                                            },
-                                            {
-                                                color: '#00CCFF',
-                                                //dot: <SmileOutlined />,
-                                                children: <p>NSX:  {product.uploadDate}</p>,
-                                            },
-                                        ]}
-                                    />
+                                            {/* quantity Select */}
+                                            {product.quantity > 0 && (
+                                                <ListGroup.Item>
+                                                    <Row>
+                                                        <Col>Số lượng mua:</Col>
+                                                        <Col>
 
-                                    <Table striped hover responsive className='table-auto'>
-                                        <thead>
-                                            <tr>
-                                                <th>Tên thành phần</th>
-                                                <th>Số lượng</th>
-                                                <th>Chất liệu</th>
-                                                <th>Màu sắc</th>
-                                                <th>Mô tả</th>
-                                                <th>Trạng thái</th>
+                                                            <Form.Control
+                                                                as='select'
+                                                                value={quantity}
+                                                                onChange={(e) => setquantity(Number(e.target.value))}
+                                                            >
+                                                                {[...Array(product.quantity).keys()].map(
+                                                                    (x) => (
+                                                                        <option key={x + 1} value={x + 1}>
+                                                                            {x + 1}
+                                                                        </option>
+                                                                    )
+                                                                )}
+                                                            </Form.Control>
 
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {filteredComponents?.map((component, index) => (
-                                                <tr key={index}>
-                                                    <td>{component?.name}</td>
-                                                    <td>{component?.quantity}</td>
-                                                    <td>{component?.material}</td>
-                                                    <td>{component?.color}</td>
-                                                    <td>{component?.description}</td>
-                                                    <td>{component?.isReplacable && component?.isReplacable === 1 ? "Thay đổi" : component?.isReplacable === 0 ? "Cố định" : ""}</td>
+                                                        </Col>
+                                                    </Row>
+                                                </ListGroup.Item>
+                                            )}
+
+                                            {/* {product.quantity > 0 && (
+                                                <ListGroup.Item>
+                                                    <Row>
+                                                        <Col>Số lượng mua:</Col>
+                                                        <Col>
+                                                            <Form.Control
+                                                                type='number'
+                                                                value={quantity}
+                                                                onChange={(e) => {
+                                                                    const newValue = Number(e.target.value);
+                                                                    if (newValue <= product.quantity) {
+                                                                        setquantity(newValue);
+                                                                    }
+                                                                }}
+                                                            />
+                                                        </Col>
+                                                        <Col>
+                                                            <Button variant="outline-primary" onClick={() => setquantity(quantity + 1)} disabled={quantity >= product.quantity}>+</Button>
+                                                            <Button variant="outline-primary" onClick={() => setquantity(quantity - 1)} disabled={quantity <= 1}>-</Button>
+                                                        </Col>
+                                                    </Row>
+                                                </ListGroup.Item>
+                                            )} */}
+
+                                            <ListGroup.Item>
+                                                <Button
+                                                    className='btn-block'
+                                                    type='button'
+                                                    disabled={product.quantity === 0}
+                                                    onClick={addToCartHandler}
+                                                >
+                                                    Thêm vào giỏ hàng
+                                                </Button>
+                                            </ListGroup.Item>
+                                        </ListGroup>
+                                    </Card>
+                                </Col>
+                            </Row>
+                            <Tabs defaultActiveKey='1'>
+                                <TabPane tab=<h5>Chi tiết sản phẩm</h5> key='1' >
+                                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                        <Timeline className='review'
+                                            items={[
+
+                                                {
+                                                    color: 'green',
+                                                    children: `Kích cỡ: ${product.size} `,
+                                                },
+
+                                                {
+                                                    color: 'gray',
+                                                    children: (
+                                                        <>
+                                                            <p>Độ bền: {product.durability}</p>
+                                                        </>
+                                                    ),
+                                                },
+                                                {
+                                                    color: '#00CCFF',
+                                                    //dot: <SmileOutlined />,
+                                                    children: <p>NSX:  {product.uploadDate}</p>,
+                                                },
+                                            ]}
+                                        />
+
+                                        <Table striped hover responsive className='table-auto'>
+                                            <thead>
+                                                <tr>
+                                                    <th>Tên thành phần</th>
+                                                    <th>Số lượng</th>
+                                                    <th>Chất liệu</th>
+                                                    <th>Màu sắc</th>
+                                                    <th>Mô tả</th>
+                                                    <th>Trạng thái</th>
 
                                                 </tr>
-                                            ))}
-                                        </tbody>
-                                    </Table>
-                                </div>
-                            </TabPane>
-                            <TabPane tab=<h5>Phản hồi</h5> key='2'>
-                                <Row className='review'>
-                                    <Col md={6}>
-                                        <ListGroup.Item>
-                                            <h2>Viết đánh giá về sản phẩm</h2>
+                                            </thead>
+                                            <tbody>
+                                                {filteredComponents?.map((component, index) => (
+                                                    <tr key={index}>
+                                                        <td>{component?.name}</td>
+                                                        <td>{component?.quantity}</td>
+                                                        <td>{component?.material}</td>
+                                                        <td> <div
+                                                            style={{
+                                                                marginLeft: '10px',
+                                                                backgroundColor: `${component.color}`,
+                                                                width: 50,
+                                                                height: 28,
+                                                            }}
+                                                        ></div></td>
+                                                        <td>{component?.description}</td>
+                                                        <td>{component?.isReplacable && component?.isReplacable === 1 ? "Tháo rời" : component?.isReplacable === 0 ? "Cố định" : ""}</td>
 
-                                            {loadingProductReview && <Loader />}
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </Table>
+                                    </div>
+                                </TabPane>
+                                <TabPane tab=<h5>Phản hồi</h5> key='2'>
+                                    <Row className='review'>
+                                        <Col md={6}>
+                                            <ListGroup.Item>
+                                                <h2>Viết đánh giá về sản phẩm</h2>
 
-                                            {userInfo ? (
-                                                <Form onSubmit={submitHandler}>
-                                                    <Form.Group className='my-2' controlId='rating'>
-                                                        <Form.Label>Rating</Form.Label>
-                                                        <Form.Control
-                                                            as='select'
-                                                            required
-                                                            value={rating}
-                                                            onChange={(e) => setRating(e.target.value)}
+                                                {loadingProductReview && <Loader />}
+
+                                                {userInfo ? (
+                                                    <Form onSubmit={submitHandler}>
+                                                        <Form.Group className='my-2' controlId='rating'>
+                                                            <Form.Label>Đánh giá</Form.Label>
+                                                            <Form.Control
+                                                                as='select'
+                                                                required
+                                                                value={rating}
+                                                                onChange={(e) => setRating(e.target.value)}
+                                                            >
+                                                                <option value=''>Chọn...</option>
+                                                                <option value='1'>1 - Poor</option>
+                                                                <option value='2'>2 - Fair</option>
+                                                                <option value='3'>3 - Good</option>
+                                                                <option value='4'>4 - Very Good</option>
+                                                                <option value='5'>5 - Excellent</option>
+                                                            </Form.Control>
+                                                        </Form.Group>
+                                                        <Form.Group className='my-2' controlId='comment'>
+                                                            <Form.Label>Viết bình luận</Form.Label>
+                                                            <Form.Control
+                                                                as='textarea'
+                                                                row='3'
+                                                                required
+                                                                value={comment}
+                                                                onChange={(e) => setComment(e.target.value)}
+                                                            ></Form.Control>
+                                                        </Form.Group>
+                                                        <Button
+                                                            disabled={loadingProductReview}
+                                                            type='submit'
+                                                            variant='primary'
                                                         >
-                                                            <option value=''>Select...</option>
-                                                            <option value='1'>1 - Poor</option>
-                                                            <option value='2'>2 - Fair</option>
-                                                            <option value='3'>3 - Good</option>
-                                                            <option value='4'>4 - Very Good</option>
-                                                            <option value='5'>5 - Excellent</option>
-                                                        </Form.Control>
-                                                    </Form.Group>
-                                                    <Form.Group className='my-2' controlId='comment'>
-                                                        <Form.Label>Comment</Form.Label>
-                                                        <Form.Control
-                                                            as='textarea'
-                                                            row='3'
-                                                            required
-                                                            value={comment}
-                                                            onChange={(e) => setComment(e.target.value)}
-                                                        ></Form.Control>
-                                                    </Form.Group>
-                                                    <Button
-                                                        disabled={loadingProductReview}
-                                                        type='submit'
-                                                        variant='primary'
-                                                    >
-                                                        Gửi bài
-                                                    </Button>
-                                                </Form>
-                                            ) : (
-                                                <Message>
-                                                    Hãy <Link to='/login'>sign in</Link> để viết bình luận
-                                                </Message>
-                                            )}
-                                        </ListGroup.Item>
-                                    </Col>
-                                    <Col md={6}>
-                                        <h2>Xem bình luận</h2>
-                                        {/* {getListFeedbackByProduct?.length === 0 && <Message>No Reviews</Message>} */}
-                                        <ListGroup variant='flush'>
-                                            {getListFeedbackByProduct?.map((review) => (
-                                                <ListGroup.Item key={review}>
-                                                    <strong>{review.name}</strong>
-                                                    <Rating value={review.rating} />
-                                                    {/* <p>{review?.createdAt.substring(0, 10)}</p> */}
-                                                    <p>{review.comment}</p>
-                                                </ListGroup.Item>
-                                            ))}
-                                        </ListGroup>
-                                    </Col>
+                                                            Gửi bài
+                                                        </Button>
+                                                    </Form>
+                                                ) : (
+                                                    <Message>
+                                                        Hãy <Link to='/login'>Đăng nhập</Link> để viết bình luận
+                                                    </Message>
+                                                )}
+                                            </ListGroup.Item>
+                                        </Col>
+                                        <Col md={6}>
+                                            <h2>Xem bình luận</h2>
+                                            {/* {getListFeedbackByProduct?.length === 0 && <Message>No Reviews</Message>} */}
+                                            <ListGroup variant='flush'>
+                                                {getListFeedbackByProduct?.map((review) => (
+                                                    <ListGroup.Item key={review}>
+                                                        <strong>{review.name}</strong>
+                                                        <Rating value={review.rating} />
+                                                        {/* <p>{review?.createdAt.substring(0, 10)}</p> */}
+                                                        <p>{review.comment}</p>
+                                                    </ListGroup.Item>
+                                                ))}
+                                            </ListGroup>
+                                        </Col>
 
-                                </Row>
-                            </TabPane>
-                        </Tabs>
-                    </>
-                )}
-            </>
-        </Container>
-</div >
+                                    </Row>
+                                </TabPane>
+                            </Tabs>
+                        </>
+                    )}
+                </>
+            </Container>
+        </div >
     );
 };
 

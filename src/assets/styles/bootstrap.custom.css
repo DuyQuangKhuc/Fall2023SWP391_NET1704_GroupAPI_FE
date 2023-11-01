@@ -214,6 +214,25 @@ hr {
     border-top: var(--bs-border-width) solid;
     opacity: 0.25;
 }
+.autocomplete-options {
+    list-style: none;
+    padding: 0;
+    margin: 1;
+    background-color: #ffffff;
+    border: 1px solid #fcfbfb;
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    color: #000;
+}
+
+.autocomplete-options li {
+    padding: 10px;
+    cursor: pointer;
+}
+
+.autocomplete-options li:hover {
+    background-color: #b2daf3;
+}
 
 h6,
 .h6,

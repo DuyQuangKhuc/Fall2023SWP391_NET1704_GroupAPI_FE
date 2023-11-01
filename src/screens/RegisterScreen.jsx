@@ -45,7 +45,7 @@ const RegisterScreen = () => {
                 navigate('/login');
                 setSuccessAlert(true);
                 setTimeout(() => {
-                    setSuccessAlert(true);
+                    setSuccessAlert("true");
                 }, 3000);
             } catch (err) {
                 toast.error("Tài khoản đã tồn tại");

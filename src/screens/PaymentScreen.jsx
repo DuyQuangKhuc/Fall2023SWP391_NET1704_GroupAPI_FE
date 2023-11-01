@@ -9,12 +9,12 @@ import { toast } from 'react-toastify';
 import { useGetVoucherOfUserQuery } from '../slices/productsApiSlice';
 import { Box, CardContent, CardMedia, Grid, IconButton, InputLabel, MenuItem, Select, Typography } from '@material-ui/core';
 import VoucherUser from '../components/VoucherUser';
+import { useFormContext } from 'react-hook-form';
 
 const PaymentScreen = () => {
     const navigate = useNavigate();
     const { userInfo } = useSelector((state) => state.auth);
     const [voucherId, setVoucherId] = useState(1);
-
     const [paymentMethodId, setPaymentMethod] = useState('');
     const [address, setAddress] = useState('');
 
@@ -23,9 +23,8 @@ const PaymentScreen = () => {
     const { data: getListPaymentMethod } = useGetListPaymentMethodQuery();
 
     const [addPaymentPromax] = useAddPaymentPromaxMutation();
-
     const submitHandler = async (e) => {
-        e.preventDefault();
+        e.preventDefault();    
         try {
             const res = await addPaymentPromax({
                 orderId: order.orderId,
@@ -34,6 +33,7 @@ const PaymentScreen = () => {
                 voucherId,
             }).unwrap()
             navigate('/');
+            
             toast.success("Thanh toán thành công");
             window.location.reload();
         } catch (err) {
@@ -75,22 +75,23 @@ const PaymentScreen = () => {
             <Row>
                 <CheckoutSteps step1 step3 />
                 <h1>Hình thức thanh toán</h1>
-                <Form onSubmit={submitHandler}>
-
+                <Form novalidate onSubmit={submitHandler}>
                     <Form.Group style={{ display: 'flex', justifyContent: 'space-between' }} >
                         <Col md={3}>
                             <Form.Label as='legend' className='mt-5' >Thông tin địa chỉ nhận hàng</Form.Label>
                             <Form.Group className='my-2' controlId='address'>
                                 <Form.Label>Địa chỉ</Form.Label>
-                                <Form.Control
+                                <Form.Control    
                                     type='text'
                                     placeholder='Enter address'
                                     value={address}
-                                    required
                                     onChange={(e) => setAddress(e.target.value)}
+                                    required
                                 ></Form.Control>
-                            </Form.Group>
-
+                                <Form.Control.Feedback type='invalid'>
+                                    Please enter a valid address.
+                                </Form.Control.Feedback>
+                            </Form.Group>                          
                         </Col>
                         <Col md={3}>
                             <Form.Label as='legend' className='mt-5'>Lựa chọn thanh toán</Form.Label>
@@ -103,6 +104,7 @@ const PaymentScreen = () => {
                                     name='paymentMethod'
                                     checked={paymentMethodId === payment.paymentMethodId}
                                     onChange={() => setPaymentMethod(payment.paymentMethodId)}
+                                    required
                                 />
                             ))}
                         </Col>

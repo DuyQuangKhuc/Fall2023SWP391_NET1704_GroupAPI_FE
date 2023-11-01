@@ -17,7 +17,7 @@ import Tab from '@mui/material/Tab';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from '@material-ui/core';
+import { Avatar, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from '@material-ui/core';
 import VoucherUser from '../components/VoucherUser';
 import { Grid } from '@material-ui/core';
 
@@ -250,9 +250,8 @@ const ProfileScreen = () => {
         }}>
             <Container>
                 <Row >
-                    <Col md={3} className='mt-3'>
+                   <Col md={3} className='mt-3'>
                         <h2>Trang cá nhân</h2>
-
                         <Form onSubmit={submitHandler} className='mb-3'>
                             <Form.Group className='my-2' controlId='user'>
                                 <Form.Label>Tên</Form.Label>
@@ -271,6 +270,7 @@ const ProfileScreen = () => {
                                     placeholder='Enter email'
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
+                                    disabled
                                 ></Form.Control>
                             </Form.Group>
 
