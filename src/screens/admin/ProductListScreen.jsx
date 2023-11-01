@@ -322,7 +322,12 @@ function ProductListScreen(props) {
                                 <td>{component?.name}</td>
                                 <td>{component?.quantity}</td>
                                 <td>{component?.material}</td>
-                                <td>{component?.color}</td>
+                                <td><div style={{
+                                    marginLeft: '10px',
+                                    backgroundColor: `${component.color}`,
+                                    width: 50,
+                                    height: 28,
+                                }}></div> </td>
                                 <td>{component?.description}</td>
                                 <td>{component?.isReplacable && component?.isReplacable === 1 ? "Thay đổi" : component?.isReplacable === 0 ? "Cố định" : ""}</td>
                             </tr>
@@ -373,15 +378,27 @@ function ProductListScreen(props) {
                     <Form.Group>
                         <Form.Label>Lựa chọn : </Form.Label>
                         {getListComponentCreatedBySystem ? (
-                            <Select value={componentId} onChange={(e) => setComponentId(e.target.value)}>
+                            <Select  value={componentId} onChange={(e) => setComponentId(e.target.value)}>
                                 {getListComponentCreatedBySystem.map((components) => (
                                     <MenuItem key={components.componentId} value={components.componentId} >
-                                        {components.name} - Chất liệu: {components.material} - Màu: <div style={{
+                                        {/* {components.name} - Chất liệu: {components.material} - Màu: <div style={{
                                             marginLeft: '10px',
                                             backgroundColor: `${components.color}`,
-                                            width: 50,
+                                            width: 28,
                                             height: 28,
-                                        }}></div>                  
+                                            display: 'flex'
+                                        }}></div>    */}
+                                        <div style={{ display: 'flex'}}>
+                                            <div>-Tên: {components.name} </div>
+                                            <div style={{ marginLeft: '20px' }}>- Chất liệu: {components.material}</div>
+                                            <div style={{ display: 'flex', marginLeft: '20px' }}>- Màu: <div style={{
+                                                marginLeft: '10px',
+                                                backgroundColor: `${components.color}`,
+                                                width: 28,
+                                                height: 28,
+                                                
+                                            }}></div>   </div>
+                                        </div>               
                                     </MenuItem>
                                 ))}
                             </Select>
@@ -402,16 +419,16 @@ function ProductListScreen(props) {
                                         .filter((data) => data.componentId === componentId) // Filter the data based on the selected option
                                         .map((data, index) => (
                                             <tr key={index}>
-                                                <td>Tên: {data.name}</td>
-                                                <td>Màu sắc: <div style={{
+                                                <td>Tên: <p>{data.name}</p></td>
+                                                <td>Màu sắc: <p style={{
                                                     marginLeft: '10px',
                                                     backgroundColor: `${data.color}`,
                                                     width: 50,
                                                     height: 28,
-                                                }}></div>        </td>
-                                                <td>Chất liệu: {data.material}</td>
-                                                <td>Mô tả: {data.description}</td>
-                                                <td>Trạng thái: {data?.isReplacable && data?.isReplacable === 1 ? "Thay đổi" : data?.isReplacable === 0 ? "Cố định" : ""}</td>
+                                                }}></p></td>
+                                                <td>Chất liệu: <p>{data.material}</p></td>
+                                                <td>Mô tả: <p>{data.description}</p></td>
+                                                <td>Trạng thái: <p>{data?.isReplacable && data?.isReplacable === 1 ? "Thay đổi" : data?.isReplacable === 0 ? "Cố định" : ""}</p></td>
                                                 <td></td>
                                             </tr>
                                         ))}
