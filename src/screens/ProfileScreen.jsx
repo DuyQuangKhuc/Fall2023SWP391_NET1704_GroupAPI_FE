@@ -26,7 +26,6 @@ const ProfileScreen = () => {
     const [phone, setPhone] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
     const { userInfo } = useSelector((state) => state.auth);
 
     const [value, setValue] = React.useState('1');
@@ -34,20 +33,29 @@ const ProfileScreen = () => {
         setValue(newValue);
     };
 
+    const { data: getListAllComponent, refetch: getListAllComponentRefetch } = useGetListAllComponentQuery();
+    useEffect(() => {
+        if (getListAllComponent) {
+            const intervalId = setInterval(getListAllComponentRefetch, 1000); // Refresh every 1 seconds
+            return () => clearInterval(intervalId); // Cleanup the interval on component unmount or 'order' change
+        }
+    }, [getListAllComponent, getListAllComponentRefetch]);
+    console.log(getListAllComponent);
     // Define useState hook to track the expanded rows
     const [expandedRows, setExpandedRows] = useState([]);
 
-    // Function to toggle the expanded state of a row
-    const toggleRow = (index) => {
-        // Check if the row is already expanded
-        if (expandedRows.includes(index)) {
-            // Remove the row index from the expanded rows array
-            setExpandedRows(expandedRows.filter((row) => row !== index));
-        } else {
-            // Add the row index to the expanded rows array
-            setExpandedRows([...expandedRows, index]);
-        }
+    const isRowExpanded = (productId) => {
+        return expandedRows.includes(productId);
     };
+
+    const toggleRow = (productId) => {
+        const isCurrentlyExpanded = isRowExpanded(productId);
+        const newExpandedRows = isCurrentlyExpanded
+            ? expandedRows.filter(rowId => rowId !== productId)
+            : [...expandedRows, productId];
+        setExpandedRows(newExpandedRows);
+    };
+
     function formatCurrency(number) {
         // Sử dụng hàm toLocaleString() để định dạng số thành chuỗi với ngăn cách hàng nghìn và mặc định là USD.
         return number.toLocaleString('en-US', {
@@ -56,8 +64,6 @@ const ProfileScreen = () => {
         });
     }
 
-    // Function to check if a row is expanded
-    const isRowExpanded = (index) => expandedRows.includes(index);
 
     const { id: accountId } = useParams();
 
@@ -174,8 +180,6 @@ const ProfileScreen = () => {
 
     const [product] = useState(JSON.parse(localStorage.getItem('ListProductCreatedByUser')));
 
-    const { data: getListAllComponent } = useGetListAllComponentQuery();
-    // const filteredComponents = getListAllComponent?.filter(component => component.productId === product.productId);
 
 
 
@@ -184,28 +188,25 @@ const ProfileScreen = () => {
         setPhone(userInfo.phone);
         setEmail(userInfo.email);
         setUser(userInfo.name)
-    }, [userInfo.email, userInfo.phone, userInfo.name]);
+        setPassword(userInfo.password);
+    }, [userInfo.email, userInfo.phone, userInfo.name, userInfo.password]);
 
     const dispatch = useDispatch();
 
     const submitHandler = async (e) => {
         e.preventDefault();
-        if (password !== confirmPassword) {
-            toast.error('sai mật khẩu');
-        } else {
-            try {
-                const res = await updateUser({
-                    accountId,
-                    name,
-                    phone,
-                    email,
-                    password,
-                }).unwrap();
-                dispatch(setCredentials({ ...res }));
-                toast.success('Cập nhập thành công');
-            } catch (err) {
-                toast.error("lỗi");
-            }
+        try {
+            const res = await updateUser({
+                accountId,
+                name,
+                phone,
+                email,
+                password,
+            }).unwrap();
+            dispatch(setCredentials({ ...res }));
+            toast.success('Cập nhập thành công');
+        } catch (err) {
+            toast.error("lỗi");
         }
     };
 
@@ -250,7 +251,7 @@ const ProfileScreen = () => {
         }}>
             <Container>
                 <Row >
-                   <Col md={3} className='mt-3'>
+                    <Col md={3} className='mt-3'>
                         <h2>Trang cá nhân</h2>
                         <Form onSubmit={submitHandler} className='mb-3'>
                             <Form.Group className='my-2' controlId='user'>
@@ -285,25 +286,27 @@ const ProfileScreen = () => {
                             </Form.Group>
 
                             <Form.Group className='my-2' controlId='password'>
-                                <Form.Label>Mật khẩu</Form.Label>
+                                {/* <Form.Label>Mật khẩu</Form.Label> */}
                                 <Form.Control
                                     type='password'
                                     placeholder='Enter password'
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    required
+
+                                    hidden
                                 ></Form.Control>
                             </Form.Group>
 
-                            <Form.Group className='my-2' controlId='confirmPassword'>
+                            {/* <Form.Group className='my-2' controlId='confirmPassword'>
                                 <Form.Label>Xác nhận mật khẩu</Form.Label>
                                 <Form.Control
                                     type='password'
                                     placeholder='Confirm password'
                                     value={confirmPassword}
                                     onChange={(e) => setConfirmPassword(e.target.value)}
+                                    hidden
                                 ></Form.Control>
-                            </Form.Group>
+                            </Form.Group> */}
 
                             <Button type='submit' variant='primary'>
                                 Cập nhập
@@ -346,41 +349,65 @@ const ProfileScreen = () => {
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {filteredListProductOnlyUser?.map((order, index) => (
-                                                        <React.Fragment key={index}>
+                                                    {filteredListProductOnlyUser?.map((order) => (
+                                                        <React.Fragment key={order?.productId}>
                                                             <tr>
-                                                                <td>
-                                                                    <ButtonGroup onClick={() => toggleRow(index)}>
-                                                                        {isRowExpanded(index) ? <FaWindowMinimize /> : <FaPlus />}
+                                                                <td className='align-middle'>
+                                                                    <ButtonGroup onClick={() => toggleRow(order?.productId)}>
+                                                                        {isRowExpanded(order?.productId) ? <FaWindowMinimize /> : <FaPlus />}
                                                                     </ButtonGroup>
                                                                 </td>
-                                                                <td><div style={{ padding: '5px', borderRadius: '5px' }}>{order?.productId}</div></td>
-                                                                <td><div style={{ padding: '5px', borderRadius: '5px' }}>{order.uploadDate}</div></td>
+                                                                <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order?.productId}</div></td>
+                                                                <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order.uploadDate}</div></td>
                                                                 <td className='align-middle'>
                                                                     <div style={{
                                                                         backgroundColor: getTabColor(order.isDeleted),
                                                                         padding: '5px',
                                                                         color: '#fff',
                                                                         borderRadius: '5px',
-                                                                        //width: 'fit-content', 
                                                                     }}
                                                                     >
                                                                         {isDeletedMapping[order.isDeleted]}
                                                                     </div>
                                                                 </td>
                                                             </tr>
-                                                            {isRowExpanded(index) && (
-                                                                getListAllComponent
-                                                                    .filter((id) => id.componentId === order?.productId)
-                                                                    .map((id, subIndex) => (
-                                                                        <div key={subIndex}>
-                                                                            <td>{id?.name}</td>
-                                                                            <td>{id?.material}</td>
-                                                                            <td>{id?.description}</td>
-                                                                            <td>{id?.color}</td>
-                                                                            <td>{id?.isReplacable}</td>
-                                                                        </div>
-                                                                    ))
+                                                            {isRowExpanded(order?.productId) && (
+                                                                <tr>
+                                                                    <td colSpan={4}>
+                                                                        <table class="table table-bordered ">
+                                                                            <thead>
+                                                                                <tr>
+                                                                                    <th>Tên</th>
+                                                                                    <th>Chất liệu</th>
+                                                                                    <th>Màu sắc</th>
+                                                                                    <th>Mô tả</th>
+                                                                                    <th>Trạng thái</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                {getListAllComponent
+                                                                                    .filter((component) => component.productId === order?.productId)
+                                                                                    .map((component, index) => (
+                                                                                        <tr key={index}>
+                                                                                            <td>{component.name}</td>
+                                                                                            <td>{component.material}</td>
+                                                                                            <td className='align-middle ' style={{ width: 90 }}>
+                                                                                                <div style={{
+                                                                                                    backgroundColor: `${component.color}`,
+                                                                                                    height: 28,
+                                                                                                    borderRadius: '5px',
+                                                                                                    padding: '5px',
+                                                                                                }}></div>
+                                                                                            </td>
+                                                                                            <td>{component.description}</td>
+                                                                                            <td>{component?.isReplacable && component?.isReplacable === 1 ? "Tháo rời" : component?.isReplacable === 0 ? "Cố định" : ""}</td>
+                                                                                        </tr>
+                                                                                    ))
+                                                                                }
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </td>
+                                                                </tr>
                                                             )}
                                                         </React.Fragment>
                                                     ))}
@@ -508,17 +535,42 @@ const ProfileScreen = () => {
                                                                 </td>
                                                             </tr>
                                                             {isRowExpanded(index) && (
-                                                                getListAllComponent
-                                                                    .filter((id) => id.componentId === order?.productId)
-                                                                    .map((id, subIndex) => (
-                                                                        <div key={subIndex}>
-                                                                            <td>{id?.name}</td>
-                                                                            <td>{id?.material}</td>
-                                                                            <td>{id?.description}</td>
-                                                                            <td>{id?.color}</td>
-                                                                            <td>{id?.isReplacable}</td>
-                                                                        </div>
-                                                                    ))
+                                                                <tr>
+                                                                    <td colSpan={4}>
+                                                                        <table class="table table-bordered ">
+                                                                            <thead>
+                                                                                <tr>
+                                                                                    <th>Tên</th>
+                                                                                    <th>Chất liệu</th>
+                                                                                    <th>Màu sắc</th>
+                                                                                    <th>Mô tả</th>
+                                                                                    <th>Trạng thái</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                {getListAllComponent
+                                                                                    .filter((component) => component.productId === order?.productId)
+                                                                                    .map((component, index) => (
+                                                                                        <tr key={index}>
+                                                                                            <td>{component.name}</td>
+                                                                                            <td>{component.material}</td>
+                                                                                            <td className='align-middle ' style={{ width: 90 }}>
+                                                                                                <div style={{
+                                                                                                    backgroundColor: `${component.color}`,
+                                                                                                    height: 28,
+                                                                                                    borderRadius: '5px',
+                                                                                                    padding: '5px',
+                                                                                                }}></div>
+                                                                                            </td>
+                                                                                            <td>{component.description}</td>
+                                                                                            <td>{component?.isReplacable && component?.isReplacable === 1 ? "Tháo rời" : component?.isReplacable === 0 ? "Cố định" : ""}</td>
+                                                                                        </tr>
+                                                                                    ))
+                                                                                }
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </td>
+                                                                </tr>
                                                             )}
                                                         </React.Fragment>
                                                     ))}
@@ -565,17 +617,42 @@ const ProfileScreen = () => {
 
                                                             </tr>
                                                             {isRowExpanded(index) && (
-                                                                getListAllComponent
-                                                                    .filter((id) => id.componentId === order?.productId)
-                                                                    .map((id, subIndex) => (
-                                                                        <div key={subIndex}>
-                                                                            <td>{id?.name}</td>
-                                                                            <td>{id?.material}</td>
-                                                                            <td>{id?.description}</td>
-                                                                            <td>{id?.color}</td>
-                                                                            <td>{id?.isReplacable}</td>
-                                                                        </div>
-                                                                    ))
+                                                                <tr>
+                                                                    <td colSpan={4}>
+                                                                        <table class="table table-bordered ">
+                                                                            <thead>
+                                                                                <tr>
+                                                                                    <th>Tên</th>
+                                                                                    <th>Chất liệu</th>
+                                                                                    <th>Màu sắc</th>
+                                                                                    <th>Mô tả</th>
+                                                                                    <th>Trạng thái</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                {getListAllComponent
+                                                                                    .filter((component) => component.productId === order?.productId)
+                                                                                    .map((component, index) => (
+                                                                                        <tr key={index}>
+                                                                                            <td>{component.name}</td>
+                                                                                            <td>{component.material}</td>
+                                                                                            <td className='align-middle ' style={{ width: 90 }}>
+                                                                                                <div style={{
+                                                                                                    backgroundColor: `${component.color}`,
+                                                                                                    height: 28,
+                                                                                                    borderRadius: '5px',
+                                                                                                    padding: '5px',
+                                                                                                }}></div>
+                                                                                            </td>
+                                                                                            <td>{component.description}</td>
+                                                                                            <td>{component?.isReplacable && component?.isReplacable === 1 ? "Tháo rời" : component?.isReplacable === 0 ? "Cố định" : ""}</td>
+                                                                                        </tr>
+                                                                                    ))
+                                                                                }
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </td>
+                                                                </tr>
                                                             )}
                                                         </React.Fragment>
                                                     ))}
@@ -676,17 +753,42 @@ const ProfileScreen = () => {
                                                                 </td>
                                                             </tr>
                                                             {isRowExpanded(index) && (
-                                                                getListAllComponent
-                                                                    .filter((id) => id.componentId === order?.productId)
-                                                                    .map((id, subIndex) => (
-                                                                        <div key={subIndex}>
-                                                                            <td>{id?.name}</td>
-                                                                            <td>{id?.material}</td>
-                                                                            <td>{id?.description}</td>
-                                                                            <td>{id?.color}</td>
-                                                                            <td>{id?.isReplacable}</td>
-                                                                        </div>
-                                                                    ))
+                                                                <tr>
+                                                                    <td colSpan={4}>
+                                                                        <table class="table table-bordered ">
+                                                                            <thead>
+                                                                                <tr>
+                                                                                    <th>Tên</th>
+                                                                                    <th>Chất liệu</th>
+                                                                                    <th>Màu sắc</th>
+                                                                                    <th>Mô tả</th>
+                                                                                    <th>Trạng thái</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                {getListAllComponent
+                                                                                    .filter((component) => component.productId === order?.productId)
+                                                                                    .map((component, index) => (
+                                                                                        <tr key={index}>
+                                                                                            <td>{component.name}</td>
+                                                                                            <td>{component.material}</td>
+                                                                                            <td className='align-middle ' style={{ width: 90 }}>
+                                                                                                <div style={{
+                                                                                                    backgroundColor: `${component.color}`,
+                                                                                                    height: 28,
+                                                                                                    borderRadius: '5px',
+                                                                                                    padding: '5px',
+                                                                                                }}></div>
+                                                                                            </td>
+                                                                                            <td>{component.description}</td>
+                                                                                            <td>{component?.isReplacable && component?.isReplacable === 1 ? "Tháo rời" : component?.isReplacable === 0 ? "Cố định" : ""}</td>
+                                                                                        </tr>
+                                                                                    ))
+                                                                                }
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </td>
+                                                                </tr>
                                                             )}
                                                         </React.Fragment>
                                                     ))}
@@ -731,17 +833,42 @@ const ProfileScreen = () => {
                                                                 </td>
                                                             </tr>
                                                             {isRowExpanded(index) && (
-                                                                getListAllComponent
-                                                                    .filter((id) => id.componentId === order?.productId)
-                                                                    .map((id, subIndex) => (
-                                                                        <div key={subIndex}>
-                                                                            <td>{id?.name}</td>
-                                                                            <td>{id?.material}</td>
-                                                                            <td>{id?.description}</td>
-                                                                            <td>{id?.color}</td>
-                                                                            <td>{id?.isReplacable}</td>
-                                                                        </div>
-                                                                    ))
+                                                                <tr>
+                                                                    <td colSpan={4}>
+                                                                        <table class="table table-bordered ">
+                                                                            <thead>
+                                                                                <tr>
+                                                                                    <th>Tên</th>
+                                                                                    <th>Chất liệu</th>
+                                                                                    <th>Màu sắc</th>
+                                                                                    <th>Mô tả</th>
+                                                                                    <th>Trạng thái</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                {getListAllComponent
+                                                                                    .filter((component) => component.productId === order?.productId)
+                                                                                    .map((component, index) => (
+                                                                                        <tr key={index}>
+                                                                                            <td>{component.name}</td>
+                                                                                            <td>{component.material}</td>
+                                                                                            <td className='align-middle ' style={{ width: 90 }}>
+                                                                                                <div style={{
+                                                                                                    backgroundColor: `${component.color}`,
+                                                                                                    height: 28,
+                                                                                                    borderRadius: '5px',
+                                                                                                    padding: '5px',
+                                                                                                }}></div>
+                                                                                            </td>
+                                                                                            <td>{component.description}</td>
+                                                                                            <td>{component?.isReplacable && component?.isReplacable === 1 ? "Tháo rời" : component?.isReplacable === 0 ? "Cố định" : ""}</td>
+                                                                                        </tr>
+                                                                                    ))
+                                                                                }
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </td>
+                                                                </tr>
                                                             )}
                                                         </React.Fragment>
                                                     ))}
@@ -786,17 +913,42 @@ const ProfileScreen = () => {
                                                                 </td>
                                                             </tr>
                                                             {isRowExpanded(index) && (
-                                                                getListAllComponent
-                                                                    .filter((id) => id.componentId === order?.productId)
-                                                                    .map((id, subIndex) => (
-                                                                        <div key={subIndex}>
-                                                                            <td>{id?.name}</td>
-                                                                            <td>{id?.material}</td>
-                                                                            <td>{id?.description}</td>
-                                                                            <td>{id?.color}</td>
-                                                                            <td>{id?.isReplacable}</td>
-                                                                        </div>
-                                                                    ))
+                                                                <tr>
+                                                                    <td colSpan={4}>
+                                                                        <table class="table table-bordered ">
+                                                                            <thead>
+                                                                                <tr>
+                                                                                    <th>Tên</th>
+                                                                                    <th>Chất liệu</th>
+                                                                                    <th>Màu sắc</th>
+                                                                                    <th>Mô tả</th>
+                                                                                    <th>Trạng thái</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                {getListAllComponent
+                                                                                    .filter((component) => component.productId === order?.productId)
+                                                                                    .map((component, index) => (
+                                                                                        <tr key={index}>
+                                                                                            <td>{component.name}</td>
+                                                                                            <td>{component.material}</td>
+                                                                                            <td className='align-middle ' style={{ width: 90 }}>
+                                                                                                <div style={{
+                                                                                                    backgroundColor: `${component.color}`,
+                                                                                                    height: 28,
+                                                                                                    borderRadius: '5px',
+                                                                                                    padding: '5px',
+                                                                                                }}></div>
+                                                                                            </td>
+                                                                                            <td>{component.description}</td>
+                                                                                            <td>{component?.isReplacable && component?.isReplacable === 1 ? "Tháo rời" : component?.isReplacable === 0 ? "Cố định" : ""}</td>
+                                                                                        </tr>
+                                                                                    ))
+                                                                                }
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </td>
+                                                                </tr>
                                                             )}
                                                         </React.Fragment>
                                                     ))}

@@ -389,21 +389,20 @@ function ProductListScreen(props) {
                                             display: 'flex'
                                         }}></div>    */}
                                         <div style={{ display: 'flex'}}>
-                                            <div>-Tên: {components.name} </div>
+                                            <div style={{ marginLeft: '5px' }}>-Tên: {components.name} </div>
                                             <div style={{ marginLeft: '20px' }}>- Chất liệu: {components.material}</div>
                                             <div style={{ display: 'flex', marginLeft: '20px' }}>- Màu: <div style={{
                                                 marginLeft: '10px',
                                                 backgroundColor: `${components.color}`,
                                                 width: 28,
-                                                height: 28,
-                                                
-                                            }}></div>   </div>
+                                                height: 28,                                              
+                                            }}></div></div>
                                         </div>               
                                     </MenuItem>
                                 ))}
                             </Select>
                         ) : (
-                            <p>Loading...</p>
+                            <p>Trống...</p>
                         )}
 
                         {isLoading ? (

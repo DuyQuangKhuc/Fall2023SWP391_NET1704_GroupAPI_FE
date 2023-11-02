@@ -1,6 +1,6 @@
 import { LinkContainer } from 'react-router-bootstrap';
-import { Table, Button, Container, Col } from 'react-bootstrap';
-import { FaCheck, FaRegEdit, FaTimes } from 'react-icons/fa';
+import { Table, Button, Container, Col, ButtonGroup } from 'react-bootstrap';
+import { FaCheck, FaPlus, FaRegEdit, FaTimes, FaWindowMinimize } from 'react-icons/fa';
 import Message from '../../components/Message';
 import Loader from '../../components/Loader';
 import { useGetListProductOnlyUserQuery } from '../../slices/ordersApiSlice';
@@ -11,9 +11,9 @@ import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import { useState } from 'react';
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@material-ui/core';
+import { Collapse, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@material-ui/core';
 
-import { useAcceptProductOfUserFromAdminMutation, useAcceptProductOfUserMutation, useCancelProductOfUserMutation } from '../../slices/productsApiSlice';
+import { useAcceptProductOfUserFromAdminMutation, useAcceptProductOfUserMutation, useCancelProductOfUserMutation, useGetListAllComponentQuery } from '../../slices/productsApiSlice';
 import { useEffect } from 'react';
 import { toast } from 'react-toastify';
 
@@ -117,7 +117,7 @@ const OrderListScreen = () => {
         try {
             const res = await acceptProductOfUser({
                 productId: productId,
-            }).unwrap();     
+            }).unwrap();
             toast.success('thành công');
         } catch (err) {
             toast.error("lỗi");
@@ -137,9 +137,32 @@ const OrderListScreen = () => {
                 handleClose()
             } catch (err) {
                 toast.error("lỗi");
-                
+
             }
         }
+    };
+
+    const { data: getListAllComponent, refetch: getListAllComponentRefetch } = useGetListAllComponentQuery();
+    useEffect(() => {
+        if (getListAllComponent) {
+            const intervalId = setInterval(getListAllComponentRefetch, 1000); // Refresh every 1 seconds
+            return () => clearInterval(intervalId); // Cleanup the interval on component unmount or 'order' change
+        }
+    }, [getListAllComponent, getListAllComponentRefetch]);
+    console.log(getListAllComponent);
+    // Define useState hook to track the expanded rows
+    const [expandedRows, setExpandedRows] = useState([]);
+
+    const isRowExpanded = (productId) => {
+        return expandedRows.includes(productId);
+    };
+
+    const toggleRow = (productId) => {
+        const isCurrentlyExpanded = isRowExpanded(productId);
+        const newExpandedRows = isCurrentlyExpanded
+            ? expandedRows.filter(rowId => rowId !== productId)
+            : [...expandedRows, productId];
+        setExpandedRows(newExpandedRows);
     };
 
 
@@ -163,6 +186,7 @@ const OrderListScreen = () => {
                             <Table>
                                 <TableHead>
                                     <TableRow>
+                                        <TableCell></TableCell>
                                         <TableCell>Mã đơn hàng</TableCell>
                                         <TableCell>ID Tài khoản đặt hàng</TableCell>
                                         <TableCell>Ngày đặt hàng</TableCell>
@@ -172,57 +196,110 @@ const OrderListScreen = () => {
                                 </TableHead>
                                 <TableBody>
                                     {filteredListProductOnlyUser?.map((row) => (
-                                        <TableRow hover role="checkbox" tabIndex={-1} key={row.productId}>
-                                            <TableCell>{row.productId}</TableCell>
-                                            <TableCell>{row.name}</TableCell>
-                                            <TableCell>{row.uploadDate}</TableCell>
-                                            <TableCell >
-                                                <div style={{ backgroundColor: getTabColor(row.isDeleted), padding: '5px', color: '#fff', borderRadius: '5px', width: 'fit-content' }}>
-                                                    {isDeletedMapping[row.isDeleted]}
-                                                </div>
-                                            </TableCell>
-                                            <TableCell>
+                                        <>
+                                            <TableRow hover role="checkbox" tabIndex={-1} key={row.productId}>
+                                                <TableCell>
+                                                    <ButtonGroup aria-label="expand row"
+                                                        size="small" onClick={() => toggleRow(row?.productId)}>
+                                                        {isRowExpanded(row?.productId) ? <FaWindowMinimize /> : <FaPlus />}
+                                                    </ButtonGroup>
+                                                </TableCell>
+                                                <TableCell>{row.productId}</TableCell>
+                                                <TableCell>{row.name}</TableCell>
+                                                <TableCell>{row.uploadDate}</TableCell>
+                                                <TableCell >
+                                                    <div style={{ backgroundColor: getTabColor(row.isDeleted), padding: '5px', color: '#fff', borderRadius: '5px', width: 'fit-content' }}>
+                                                        {isDeletedMapping[row.isDeleted]}
+                                                    </div>
+                                                </TableCell>
+                                                <TableCell>
 
-                                                <Button variant='outline-success' className='mx-2' onClick={() => handleClickOpen(row.productId)} >
-                                                    <FaCheck style={{ color: 'green' }} />
-                                                </Button>
+                                                    <Button variant='outline-success' className='mx-2' onClick={() => handleClickOpen(row.productId)} >
+                                                        <FaCheck style={{ color: 'green' }} />
+                                                    </Button>
 
-                                                <Dialog open={open} onClose={handleClose}>
-                                                    <DialogTitle>Gửi hóa đơn đến khách hàng</DialogTitle>
-                                                    <DialogContent>
-                                                        <DialogContentText>
-                                                            Gửi số tiền yêu cầu mà khách hàng cần thanh toán
-                                                        </DialogContentText>
-                                                        <TextField
-                                                            autoFocus
-                                                            margin="dense"
-                                                            id="number"
-                                                            label="Nhập số tiền"
-                                                            type="number"
-                                                            fullWidth
-                                                            value={price}
-                                                            onChange={(e) => setPrice(e.target.value)}
-                                                        />
-                                                    </DialogContent>
-                                                    <DialogActions>
-                                                        <Button onClick={handleClose}>Thoát</Button>
-                                                        <Button onClick={(e) => submitHandler1(e, row.productId)}>Gửi hóa đơn</Button>
-                                                    </DialogActions>
-                                                </Dialog>
+                                                    <Dialog open={open} onClose={handleClose}>
+                                                        <DialogTitle>Gửi hóa đơn đến khách hàng</DialogTitle>
+                                                        <DialogContent>
+                                                            <DialogContentText>
+                                                                Gửi số tiền yêu cầu mà khách hàng cần thanh toán
+                                                            </DialogContentText>
+                                                            <TextField
+                                                                autoFocus
+                                                                margin="dense"
+                                                                id="number"
+                                                                label="Nhập số tiền"
+                                                                type="number"
+                                                                fullWidth
+                                                                value={price}
+                                                                onChange={(e) => setPrice(e.target.value)}
+                                                            />
+                                                        </DialogContent>
+                                                        <DialogActions>
+                                                            <Button onClick={handleClose}>Thoát</Button>
+                                                            <Button onClick={(e) => submitHandler1(e, row.productId)}>Gửi hóa đơn</Button>
+                                                        </DialogActions>
+                                                    </Dialog>
 
-                                                <Button
-                                                    variant="outline-danger"
-                                                    className=''
-                                                    onClick={() => submitHandler2(row.productId)}
-                                                >
-                                                    <FaTimes style={{ color: '' }} />
-                                                </Button>
+                                                    <Button
+                                                        variant="outline-danger"
+                                                        className=''
+                                                        onClick={() => submitHandler2(row.productId)}
+                                                    >
+                                                        <FaTimes style={{ color: '' }} />
+                                                    </Button>
 
-                                            </TableCell>
-                                        </TableRow>
+                                                </TableCell>
+
+                                            </TableRow>
+                                            <TableRow>
+                                                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+                                                    <Collapse in={isRowExpanded(row?.productId)} timeout="auto" unmountOnExit>
+                                                        <Box sx={{ margin: 1 }}>
+                                                            <table class="table table-bordered ">
+                                                                <TableHead>
+                                                                    <TableRow>
+                                                                        <TableCell>Tên</TableCell>
+                                                                        <TableCell>Chất liệu</TableCell>
+                                                                        <TableCell>Số lượng</TableCell>
+                                                                        <TableCell>Màu sắc</TableCell>
+                                                                        <TableCell>Mô tả</TableCell>
+                                                                        <TableCell>Trạng thái</TableCell>
+                                                                    </TableRow>
+                                                                </TableHead>
+                                                                <TableBody>
+                                                                    {getListAllComponent?.filter((component) => component.productId === row?.productId)?.map((component, index) => (
+                                                                        <TableRow key={index}>
+                                                                            <TableCell>{component.name}</TableCell>
+                                                                            <TableCell>{component.material}</TableCell>
+                                                                            <TableCell>{component.quantity}</TableCell>
+                                                                            <TableCell>
+                                                                                <div style={{
+                                                                                    backgroundColor: `${component.color}`,
+                                                                                    width: 90,
+                                                                                    height: 28,
+                                                                                    borderRadius: '5px',
+                                                                                    padding: '5px',
+                                                                                }}></div>
+                                                                            </TableCell>
+                                                                            <TableCell>{component.description}</TableCell>
+                                                                            <TableCell>{component?.isReplacable && component?.isReplacable === 1 ? "Tháo rời" : component?.isReplacable === 0 ? "Cố định" : ""}</TableCell>
+                                                                        </TableRow>
+                                                                    ))
+                                                                    }
+                                                                </TableBody>
+                                                            </table>
+                                                        </Box>
+
+                                                    </Collapse>
+                                                </TableCell>
+                                            </TableRow>
+                                        </>
                                     ))}
+
                                 </TableBody>
                             </Table>
+
                         </TableContainer>
 
                     </TabPanel>
@@ -232,6 +309,7 @@ const OrderListScreen = () => {
                             <Table>
                                 <TableHead>
                                     <TableRow>
+                                        <TableCell></TableCell>
                                         <TableCell>Mã đơn hàng</TableCell>
                                         <TableCell>ID Tài khoản đặt hàng</TableCell>
                                         <TableCell>Tổng số tiền</TableCell>
@@ -242,17 +320,66 @@ const OrderListScreen = () => {
                                 </TableHead>
                                 <TableBody>
                                     {filteredListProductOnlyUser1?.map((row) => (
-                                        <TableRow hover role="checkbox" tabIndex={-1} key={row.productId}>
-                                            <TableCell>{row.productId}</TableCell>
-                                            <TableCell>{row.name}</TableCell>
-                                            <TableCell>{formatCurrency(row.price)}</TableCell>
-                                            <TableCell>{row.uploadDate}</TableCell>
-                                            <TableCell >
-                                                <div style={{ backgroundColor: getTabColor(row.isDeleted), padding: '5px', color: '#fff', borderRadius: '5px', width: 'fit-content' }}>
-                                                    {isDeletedMapping[row.isDeleted]}
-                                                </div>
-                                            </TableCell>
-                                        </TableRow>
+                                        <>
+                                            <TableRow hover role="checkbox" tabIndex={-1} key={row.productId}>
+                                                <TableCell>
+                                                    <ButtonGroup onClick={() => toggleRow(row?.productId)}>
+                                                        {isRowExpanded(row?.productId) ? <FaWindowMinimize /> : <FaPlus />}
+                                                    </ButtonGroup>
+                                                </TableCell>
+                                                <TableCell>{row.productId}</TableCell>
+                                                <TableCell>{row.name}</TableCell>
+                                                <TableCell>{formatCurrency(row.price)}</TableCell>
+                                                <TableCell>{row.uploadDate}</TableCell>
+                                                <TableCell >
+                                                    <div style={{ backgroundColor: getTabColor(row.isDeleted), padding: '5px', color: '#fff', borderRadius: '5px', width: 'fit-content' }}>
+                                                        {isDeletedMapping[row.isDeleted]}
+                                                    </div>
+                                                </TableCell>
+                                            </TableRow>
+                                            <TableRow>
+                                                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+                                                    <Collapse in={isRowExpanded(row?.productId)} timeout="auto" unmountOnExit>
+                                                        <Box sx={{ margin: 1 }}>
+                                                            <table class="table table-bordered ">
+                                                                <TableHead>
+                                                                    <TableRow>
+                                                                        <TableCell>Tên</TableCell>
+                                                                        <TableCell>Chất liệu</TableCell>
+                                                                        <TableCell>Số lượng</TableCell>
+                                                                        <TableCell>Màu sắc</TableCell>
+                                                                        <TableCell>Mô tả</TableCell>
+                                                                        <TableCell>Trạng thái</TableCell>
+                                                                    </TableRow>
+                                                                </TableHead>
+                                                                <TableBody>
+                                                                    {getListAllComponent?.filter((component) => component.productId === row?.productId)?.map((component, index) => (
+                                                                        <TableRow key={index}>
+                                                                            <TableCell>{component.name}</TableCell>
+                                                                            <TableCell>{component.material}</TableCell>
+                                                                            <TableCell>{component.quantity}</TableCell>
+                                                                            <TableCell>
+                                                                                <div style={{
+                                                                                    backgroundColor: `${component.color}`,
+                                                                                    width: 90,
+                                                                                    height: 28,
+                                                                                    borderRadius: '5px',
+                                                                                    padding: '5px',
+                                                                                }}></div>
+                                                                            </TableCell>
+                                                                            <TableCell>{component.description}</TableCell>
+                                                                            <TableCell>{component?.isReplacable && component?.isReplacable === 1 ? "Tháo rời" : component?.isReplacable === 0 ? "Cố định" : ""}</TableCell>
+                                                                        </TableRow>
+                                                                    ))
+                                                                    }
+                                                                </TableBody>
+                                                            </table>
+                                                        </Box>
+
+                                                    </Collapse>
+                                                </TableCell>
+                                            </TableRow>
+                                        </>
                                     ))}
                                 </TableBody>
                             </Table>
@@ -335,6 +462,7 @@ const OrderListScreen = () => {
                             <Table>
                                 <TableHead>
                                     <TableRow>
+                                        <TableCell></TableCell>
                                         <TableCell>Mã đơn hàng</TableCell>
                                         <TableCell>ID Tài khoản đặt hàng</TableCell>
                                         <TableCell>Tổng số tiền</TableCell>
@@ -345,7 +473,13 @@ const OrderListScreen = () => {
                                 </TableHead>
                                 <TableBody>
                                     {filteredListProductOnlyUser3?.map((row) => (
+                                        <>
                                         <TableRow hover role="checkbox" tabIndex={-1} key={row.productId}>
+                                            <TableCell>
+                                                <ButtonGroup onClick={() => toggleRow(row?.productId)}>
+                                                    {isRowExpanded(row?.productId) ? <FaWindowMinimize /> : <FaPlus />}
+                                                </ButtonGroup>
+                                            </TableCell>
                                             <TableCell>{row.productId}</TableCell>
                                             <TableCell>{row.name}</TableCell>
                                             <TableCell>{formatCurrency(row.price)}</TableCell>
@@ -356,6 +490,49 @@ const OrderListScreen = () => {
                                                 </div>
                                             </TableCell>
                                         </TableRow>
+                                            <TableRow>
+                                                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+                                                    <Collapse in={isRowExpanded(row?.productId)} timeout="auto" unmountOnExit>
+                                                        <Box sx={{ margin: 1 }}>
+                                                            <table class="table table-bordered ">
+                                                                <TableHead>
+                                                                    <TableRow>
+                                                                        <TableCell>Tên</TableCell>
+                                                                        <TableCell>Chất liệu</TableCell>
+                                                                        <TableCell>Số lượng</TableCell>
+                                                                        <TableCell>Màu sắc</TableCell>
+                                                                        <TableCell>Mô tả</TableCell>
+                                                                        <TableCell>Trạng thái</TableCell>
+                                                                    </TableRow>
+                                                                </TableHead>
+                                                                <TableBody>
+                                                                    {getListAllComponent?.filter((component) => component.productId === row?.productId)?.map((component, index) => (
+                                                                        <TableRow key={index}>
+                                                                            <TableCell>{component.name}</TableCell>
+                                                                            <TableCell>{component.material}</TableCell>
+                                                                            <TableCell>{component.quantity}</TableCell>
+                                                                            <TableCell>
+                                                                                <div style={{
+                                                                                    backgroundColor: `${component.color}`,
+                                                                                    width: 90,
+                                                                                    height: 28,
+                                                                                    borderRadius: '5px',
+                                                                                    padding: '5px',
+                                                                                }}></div>
+                                                                            </TableCell>
+                                                                            <TableCell>{component.description}</TableCell>
+                                                                            <TableCell>{component?.isReplacable && component?.isReplacable === 1 ? "Tháo rời" : component?.isReplacable === 0 ? "Cố định" : ""}</TableCell>
+                                                                        </TableRow>
+                                                                    ))
+                                                                    }
+                                                                </TableBody>
+                                                            </table>
+                                                        </Box>
+
+                                                    </Collapse>
+                                                </TableCell>
+                                            </TableRow>
+                                        </>
                                     ))}
                                 </TableBody>
                             </Table>
@@ -367,6 +544,7 @@ const OrderListScreen = () => {
                             <Table>
                                 <TableHead>
                                     <TableRow>
+                                        <TableCell></TableCell>
                                         <TableCell>Mã đơn hàng</TableCell>
                                         <TableCell>ID Tài khoản đặt hàng</TableCell>
                                         <TableCell>Tổng số tiền</TableCell>
@@ -377,7 +555,13 @@ const OrderListScreen = () => {
                                 </TableHead>
                                 <TableBody>
                                     {filteredListProductOnlyUser4?.map((row) => (
+                                        <>
                                         <TableRow hover role="checkbox" tabIndex={-1} key={row.productId}>
+                                            <TableCell>
+                                                <ButtonGroup onClick={() => toggleRow(row?.productId)}>
+                                                    {isRowExpanded(row?.productId) ? <FaWindowMinimize /> : <FaPlus />}
+                                                </ButtonGroup>
+                                            </TableCell>
                                             <TableCell>{row.productId}</TableCell>
                                             <TableCell>{row.name}</TableCell>
                                             <TableCell>{formatCurrency(row.price)}</TableCell>
@@ -388,6 +572,49 @@ const OrderListScreen = () => {
                                                 </div>
                                             </TableCell>
                                         </TableRow>
+                                            <TableRow>
+                                                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+                                                    <Collapse in={isRowExpanded(row?.productId)} timeout="auto" unmountOnExit>
+                                                        <Box sx={{ margin: 1 }}>
+                                                            <table class="table table-bordered ">
+                                                                <TableHead>
+                                                                    <TableRow>
+                                                                        <TableCell>Tên</TableCell>
+                                                                        <TableCell>Chất liệu</TableCell>
+                                                                        <TableCell>Số lượng</TableCell>
+                                                                        <TableCell>Màu sắc</TableCell>
+                                                                        <TableCell>Mô tả</TableCell>
+                                                                        <TableCell>Trạng thái</TableCell>
+                                                                    </TableRow>
+                                                                </TableHead>
+                                                                <TableBody>
+                                                                    {getListAllComponent?.filter((component) => component.productId === row?.productId)?.map((component, index) => (
+                                                                        <TableRow key={index}>
+                                                                            <TableCell>{component.name}</TableCell>
+                                                                            <TableCell>{component.material}</TableCell>
+                                                                            <TableCell>{component.quantity}</TableCell>
+                                                                            <TableCell>
+                                                                                <div style={{
+                                                                                    backgroundColor: `${component.color}`,
+                                                                                    width: 90,
+                                                                                    height: 28,
+                                                                                    borderRadius: '5px',
+                                                                                    padding: '5px',
+                                                                                }}></div>
+                                                                            </TableCell>
+                                                                            <TableCell>{component.description}</TableCell>
+                                                                            <TableCell>{component?.isReplacable && component?.isReplacable === 1 ? "Tháo rời" : component?.isReplacable === 0 ? "Cố định" : ""}</TableCell>
+                                                                        </TableRow>
+                                                                    ))
+                                                                    }
+                                                                </TableBody>
+                                                            </table>
+                                                        </Box>
+
+                                                    </Collapse>
+                                                </TableCell>
+                                            </TableRow>
+                                        </>
                                     ))}
                                 </TableBody>
                             </Table>
@@ -399,6 +626,7 @@ const OrderListScreen = () => {
                             <Table>
                                 <TableHead>
                                     <TableRow>
+                                        <TableCell></TableCell>
                                         <TableCell>Mã đơn hàng</TableCell>
                                         <TableCell>ID Tài khoản đặt hàng</TableCell>
                                         <TableCell>Tổng số tiền</TableCell>
@@ -409,7 +637,13 @@ const OrderListScreen = () => {
                                 </TableHead>
                                 <TableBody>
                                     {filteredListProductOnlyUser5?.map((row) => (
+                                        <>
                                         <TableRow hover role="checkbox" tabIndex={-1} key={row.productId}>
+                                            <TableCell>
+                                                <ButtonGroup onClick={() => toggleRow(row?.productId)}>
+                                                    {isRowExpanded(row?.productId) ? <FaWindowMinimize /> : <FaPlus />}
+                                                </ButtonGroup>
+                                            </TableCell>
                                             <TableCell>{row.productId}</TableCell>
                                             <TableCell>{row.name}</TableCell>
                                             <TableCell>{formatCurrency(row.price)}</TableCell>
@@ -420,6 +654,49 @@ const OrderListScreen = () => {
                                                 </div>
                                             </TableCell>
                                         </TableRow>
+                                            <TableRow>
+                                                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+                                                    <Collapse in={isRowExpanded(row?.productId)} timeout="auto" unmountOnExit>
+                                                        <Box sx={{ margin: 1 }}>
+                                                            <table class="table table-bordered ">
+                                                                <TableHead>
+                                                                    <TableRow>
+                                                                        <TableCell>Tên</TableCell>
+                                                                        <TableCell>Chất liệu</TableCell>
+                                                                        <TableCell>Số lượng</TableCell>
+                                                                        <TableCell>Màu sắc</TableCell>
+                                                                        <TableCell>Mô tả</TableCell>
+                                                                        <TableCell>Trạng thái</TableCell>
+                                                                    </TableRow>
+                                                                </TableHead>
+                                                                <TableBody>
+                                                                    {getListAllComponent?.filter((component) => component.productId === row?.productId)?.map((component, index) => (
+                                                                        <TableRow key={index}>
+                                                                            <TableCell>{component.name}</TableCell>
+                                                                            <TableCell>{component.material}</TableCell>
+                                                                            <TableCell>{component.quantity}</TableCell>
+                                                                            <TableCell>
+                                                                                <div style={{
+                                                                                    backgroundColor: `${component.color}`,
+                                                                                    width: 90,
+                                                                                    height: 28,
+                                                                                    borderRadius: '5px',
+                                                                                    padding: '5px',
+                                                                                }}></div>
+                                                                            </TableCell>
+                                                                            <TableCell>{component.description}</TableCell>
+                                                                            <TableCell>{component?.isReplacable && component?.isReplacable === 1 ? "Tháo rời" : component?.isReplacable === 0 ? "Cố định" : ""}</TableCell>
+                                                                        </TableRow>
+                                                                    ))
+                                                                    }
+                                                                </TableBody>
+                                                            </table>
+                                                        </Box>
+
+                                                    </Collapse>
+                                                </TableCell>
+                                            </TableRow>
+                                        </>
                                     ))}
                                 </TableBody>
                             </Table>
