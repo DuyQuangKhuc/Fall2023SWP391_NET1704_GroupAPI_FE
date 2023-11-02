@@ -1,26 +1,29 @@
-import { Pagination } from 'react-bootstrap';
-import { LinkContainer } from 'react-router-bootstrap';
 
-const Paginate = ({ pages, page, isAdmin = false, keyword = '' }) => {
+import * as React from 'react';
+import Pagination from '@mui/material/Pagination';
+import { useEffect } from 'react';
+import { useState } from 'react';
+
+const Paginate = ({ page, setPage, totalPage }) => {
+
+   
+    const handleChange = (event, value) => {
+        setPage(value);
+    };
+
     return (
-        pages > 1 && (
-            <Pagination>
-                {[...Array(pages).keys()].map((x) => (
-                    <LinkContainer
-                        key={x + 1}
-                        to={
-                            !isAdmin
-                                ? keyword
-                                    ? `/search/${keyword}/page/${x + 1}`
-                                    : `/page/${x + 1}`
-                                : `/admin/productlist/${x + 1}`
-                        }
-                    >
-                        <Pagination.Item active={x + 1 === page}>{x + 1}</Pagination.Item>
-                    </LinkContainer>
-                ))}
-            </Pagination>
-        )
+
+        <Pagination
+            count={totalPage}
+            variant="outlined"
+            shape="rounded"
+            page={page}
+            showFirstButton
+            showLastButton
+            onChange={handleChange}
+            style={{ justifyContent: 'center', marginLeft: '550px' }}
+        >
+        </Pagination>
     );
 };
 

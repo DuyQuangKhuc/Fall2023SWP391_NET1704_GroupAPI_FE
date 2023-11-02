@@ -9,16 +9,23 @@ import Paginate from '../components/Paginate';
 import ProductCarousel from '../components/ProductCarousel';
 import Meta from '../components/Meta';
 import { useGetOrderIsUsingByAccountIdQuery } from '../slices/ordersApiSlice';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 const HomeScreen = () => {
     const { pageNumber, keyword } = useParams();
-
-    const { data, isLoading, error } = useGetProductsQuery({
-        keyword,
-        pageNumber,
+    const [page, setPage] = useState(1);
+    const [totalPage, setTotalPage] = useState(1);
+    useEffect(() => {
+        if (page % 12 === 0) {
+            setTotalPage(prevTotalPage => prevTotalPage + 1);
+        }
+    }, [page]);
+    const { data, isLoading, error, } = useGetProductsQuery({
+        page
     });
+
+
     const { userInfo } = useSelector((state) => state.auth);
     const { data: getOrder } = useGetOrderIsUsingByAccountIdQuery(userInfo?.accountId);
     useEffect(() => {
@@ -63,11 +70,7 @@ const HomeScreen = () => {
                                     </Col>
                                 ))}
                             </Row>
-                            <Paginate
-                                pages={data.pages}
-                                page={data.page}
-                                keyword={keyword ? keyword : ''}
-                            />
+                            <Paginate page={page} setPage={setPage} totalPage={totalPage} />
                         </>
                     )}
                 </>

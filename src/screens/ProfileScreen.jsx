@@ -430,12 +430,12 @@ const ProfileScreen = () => {
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {filteredListProductOnlyUser1?.map((order, index) => (
-                                                        <React.Fragment key={index}>
+                                                    {filteredListProductOnlyUser1?.map((order) => (
+                                                        <React.Fragment key={order?.productId}>
                                                             <tr>
                                                                 <td className='align-middle'>
-                                                                    <ButtonGroup onClick={() => toggleRow(index)}>
-                                                                        {isRowExpanded(index) ? <FaWindowMinimize /> : <FaPlus />}
+                                                                    <ButtonGroup onClick={() => toggleRow(order?.productId)}>
+                                                                        {isRowExpanded(order?.productId) ? <FaWindowMinimize /> : <FaPlus />}
                                                                     </ButtonGroup>
                                                                 </td>
                                                                 <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order?.productId}</div></td>
@@ -536,7 +536,7 @@ const ProfileScreen = () => {
                                                                     </Button>
                                                                 </td>
                                                             </tr>
-                                                            {isRowExpanded(index) && (
+                                                            {isRowExpanded(order?.productId) && (
                                                                 <tr>
                                                                     <td colSpan={4}>
                                                                         <table class="table table-bordered ">
@@ -679,12 +679,12 @@ const ProfileScreen = () => {
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {filteredListProductOnlyUser3?.map((order, index) => (
-                                                        <React.Fragment key={index}>
+                                                    {filteredListProductOnlyUser3?.map((order) => (
+                                                        <React.Fragment key={order?.productId}>
                                                             <tr>
-                                                                <td>
-                                                                    <ButtonGroup onClick={() => toggleRow(index)}>
-                                                                        {isRowExpanded(index) ? <FaWindowMinimize /> : <FaPlus />}
+                                                                <td className='align-middle'>
+                                                                    <ButtonGroup onClick={() => toggleRow(order?.productId)}>
+                                                                        {isRowExpanded(order?.productId) ? <FaWindowMinimize /> : <FaPlus />}
                                                                     </ButtonGroup>
                                                                 </td>
                                                                 <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order?.productId}</div></td>
@@ -702,7 +702,7 @@ const ProfileScreen = () => {
                                                                         {isDeletedMapping[order.isDeleted]}
                                                                     </div>
                                                                 </td>
-                                                                <td >
+                                                                <td>
                                                                     <Button variant='outline-success' className='mx-1' onClick={() => handleClickOpen1(order.productId)} >
                                                                         <FaCheck style={{ color: 'green' }} />
                                                                     </Button>
@@ -758,7 +758,7 @@ const ProfileScreen = () => {
                                                                     </Button>
                                                                 </td>
                                                             </tr>
-                                                            {isRowExpanded(index) && (
+                                                            {isRowExpanded(order?.productId) && (
                                                                 <tr>
                                                                     <td colSpan={4}>
                                                                         <table class="table table-bordered ">
@@ -816,12 +816,12 @@ const ProfileScreen = () => {
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {filteredListProductOnlyUser4?.map((order, index) => (
-                                                        <React.Fragment key={index}>
+                                                    {filteredListProductOnlyUser4?.map((order) => (
+                                                        <React.Fragment key={order?.productId}>
                                                             <tr>
-                                                                <td>
-                                                                    <ButtonGroup onClick={() => toggleRow(index)}>
-                                                                        {isRowExpanded(index) ? <FaWindowMinimize /> : <FaPlus />}
+                                                                <td className='align-middle'>
+                                                                    <ButtonGroup onClick={() => toggleRow(order?.productId)}>
+                                                                        {isRowExpanded(order?.productId) ? <FaWindowMinimize /> : <FaPlus />}
                                                                     </ButtonGroup>
                                                                 </td>
                                                                 <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order?.productId}</div></td>
@@ -840,7 +840,7 @@ const ProfileScreen = () => {
                                                                     </div>
                                                                 </td>
                                                             </tr>
-                                                            {isRowExpanded(index) && (
+                                                            {isRowExpanded(order?.productId) && (
                                                                 <tr>
                                                                     <td colSpan={4}>
                                                                         <table class="table table-bordered ">
@@ -898,12 +898,12 @@ const ProfileScreen = () => {
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {filteredListProductOnlyUser5?.map((order, index) => (
-                                                        <React.Fragment key={index}>
+                                                    {filteredListProductOnlyUser5?.map((order) => (
+                                                        <React.Fragment key={order?.productId}>
                                                             <tr>
-                                                                <td>
-                                                                    <ButtonGroup onClick={() => toggleRow(index)}>
-                                                                        {isRowExpanded(index) ? <FaWindowMinimize /> : <FaPlus />}
+                                                                <td className='align-middle'>
+                                                                    <ButtonGroup onClick={() => toggleRow(order?.productId)}>
+                                                                        {isRowExpanded(order?.productId) ? <FaWindowMinimize /> : <FaPlus />}
                                                                     </ButtonGroup>
                                                                 </td>
                                                                 <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order?.productId}</div></td>
@@ -922,7 +922,7 @@ const ProfileScreen = () => {
                                                                     </div>
                                                                 </td>
                                                             </tr>
-                                                            {isRowExpanded(index) && (
+                                                            {isRowExpanded(order?.productId) && (
                                                                 <tr>
                                                                     <td colSpan={4}>
                                                                         <table class="table table-bordered ">
