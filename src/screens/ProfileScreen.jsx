@@ -358,7 +358,7 @@ const ProfileScreen = () => {
                                                                     </ButtonGroup>
                                                                 </td>
                                                                 <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order?.productId}</div></td>
-                                                                <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order.uploadDate}</div></td>
+                                                                <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{new Date(order.uploadDate).toLocaleDateString('en-GB')}</div></td>
                                                                 <td className='align-middle'>
                                                                     <div style={{
                                                                         backgroundColor: getTabColor(order.isDeleted),
@@ -379,7 +379,8 @@ const ProfileScreen = () => {
                                                                                 <tr>
                                                                                     <th>Tên</th>
                                                                                     <th>Chất liệu</th>
-                                                                                    <th>Màu sắc</th>
+                                                                                    <th>Số lượng</th>
+                                                                                    <th>Màu sắc</th> 
                                                                                     <th>Mô tả</th>
                                                                                     <th>Trạng thái</th>
                                                                                 </tr>
@@ -391,6 +392,7 @@ const ProfileScreen = () => {
                                                                                         <tr key={index}>
                                                                                             <td>{component.name}</td>
                                                                                             <td>{component.material}</td>
+                                                                                            <td>{component.quantity}</td>
                                                                                             <td className='align-middle ' style={{ width: 90 }}>
                                                                                                 <div style={{
                                                                                                     backgroundColor: `${component.color}`,
@@ -438,7 +440,7 @@ const ProfileScreen = () => {
                                                                 </td>
                                                                 <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order?.productId}</div></td>
                                                                 <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{formatCurrency(order.price)}</div></td>
-                                                                <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order.uploadDate}</div></td>
+                                                                <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{new Date(order.uploadDate).toLocaleDateString('en-GB')}</div></td>
                                                                 <td className='align-middle'>
                                                                     <div style={{
                                                                         backgroundColor: getTabColor(order.isDeleted),
@@ -542,7 +544,8 @@ const ProfileScreen = () => {
                                                                                 <tr>
                                                                                     <th>Tên</th>
                                                                                     <th>Chất liệu</th>
-                                                                                    <th>Màu sắc</th>
+                                                                                    <th>Số lượng</th>
+                                                                                    <th>Màu sắc</th> 
                                                                                     <th>Mô tả</th>
                                                                                     <th>Trạng thái</th>
                                                                                 </tr>
@@ -554,6 +557,7 @@ const ProfileScreen = () => {
                                                                                         <tr key={index}>
                                                                                             <td>{component.name}</td>
                                                                                             <td>{component.material}</td>
+                                                                                            <td>{component.quantity}</td>
                                                                                             <td className='align-middle ' style={{ width: 90 }}>
                                                                                                 <div style={{
                                                                                                     backgroundColor: `${component.color}`,
@@ -601,7 +605,7 @@ const ProfileScreen = () => {
                                                                 </td>
                                                                 <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order?.productId}</div></td>
                                                                 <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{formatCurrency(order.price)}</div></td>
-                                                                <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order.uploadDate}</div></td>
+                                                                <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{new Date(order.uploadDate).toLocaleDateString('en-GB')}</div></td>
                                                                 <td className='align-middle'>
                                                                     <div style={{
                                                                         backgroundColor: getTabColor(order.isDeleted),
@@ -624,7 +628,8 @@ const ProfileScreen = () => {
                                                                                 <tr>
                                                                                     <th>Tên</th>
                                                                                     <th>Chất liệu</th>
-                                                                                    <th>Màu sắc</th>
+                                                                                    <th>Số lượng</th>
+                                                                                    <th>Màu sắc</th> 
                                                                                     <th>Mô tả</th>
                                                                                     <th>Trạng thái</th>
                                                                                 </tr>
@@ -636,6 +641,7 @@ const ProfileScreen = () => {
                                                                                         <tr key={index}>
                                                                                             <td>{component.name}</td>
                                                                                             <td>{component.material}</td>
+                                                                                            <td>{component.quantity}</td>
                                                                                             <td className='align-middle ' style={{ width: 90 }}>
                                                                                                 <div style={{
                                                                                                     backgroundColor: `${component.color}`,
@@ -683,7 +689,7 @@ const ProfileScreen = () => {
                                                                 </td>
                                                                 <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order?.productId}</div></td>
                                                                 <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{formatCurrency(order.price)}</div></td>
-                                                                <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order.uploadDate}</div></td>
+                                                                <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{new Date(order.uploadDate).toLocaleDateString('en-GB')}</div></td>
                                                                 <td className='align-middle'>
                                                                     <div style={{
                                                                         backgroundColor: getTabColor(order.isDeleted),
@@ -760,7 +766,8 @@ const ProfileScreen = () => {
                                                                                 <tr>
                                                                                     <th>Tên</th>
                                                                                     <th>Chất liệu</th>
-                                                                                    <th>Màu sắc</th>
+                                                                                    <th>Số lượng</th>
+                                                                                    <th>Màu sắc</th> 
                                                                                     <th>Mô tả</th>
                                                                                     <th>Trạng thái</th>
                                                                                 </tr>
@@ -772,6 +779,7 @@ const ProfileScreen = () => {
                                                                                         <tr key={index}>
                                                                                             <td>{component.name}</td>
                                                                                             <td>{component.material}</td>
+                                                                                            <td>{component.quantity}</td>
                                                                                             <td className='align-middle ' style={{ width: 90 }}>
                                                                                                 <div style={{
                                                                                                     backgroundColor: `${component.color}`,
@@ -818,7 +826,7 @@ const ProfileScreen = () => {
                                                                 </td>
                                                                 <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order?.productId}</div></td>
                                                                 <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{formatCurrency(order.price)}</div></td>
-                                                                <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order.uploadDate}</div></td>
+                                                                <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{new Date(order.uploadDate).toLocaleDateString('en-GB')}</div></td>
                                                                 <td className='align-middle'>
                                                                     <div style={{
                                                                         backgroundColor: getTabColor(order.isDeleted),
@@ -840,6 +848,7 @@ const ProfileScreen = () => {
                                                                                 <tr>
                                                                                     <th>Tên</th>
                                                                                     <th>Chất liệu</th>
+                                                                                    <th>Số lượng</th>
                                                                                     <th>Màu sắc</th>
                                                                                     <th>Mô tả</th>
                                                                                     <th>Trạng thái</th>
@@ -852,6 +861,7 @@ const ProfileScreen = () => {
                                                                                         <tr key={index}>
                                                                                             <td>{component.name}</td>
                                                                                             <td>{component.material}</td>
+                                                                                            <td>{component.quantity}</td>
                                                                                             <td className='align-middle ' style={{ width: 90 }}>
                                                                                                 <div style={{
                                                                                                     backgroundColor: `${component.color}`,
@@ -898,7 +908,7 @@ const ProfileScreen = () => {
                                                                 </td>
                                                                 <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order?.productId}</div></td>
                                                                 <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{formatCurrency(order.price)}</div></td>
-                                                                <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order.uploadDate}</div></td>
+                                                                <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{new Date(order.uploadDate).toLocaleDateString('en-GB')}</div></td>
                                                                 <td className='align-middle'>
                                                                     <div style={{
                                                                         backgroundColor: getTabColor(order.isDeleted),
@@ -920,7 +930,8 @@ const ProfileScreen = () => {
                                                                                 <tr>
                                                                                     <th>Tên</th>
                                                                                     <th>Chất liệu</th>
-                                                                                    <th>Màu sắc</th>
+                                                                                    <th>Số lượng</th>
+                                                                                    <th>Màu sắc</th> 
                                                                                     <th>Mô tả</th>
                                                                                     <th>Trạng thái</th>
                                                                                 </tr>
@@ -932,6 +943,7 @@ const ProfileScreen = () => {
                                                                                         <tr key={index}>
                                                                                             <td>{component.name}</td>
                                                                                             <td>{component.material}</td>
+                                                                                            <td>{component.quantity}</td>
                                                                                             <td className='align-middle ' style={{ width: 90 }}>
                                                                                                 <div style={{
                                                                                                     backgroundColor: `${component.color}`,

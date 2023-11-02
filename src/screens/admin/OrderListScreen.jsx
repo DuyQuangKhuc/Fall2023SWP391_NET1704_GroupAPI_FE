@@ -206,7 +206,7 @@ const OrderListScreen = () => {
                                                 </TableCell>
                                                 <TableCell>{row.productId}</TableCell>
                                                 <TableCell>{row.name}</TableCell>
-                                                <TableCell>{row.uploadDate}</TableCell>
+                                                <TableCell>{new Date(row.uploadDate).toLocaleDateString('en-GB')}</TableCell>
                                                 <TableCell >
                                                     <div style={{ backgroundColor: getTabColor(row.isDeleted), padding: '5px', color: '#fff', borderRadius: '5px', width: 'fit-content' }}>
                                                         {isDeletedMapping[row.isDeleted]}
@@ -330,7 +330,7 @@ const OrderListScreen = () => {
                                                 <TableCell>{row.productId}</TableCell>
                                                 <TableCell>{row.name}</TableCell>
                                                 <TableCell>{formatCurrency(row.price)}</TableCell>
-                                                <TableCell>{row.uploadDate}</TableCell>
+                                                <TableCell>{new Date(row.uploadDate).toLocaleDateString('en-GB')}</TableCell>
                                                 <TableCell >
                                                     <div style={{ backgroundColor: getTabColor(row.isDeleted), padding: '5px', color: '#fff', borderRadius: '5px', width: 'fit-content' }}>
                                                         {isDeletedMapping[row.isDeleted]}
@@ -391,6 +391,7 @@ const OrderListScreen = () => {
                             <Table>
                                 <TableHead>
                                     <TableRow>
+                                        <TableCell></TableCell>
                                         <TableCell>Mã đơn hàng</TableCell>
                                         <TableCell>ID Tài khoản đặt hàng</TableCell>
                                         <TableCell>Tổng số tiền</TableCell>
@@ -401,56 +402,105 @@ const OrderListScreen = () => {
                                 </TableHead>
                                 <TableBody>
                                     {filteredListProductOnlyUser2?.map((row) => (
-                                        <TableRow key={row.productId}>
-                                            <TableCell>{row.productId}</TableCell>
-                                            <TableCell>{row.name}</TableCell>
-                                            <TableCell>{formatCurrency(row.price)}</TableCell>
-                                            <TableCell>{row.uploadDate}</TableCell>
-                                            <TableCell >
-                                                <div style={{ backgroundColor: getTabColor(row.isDeleted), padding: '5px', color: '#fff', borderRadius: '5px', width: 'fit-content' }}>
-                                                    {isDeletedMapping[row.isDeleted]}
-                                                </div>
-                                            </TableCell>
-                                            <TableCell>
-                                                <Button variant='outline-success' className='mx-1' onClick={() => submitHandler3(row.productId)}>
-                                                    <FaCheck style={{ color: 'green' }} />
-                                                </Button>
+                                        <>
+                                            <TableRow hover role="checkbox" tabIndex={-1} key={row.productId}>
+                                                <TableCell>
+                                                    <ButtonGroup onClick={() => toggleRow(row?.productId)}>
+                                                        {isRowExpanded(row?.productId) ? <FaWindowMinimize /> : <FaPlus />}
+                                                    </ButtonGroup>
+                                                </TableCell>
+                                                <TableCell>{row.productId}</TableCell>
+                                                <TableCell>{row.name}</TableCell>
+                                                <TableCell>{formatCurrency(row.price)}</TableCell>
+                                                <TableCell>{new Date(row.uploadDate).toLocaleDateString('en-GB')}</TableCell>
+                                                <TableCell >
+                                                    <div style={{ backgroundColor: getTabColor(row.isDeleted), padding: '5px', color: '#fff', borderRadius: '5px', width: 'fit-content' }}>
+                                                        {isDeletedMapping[row.isDeleted]}
+                                                    </div>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <Button variant='outline-success' className='mx-1' onClick={() => submitHandler3(row.productId)}>
+                                                        <FaCheck style={{ color: 'green' }} />
+                                                    </Button>
 
-                                                <Dialog open={open} onClose={handleClose}>
-                                                    <DialogTitle>Thương lượng lại giá</DialogTitle>
-                                                    <DialogContent>
-                                                        <DialogContentText>
-                                                            Đề xuất lại giá cho khách hàng
-                                                        </DialogContentText>
-                                                        <TextField
-                                                            autoFocus
-                                                            margin="dense"
-                                                            id="number"
-                                                            label="Nhập số tiền"
-                                                            type="number"
-                                                            fullWidth
-                                                            value={price}
-                                                            onChange={(e) => setPrice(e.target.value)}
-                                                        />
-                                                    </DialogContent>
-                                                    <DialogActions>
-                                                        <Button onClick={handleClose}>Thoát</Button>
-                                                        <Button onClick={(e) => submitHandler1(e, row.productId)}>Gửi hóa đơn</Button>
-                                                    </DialogActions>
-                                                </Dialog>
+                                                    <Dialog open={open} onClose={handleClose}>
+                                                        <DialogTitle>Thương lượng lại giá</DialogTitle>
+                                                        <DialogContent>
+                                                            <DialogContentText>
+                                                                Đề xuất lại giá cho khách hàng
+                                                            </DialogContentText>
+                                                            <TextField
+                                                                autoFocus
+                                                                margin="dense"
+                                                                id="number"
+                                                                label="Nhập số tiền"
+                                                                type="number"
+                                                                fullWidth
+                                                                value={price}
+                                                                onChange={(e) => setPrice(e.target.value)}
+                                                            />
+                                                        </DialogContent>
+                                                        <DialogActions>
+                                                            <Button onClick={handleClose}>Thoát</Button>
+                                                            <Button onClick={(e) => submitHandler1(e, row.productId)}>Gửi hóa đơn</Button>
+                                                        </DialogActions>
+                                                    </Dialog>
 
-                                                <Button variant='outline-warning' className='mx-1' onClick={() => handleClickOpen(row.productId)} >
-                                                    <FaRegEdit style={{ color: '' }} />
-                                                </Button>
+                                                    <Button variant='outline-warning' className='mx-1' onClick={() => handleClickOpen(row.productId)} >
+                                                        <FaRegEdit style={{ color: '' }} />
+                                                    </Button>
 
-                                                <Button
-                                                    variant="outline-danger"
-                                                    className='mx-1'
-                                                    onClick={() => submitHandler2(row.productId)}
-                                                >
-                                                    <FaTimes style={{ color: '' }} />
-                                                </Button></TableCell>
-                                        </TableRow>
+                                                    <Button
+                                                        variant="outline-danger"
+                                                        className='mx-1'
+                                                        onClick={() => submitHandler2(row.productId)}
+                                                    >
+                                                        <FaTimes style={{ color: '' }} />
+                                                    </Button></TableCell>
+                                            </TableRow>
+                                            <TableRow>
+                                                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+                                                    <Collapse in={isRowExpanded(row?.productId)} timeout="auto" unmountOnExit>
+                                                        <Box sx={{ margin: 1 }}>
+                                                            <table class="table table-bordered ">
+                                                                <TableHead>
+                                                                    <TableRow>
+                                                                        <TableCell>Tên</TableCell>
+                                                                        <TableCell>Chất liệu</TableCell>
+                                                                        <TableCell>Số lượng</TableCell>
+                                                                        <TableCell>Màu sắc</TableCell>
+                                                                        <TableCell>Mô tả</TableCell>
+                                                                        <TableCell>Trạng thái</TableCell>
+                                                                    </TableRow>
+                                                                </TableHead>
+                                                                <TableBody>
+                                                                    {getListAllComponent?.filter((component) => component.productId === row?.productId)?.map((component, index) => (
+                                                                        <TableRow key={index}>
+                                                                            <TableCell>{component.name}</TableCell>
+                                                                            <TableCell>{component.material}</TableCell>
+                                                                            <TableCell>{component.quantity}</TableCell>
+                                                                            <TableCell>
+                                                                                <div style={{
+                                                                                    backgroundColor: `${component.color}`,
+                                                                                    width: 90,
+                                                                                    height: 28,
+                                                                                    borderRadius: '5px',
+                                                                                    padding: '5px',
+                                                                                }}></div>
+                                                                            </TableCell>
+                                                                            <TableCell>{component.description}</TableCell>
+                                                                            <TableCell>{component?.isReplacable && component?.isReplacable === 1 ? "Tháo rời" : component?.isReplacable === 0 ? "Cố định" : ""}</TableCell>
+                                                                        </TableRow>
+                                                                    ))
+                                                                    }
+                                                                </TableBody>
+                                                            </table>
+                                                        </Box>
+
+                                                    </Collapse>
+                                                </TableCell>
+                                            </TableRow>
+                                        </>
                                     ))}
                                 </TableBody>
                             </Table>
@@ -474,22 +524,22 @@ const OrderListScreen = () => {
                                 <TableBody>
                                     {filteredListProductOnlyUser3?.map((row) => (
                                         <>
-                                        <TableRow hover role="checkbox" tabIndex={-1} key={row.productId}>
-                                            <TableCell>
-                                                <ButtonGroup onClick={() => toggleRow(row?.productId)}>
-                                                    {isRowExpanded(row?.productId) ? <FaWindowMinimize /> : <FaPlus />}
-                                                </ButtonGroup>
-                                            </TableCell>
-                                            <TableCell>{row.productId}</TableCell>
-                                            <TableCell>{row.name}</TableCell>
-                                            <TableCell>{formatCurrency(row.price)}</TableCell>
-                                            <TableCell>{row.uploadDate}</TableCell>
-                                            <TableCell >
-                                                <div style={{ backgroundColor: getTabColor(row.isDeleted), padding: '5px', color: '#fff', borderRadius: '5px', width: 'fit-content' }}>
-                                                    {isDeletedMapping[row.isDeleted]}
-                                                </div>
-                                            </TableCell>
-                                        </TableRow>
+                                            <TableRow hover role="checkbox" tabIndex={-1} key={row.productId}>
+                                                <TableCell>
+                                                    <ButtonGroup onClick={() => toggleRow(row?.productId)}>
+                                                        {isRowExpanded(row?.productId) ? <FaWindowMinimize /> : <FaPlus />}
+                                                    </ButtonGroup>
+                                                </TableCell>
+                                                <TableCell>{row.productId}</TableCell>
+                                                <TableCell>{row.name}</TableCell>
+                                                <TableCell>{formatCurrency(row.price)}</TableCell>
+                                                <TableCell>{new Date(row.uploadDate).toLocaleDateString('en-GB')}</TableCell>
+                                                <TableCell >
+                                                    <div style={{ backgroundColor: getTabColor(row.isDeleted), padding: '5px', color: '#fff', borderRadius: '5px', width: 'fit-content' }}>
+                                                        {isDeletedMapping[row.isDeleted]}
+                                                    </div>
+                                                </TableCell>
+                                            </TableRow>
                                             <TableRow>
                                                 <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
                                                     <Collapse in={isRowExpanded(row?.productId)} timeout="auto" unmountOnExit>
@@ -556,22 +606,22 @@ const OrderListScreen = () => {
                                 <TableBody>
                                     {filteredListProductOnlyUser4?.map((row) => (
                                         <>
-                                        <TableRow hover role="checkbox" tabIndex={-1} key={row.productId}>
-                                            <TableCell>
-                                                <ButtonGroup onClick={() => toggleRow(row?.productId)}>
-                                                    {isRowExpanded(row?.productId) ? <FaWindowMinimize /> : <FaPlus />}
-                                                </ButtonGroup>
-                                            </TableCell>
-                                            <TableCell>{row.productId}</TableCell>
-                                            <TableCell>{row.name}</TableCell>
-                                            <TableCell>{formatCurrency(row.price)}</TableCell>
-                                            <TableCell>{row.uploadDate}</TableCell>
-                                            <TableCell >
-                                                <div style={{ backgroundColor: getTabColor(row.isDeleted), padding: '5px', color: '#fff', borderRadius: '5px', width: 'fit-content' }}>
-                                                    {isDeletedMapping[row.isDeleted]}
-                                                </div>
-                                            </TableCell>
-                                        </TableRow>
+                                            <TableRow hover role="checkbox" tabIndex={-1} key={row.productId}>
+                                                <TableCell>
+                                                    <ButtonGroup onClick={() => toggleRow(row?.productId)}>
+                                                        {isRowExpanded(row?.productId) ? <FaWindowMinimize /> : <FaPlus />}
+                                                    </ButtonGroup>
+                                                </TableCell>
+                                                <TableCell>{row.productId}</TableCell>
+                                                <TableCell>{row.name}</TableCell>
+                                                <TableCell>{formatCurrency(row.price)}</TableCell>
+                                                <TableCell>{new Date(row.uploadDate).toLocaleDateString('en-GB')}</TableCell>
+                                                <TableCell >
+                                                    <div style={{ backgroundColor: getTabColor(row.isDeleted), padding: '5px', color: '#fff', borderRadius: '5px', width: 'fit-content' }}>
+                                                        {isDeletedMapping[row.isDeleted]}
+                                                    </div>
+                                                </TableCell>
+                                            </TableRow>
                                             <TableRow>
                                                 <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
                                                     <Collapse in={isRowExpanded(row?.productId)} timeout="auto" unmountOnExit>
@@ -638,22 +688,22 @@ const OrderListScreen = () => {
                                 <TableBody>
                                     {filteredListProductOnlyUser5?.map((row) => (
                                         <>
-                                        <TableRow hover role="checkbox" tabIndex={-1} key={row.productId}>
-                                            <TableCell>
-                                                <ButtonGroup onClick={() => toggleRow(row?.productId)}>
-                                                    {isRowExpanded(row?.productId) ? <FaWindowMinimize /> : <FaPlus />}
-                                                </ButtonGroup>
-                                            </TableCell>
-                                            <TableCell>{row.productId}</TableCell>
-                                            <TableCell>{row.name}</TableCell>
-                                            <TableCell>{formatCurrency(row.price)}</TableCell>
-                                            <TableCell>{row.uploadDate}</TableCell>
-                                            <TableCell >
-                                                <div style={{ backgroundColor: getTabColor(row.isDeleted), padding: '5px', color: '#fff', borderRadius: '5px', width: 'fit-content' }}>
-                                                    {isDeletedMapping[row.isDeleted]}
-                                                </div>
-                                            </TableCell>
-                                        </TableRow>
+                                            <TableRow hover role="checkbox" tabIndex={-1} key={row.productId}>
+                                                <TableCell>
+                                                    <ButtonGroup onClick={() => toggleRow(row?.productId)}>
+                                                        {isRowExpanded(row?.productId) ? <FaWindowMinimize /> : <FaPlus />}
+                                                    </ButtonGroup>
+                                                </TableCell>
+                                                <TableCell>{row.productId}</TableCell>
+                                                <TableCell>{row.name}</TableCell>
+                                                <TableCell>{formatCurrency(row.price)}</TableCell>
+                                                <TableCell>{new Date(row.uploadDate).toLocaleDateString('en-GB')}</TableCell>
+                                                <TableCell >
+                                                    <div style={{ backgroundColor: getTabColor(row.isDeleted), padding: '5px', color: '#fff', borderRadius: '5px', width: 'fit-content' }}>
+                                                        {isDeletedMapping[row.isDeleted]}
+                                                    </div>
+                                                </TableCell>
+                                            </TableRow>
                                             <TableRow>
                                                 <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
                                                     <Collapse in={isRowExpanded(row?.productId)} timeout="auto" unmountOnExit>
