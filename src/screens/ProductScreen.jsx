@@ -260,7 +260,7 @@ const ProductScreen = () => {
                                                 {
                                                     color: '#00CCFF',
                                                     //dot: <SmileOutlined />,
-                                                    children: <p>NSX:  {product.uploadDate}</p>,
+                                                    children: <p>NSX:  {new Date(product.uploadDate).toLocaleDateString('en-GB')}</p>,
                                                 },
                                             ]}
                                         />
@@ -299,75 +299,76 @@ const ProductScreen = () => {
                                             </tbody>
                                         </Table>
                                     </div>
-                                </TabPane>
-                                <TabPane tab=<h5>Phản hồi</h5> key='2'>
-                                    <Row className='review'>
-                                        <Col md={6}>
-                                            <ListGroup.Item>
-                                                <h2>Viết đánh giá về sản phẩm</h2>
+                                            <Row className='review'>
+                                                <Col md={6}>
+                                                    <ListGroup.Item>
+                                                        <h2>Viết đánh giá về sản phẩm</h2>
 
-                                                {loadingProductReview && <Loader />}
+                                                        {loadingProductReview && <Loader />}
 
-                                                {userInfo ? (
-                                                    <Form onSubmit={submitHandler}>
-                                                        <Form.Group className='my-2' controlId='rating'>
-                                                            <Form.Label>Đánh giá</Form.Label>
-                                                            <Form.Control
-                                                                as='select'
-                                                                required
-                                                                value={rating}
-                                                                onChange={(e) => setRating(e.target.value)}
-                                                            >
-                                                                <option value=''>Chọn...</option>
-                                                                <option value='1'>1 - Poor</option>
-                                                                <option value='2'>2 - Fair</option>
-                                                                <option value='3'>3 - Good</option>
-                                                                <option value='4'>4 - Very Good</option>
-                                                                <option value='5'>5 - Excellent</option>
-                                                            </Form.Control>
-                                                        </Form.Group>
-                                                        <Form.Group className='my-2' controlId='comment'>
-                                                            <Form.Label>Viết bình luận</Form.Label>
-                                                            <Form.Control
-                                                                as='textarea'
-                                                                row='3'
-                                                                required
-                                                                value={comment}
-                                                                onChange={(e) => setComment(e.target.value)}
-                                                            ></Form.Control>
-                                                        </Form.Group>
-                                                        <Button
-                                                            disabled={loadingProductReview}
-                                                            type='submit'
-                                                            variant='primary'
-                                                        >
-                                                            Gửi bài
-                                                        </Button>
-                                                    </Form>
-                                                ) : (
-                                                    <Message>
-                                                        Hãy <Link to='/login'>Đăng nhập</Link> để viết bình luận
-                                                    </Message>
-                                                )}
-                                            </ListGroup.Item>
-                                        </Col>
-                                        <Col md={6}>
-                                            <h2>Xem bình luận</h2>
-                                            {/* {getListFeedbackByProduct?.length === 0 && <Message>No Reviews</Message>} */}
-                                            <ListGroup variant='flush'>
-                                                {getListFeedbackByProduct?.map((review) => (
-                                                    <ListGroup.Item key={review}>
-                                                        <strong>{review.name}</strong>
-                                                        <Rating value={review.rating} />
-                                                        {/* <p>{review?.createdAt.substring(0, 10)}</p> */}
-                                                        <p>{review.comment}</p>
+                                                        {userInfo ? (
+                                                            <Form onSubmit={submitHandler}>
+                                                                <Form.Group className='my-2' controlId='rating'>
+                                                                    <Form.Label>Đánh giá</Form.Label>
+                                                                    <Form.Control
+                                                                        as='select'
+                                                                        required
+                                                                        value={rating}
+                                                                        onChange={(e) => setRating(e.target.value)}
+                                                                    >
+                                                                        <option value=''>Chọn...</option>
+                                                                        <option value='1'>1 - Tệ</option>
+                                                                        <option value='2'>2 - Ổn</option>
+                                                                        <option value='3'>3 - Tốt</option>
+                                                                        <option value='4'>4 - Rất tốt</option>
+                                                                        <option value='5'>5 - Chất lượng cao</option>
+                                                                    </Form.Control>
+                                                                </Form.Group>
+                                                                <Form.Group className='my-2' controlId='comment'>
+                                                                    <Form.Label>Viết bình luận</Form.Label>
+                                                                    <Form.Control
+                                                                        as='textarea'
+                                                                        row='3'
+                                                                        required
+                                                                        value={comment}
+                                                                        onChange={(e) => setComment(e.target.value)}
+                                                                    ></Form.Control>
+                                                                </Form.Group>
+                                                                <Button
+                                                                    disabled={loadingProductReview}
+                                                                    type='submit'
+                                                                    variant='primary'
+                                                                >
+                                                                    Gửi bài
+                                                                </Button>
+                                                            </Form>
+                                                        ) : (
+                                                            <Message>
+                                                                Hãy <Link to='/login'>Đăng nhập</Link> để viết bình luận
+                                                            </Message>
+                                                        )}
                                                     </ListGroup.Item>
-                                                ))}
-                                            </ListGroup>
-                                        </Col>
+                                                </Col>
+                                                <Col md={6}>
+                                                    <h2>Xem bình luận</h2>
+                                                    {/* {getListFeedbackByProduct?.length === 0 && <Message>No Reviews</Message>} */}
+                                                    <ListGroup variant='flush'>
+                                                        {getListFeedbackByProduct?.map((review) => (
+                                                            <ListGroup.Item key={review}>
+                                                                <strong>{review.name}</strong>
+                                                                <Rating value={review.rating} />
+                                                                {/* <p>{review?.createdAt.substring(0, 10)}</p> */}
+                                                                <p>{review.comment}</p>
+                                                            </ListGroup.Item>
+                                                        ))}
+                                                    </ListGroup>
+                                                </Col>
 
-                                    </Row>
+                                            </Row>
                                 </TabPane>
+                                {/* <TabPane tab=<h5>Phản hồi</h5> key='2'>
+                                    
+                                </TabPane> */}
                             </Tabs>
                         </>
                     )}

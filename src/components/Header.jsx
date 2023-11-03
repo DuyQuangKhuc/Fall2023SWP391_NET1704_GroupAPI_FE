@@ -41,7 +41,7 @@ const Header = () => {
         }
     }
 
-    const [getAddProductUserAutomatic ] = useGetAddProductUserAutomaticMutation({
+    const [getAddProductUserAutomatic] = useGetAddProductUserAutomaticMutation({
         refetchInterval: 1000, // Set the interval in milliseconds (e.g., every 5 seconds)
         enabled: true, // Enable the automatic refetch
     })
@@ -73,30 +73,32 @@ const Header = () => {
                     <Navbar.Toggle aria-controls='basic-navbar-nav' />
                     <Navbar.Collapse id='basic-navbar-nav'>
                         <Nav className='ms-auto'>
-                            
-                            {userInfo && userInfo.role === 4  && (
-                                <SearchBox className="ms-32" />
-                            )}
+
+
+                            <SearchBox className="ms-32" />
+
 
                             {userInfo && userInfo.role === 4 && (
                                 <LinkContainer to='/voucher'>
                                     <Nav.Link>
-                                        <FaTicketAlt/> Đổi voucher
+                                        <FaTicketAlt /> Đổi voucher
                                     </Nav.Link>
                                 </LinkContainer>
                             )}
-                            
-                            {userInfo && userInfo.role === 4 && (
-                                <LinkContainer to='/cart'>
-                                    <Nav.Link>
-                                        <FaShoppingCart /> Đơn hàng
-                                        {getListOrderDetailCloneByOrderIdorderId?.length > 0 && (
-                                            <Badge pill bg='success' style={{ marginLeft: '5px' }}>
-                                                {getListOrderDetailCloneByOrderIdorderId?.reduce((a, c) => a + c.quantity, 0)}
-                                            </Badge>
-                                        )}
-                                    </Nav.Link>
-                                </LinkContainer>
+
+                            {userInfo && userInfo.role === 1 ? (  
+                                <></>
+                            ) : (
+                                    <LinkContainer to='/cart'>
+                                        <Nav.Link>
+                                            <FaShoppingCart /> Đơn hàng
+                                            {getListOrderDetailCloneByOrderIdorderId?.length > 0 && (
+                                                <Badge pill bg='success' style={{ marginLeft: '5px' }}>
+                                                    {getListOrderDetailCloneByOrderIdorderId?.reduce((a, c) => a + c.quantity, 0)}
+                                                </Badge>
+                                            )}
+                                        </Nav.Link>
+                                    </LinkContainer>
                             )}
 
                             {userInfo && userInfo.role === 4 && (
@@ -106,7 +108,7 @@ const Header = () => {
                                     </Nav.Link>
                                 </LinkContainer>
                             )}
-                            
+
                             {userInfo && userInfo?.role === 4 ? (
                                 <NavDropdown title={userInfo?.email} id='username'>
                                     <LinkContainer to={`/profile/${userInfo.accountId}`}>

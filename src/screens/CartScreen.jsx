@@ -31,7 +31,7 @@ const CartScreen = () => {
         if (getListOrderDetailCloneByOrderIdorderId) {
             const intervalId = setInterval(refetch, 1000); // Refresh every 1 seconds
             return () => clearInterval(intervalId); // Cleanup the interval on component unmount or 'order' change
-        } 
+        }
     }, [getListOrderDetailCloneByOrderIdorderId, refetch]);
 
 
@@ -47,7 +47,7 @@ const CartScreen = () => {
 
 
     const deleteHandler = async (orderDetailId) => {
-        if (window.confirm('Are you sure ?')) {
+        if (window.confirm('Bạn muốn xóa sản phẩm khỏi giỏi hàng?')) {
             try {
                 await deleteOrderDetail(orderDetailId);
             } catch (err) {
@@ -60,7 +60,7 @@ const CartScreen = () => {
 
 
     const deleteAllHandler = async (orderId) => {
-        if (window.confirm('Are you sure ?')) {
+        if (window.confirm('Bạn muốn xóa sản phẩm khỏi giỏi hàng?')) {
             try {
                 await deleteAllOrderDetailInOrder(orderId);
             } catch (err) {
@@ -78,48 +78,49 @@ const CartScreen = () => {
             <Row className='py-3'>
                 <Col md={8}>
                     <h1 style={{ marginBottom: '20px' }}>Shopping Cart</h1>
-                    {getListOrderDetailCloneByOrderIdorderId?.length === 0 ? (
+                    {(getListOrderDetailCloneByOrderIdorderId?.length === 0 || getListOrderDetailCloneByOrderIdorderId === undefined) ? (
                         <Message>
-                            Your cart is empty <Link to='/'>Go Back</Link>
+                            Giỏ hàng đang trống <Link to='/'>Quay lại</Link>
                         </Message>
                     ) : (
 
                         <ListGroup variant='flush'>
-                            <Button
-                                className='mb-3'
-                                type='button'
-                                variant='light'
-                                onClick={() => deleteAllHandler(order.orderId)}
-                            >
-                                <FaTrash /> Clear all items
-                            </Button>
+                            <Col md={8}>
+                                <Button
+                                    className='mb-3'
+                                    type='button'
+                                    variant='light'
+                                    onClick={() => deleteAllHandler(order?.orderId)}
+                                >
+                                    <FaTrash /> Clear all items
+                                </Button>
+                            </Col>
+                            <div>
+                                {getListOrderDetailCloneByOrderIdorderId?.map((item) => (
+                                    <ListGroup.Item key={item.productId}  >
+                                        <Row>
+                                            <Col md={2}>
+                                                <Image src={item.image} alt={item.name} fluid rounded />
+                                            </Col>
+                                            <Col md={3} className='mt-2'>
+                                                <Link to={`/product/${item.productId}`}>{item.name}</Link>
+                                            </Col>
+                                            <Col md={2} className='mt-2'>{formatCurrency(item.price)}</Col>
+                                            <Col md={2} className='mt-2'>Số lượng: {item.quantity}</Col>
+                                            <Col md={2}>
+                                                <Button
+                                                    type='button'
+                                                    variant='light'
+                                                    onClick={() => deleteHandler(item.orderDetailId)}
+                                                >
+                                                    <FaTrash />
+                                                </Button>
+                                            </Col>
+                                        </Row>
 
-                            {getListOrderDetailCloneByOrderIdorderId?.map((item) => (
-                                <ListGroup.Item key={item.productId}  >
-                                    <Row>
-                                        <Col md={2}>
-
-                                            <Image src={item.image} alt={item.name} fluid rounded />
-                                        </Col>
-                                        <Col md={3} className='mt-2'>
-                                            <Link to={`/product/${item.productId}`}>{item.name}</Link>
-                                        </Col>
-                                        <Col md={2} className='mt-2'>{formatCurrency(item.price)}</Col>
-                                        <Col md={2} className='mt-2'>Số lượng: {item.quantity}</Col>
-                                        <Col md={2}>
-                                            <Button
-                                                type='button'
-                                                variant='light'
-                                                onClick={() => deleteHandler(item.orderDetailId)}
-                                            >
-                                                <FaTrash />
-                                            </Button>
-                                        </Col>
-                                    </Row>
-
-                                </ListGroup.Item>
-                            ))}
-
+                                    </ListGroup.Item>
+                                ))}
+                            </div>
                         </ListGroup>
                     )}
                 </Col>

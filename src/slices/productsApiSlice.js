@@ -4,7 +4,7 @@ export const productsApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
         getProducts: builder.query({
             query: (data) => ({
-                url: `/api/Product/List-Product-Paging?page=${data.page}&size=12`,
+                url: `/api/Product/List-Product`,
                 params: data,
             }),
             keepUnusedDataFor: 5,
@@ -14,7 +14,17 @@ export const productsApiSlice = apiSlice.injectEndpoints({
 
         getProducts1: builder.query({
             query: (data) => ({
-                url: `/api/Product/List-Product`,
+                url: `/api/Product/List-Product-Paging?page=${data.page}&size=5`,
+                params: data,
+            }),
+            keepUnusedDataFor: 5,
+            //providesTags: ['Products'],
+            refetchInterval: 1000,
+        }),
+
+        getProductSize: builder.query({
+            query: (data) => ({
+                url: `/api/Product/PagesNumber?size=5`,
                 params: data,
             }),
             keepUnusedDataFor: 5,
@@ -112,8 +122,8 @@ export const productsApiSlice = apiSlice.injectEndpoints({
         }),
 
         getCompleteProduct: builder.mutation({
-            query: (accountId) => ({
-                url: `/api/Product/Complete-Product?accountId=${accountId}`,
+            query: (data) => ({
+                url: `/api/Product/Complete-Product?accountId=${data.accountId}&imagePath=${data.imagePath}&description=${data.description}`,
                 method: 'POST',
             }),
             refetchInterval: 1000,
@@ -222,6 +232,7 @@ export const productsApiSlice = apiSlice.injectEndpoints({
 export const {
     useGetProductsQuery,
     useGetProducts1Query,
+    useGetProductSizeQuery,
     useGetProductDetailsQuery,
     useCreateProductMutation,
     useUpdateProductMutation,

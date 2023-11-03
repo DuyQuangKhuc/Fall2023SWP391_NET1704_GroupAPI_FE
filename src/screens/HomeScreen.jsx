@@ -1,6 +1,6 @@
 import { Row, Col, Container } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
-import { useGetProductsQuery } from '../slices/productsApiSlice';
+import { useGetProductSizeQuery, useGetProducts1Query, useGetProductsQuery } from '../slices/productsApiSlice';
 import { Link } from 'react-router-dom';
 import Product from '../components/Product';
 import Loader from '../components/Loader';
@@ -11,21 +11,23 @@ import Meta from '../components/Meta';
 import { useGetOrderIsUsingByAccountIdQuery } from '../slices/ordersApiSlice';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { Carousel, Image } from 'react-bootstrap';
 
 const HomeScreen = () => {
     const { pageNumber, keyword } = useParams();
     const [page, setPage] = useState(1);
     const [totalPage, setTotalPage] = useState(1);
-    useEffect(() => {
-        if (page % 12 === 0) {
-            setTotalPage(prevTotalPage => prevTotalPage + 1);
-        }
-    }, [page]);
-    const { data, isLoading, error, } = useGetProductsQuery({
+    
+    const { data, isLoading, error, } = useGetProducts1Query({
         page
     });
 
-
+    const { data: GetProducts, } = useGetProductsQuery();
+    
+    const { data: GetProductSize, } = useGetProductSizeQuery();
+    useEffect(() => { 
+        setTotalPage(GetProductSize)
+    }, [GetProductSize]);
     const { userInfo } = useSelector((state) => state.auth);
     const { data: getOrder } = useGetOrderIsUsingByAccountIdQuery(userInfo?.accountId);
     useEffect(() => {
@@ -61,6 +63,13 @@ const HomeScreen = () => {
                     ) : (
                         <>
                             <Meta />
+                            {/* <Carousel showThumbs={false} showStatus={false} infiniteLoop useKeyboardArrows autoPlay>
+                                {data.slice(0, 8).map((product) => (
+                                    <div key={product.productId}>
+                                        <Product product={product} />
+                                    </div>
+                                ))}
+                            </Carousel> */}
                             <h1>Danh sách sản phẩm</h1>
                             <Row>
                                 {/* {data.products.map((product) => ( */}

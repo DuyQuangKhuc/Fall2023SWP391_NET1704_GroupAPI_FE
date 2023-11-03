@@ -15,7 +15,8 @@ const UserEditScreen = () => {
     const { id: userId } = useParams();
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
-    const [isAdmin, setIsAdmin] = useState(false);
+    const [isAdmin, setIsAdmin] = useState(1);
+    const [isUser, setIsUser] = useState(4);
 
     const {
         data: user,
@@ -45,7 +46,7 @@ const UserEditScreen = () => {
             setName(user.name);
             setEmail(user.email);
             setIsAdmin(user.role);
-            
+
         }
     }, [user]);
 
@@ -87,10 +88,16 @@ const UserEditScreen = () => {
 
                         <Form.Group className='my-2' controlId='isadmin'>
                             <Form.Check
-                                type='checkbox'
-                                label='Is Admin'
+                                type='radio'
+                                label='Admin'
                                 checked={isAdmin}
                                 onChange={(e) => setIsAdmin(e.target.checked)}
+                            ></Form.Check>
+                            <Form.Check
+                                type='radio'
+                                label='Người dùng'
+                                checked={isUser}
+                                onChange={(e) => setIsUser(e.target.checked)}
                             ></Form.Check>
                         </Form.Group>
 

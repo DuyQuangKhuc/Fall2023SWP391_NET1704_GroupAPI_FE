@@ -19,9 +19,9 @@ const ProductCarousel = () => {
         <Message variant='danger'>{error?.data?.message || error.error}</Message>
     ) : (
         <Carousel pause='hover' className='bg-primary mb-4'>
-            {products?.map((product, index) => (
+            {products?.slice(0, 8).map((product, index) => (
                 <Carousel.Item key={index}>
-                    
+
                     <Link to={`/product/${product.productId}`}>
                         <Image src={product.imagePath1} alt={product.name} fluid style={{ width: '510px', height: '510px' }} />
                         <Carousel.Caption className='carousel-caption'>
@@ -34,9 +34,6 @@ const ProductCarousel = () => {
                             <source src={assets} type='video/mp4' style={{ width: '786px', height: '510px' }} />
                         </video> */}
                     </Link>
-                    
-                    
-
                 </Carousel.Item>
             ))}
         </Carousel>

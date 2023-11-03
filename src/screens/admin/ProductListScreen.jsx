@@ -60,7 +60,7 @@ function ProductListScreen(props) {
     const { data, isLoading, error, refetch } = useGetProductsQuery({
         pageNumber,
     });
-    
+
     function formatCurrency(number) {
         // Sử dụng hàm toLocaleString() để định dạng số thành chuỗi với ngăn cách hàng nghìn và mặc định là USD.
         return number.toLocaleString('en-US', {
@@ -118,6 +118,8 @@ function ProductListScreen(props) {
                         width: 170,
                         sortable: true,
                         filterable: true,
+                        valueGetter: (params) =>
+                            field === 'status' ? (params.row.status === 1 ? "Cố định" : "Không cố định") : params.value,
                         renderCell: (params) => (
                             <div onClick={() => handleCellClick(params)}>
                                 {params.value}
@@ -263,6 +265,7 @@ function ProductListScreen(props) {
                         setIsModalOpen(false);
                         setDisabled(false)
                         toast.success('Sản phẩm đã được tạo thành công');
+                        window.location.reload();
                     })
                     .catch((err) => {
                         toast.error('Tạo sản phẩm thất bại');
@@ -271,7 +274,7 @@ function ProductListScreen(props) {
                     });
             })
             .catch((error) => {
-                console.log(error)
+                toast.error('Hãy thêm ảnh');
             });
 
 
@@ -323,7 +326,7 @@ function ProductListScreen(props) {
                                 <td>{component?.quantity}</td>
                                 <td>{component?.material}</td>
                                 <td><div style={{
-                                    marginLeft: '10px',
+                                    marginLeft: '70px',
                                     backgroundColor: `${component.color}`,
                                     width: 50,
                                     height: 28,
@@ -378,7 +381,7 @@ function ProductListScreen(props) {
                     <Form.Group>
                         <Form.Label>Lựa chọn : </Form.Label>
                         {getListComponentCreatedBySystem ? (
-                            <Select  value={componentId} onChange={(e) => setComponentId(e.target.value)}>
+                            <Select value={componentId} onChange={(e) => setComponentId(e.target.value)}>
                                 {getListComponentCreatedBySystem.map((components) => (
                                     <MenuItem key={components.componentId} value={components.componentId} >
                                         {/* {components.name} - Chất liệu: {components.material} - Màu: <div style={{
@@ -388,16 +391,16 @@ function ProductListScreen(props) {
                                             height: 28,
                                             display: 'flex'
                                         }}></div>    */}
-                                        <div style={{ display: 'flex'}}>
-                                            <div style={{ marginLeft: '5px' }}>-Tên: {components.name} </div>
+                                        <div style={{ display: 'flex' }}>
+                                            <div style={{ marginLeft: '5px' }}>  Tên: {components.name} </div>
                                             <div style={{ marginLeft: '20px' }}>- Chất liệu: {components.material}</div>
                                             <div style={{ display: 'flex', marginLeft: '20px' }}>- Màu: <div style={{
                                                 marginLeft: '10px',
                                                 backgroundColor: `${components.color}`,
                                                 width: 28,
-                                                height: 28,                                              
+                                                height: 20,
                                             }}></div></div>
-                                        </div>               
+                                        </div>
                                     </MenuItem>
                                 ))}
                             </Select>
@@ -412,22 +415,22 @@ function ProductListScreen(props) {
                                 {error?.data?.message || error.error}
                             </Message>
                         ) : (
-                            <Table>
+                            <Table className='mt-2'>
                                 <tbody>
                                     {getListComponentCreatedBySystem && getListComponentCreatedBySystem
                                         .filter((data) => data.componentId === componentId) // Filter the data based on the selected option
                                         .map((data, index) => (
                                             <tr key={index}>
-                                                <td>Tên: <p>{data.name}</p></td>
-                                                <td>Màu sắc: <p style={{
-                                                    marginLeft: '10px',
+                                                {/* <td>Tên: {data.name}</td>
+                                                <td style={{ display: 'flex' }}>Màu sắc: <div style={{
+                                                    marginLeft: '5px',
                                                     backgroundColor: `${data.color}`,
                                                     width: 50,
-                                                    height: 28,
-                                                }}></p></td>
-                                                <td>Chất liệu: <p>{data.material}</p></td>
-                                                <td>Mô tả: <p>{data.description}</p></td>
-                                                <td>Trạng thái: <p>{data?.isReplacable && data?.isReplacable === 1 ? "Thay đổi" : data?.isReplacable === 0 ? "Cố định" : ""}</p></td>
+                                                    height: 30,
+                                                }}></div></td>
+                                                <td>Chất liệu: <>{data.material}</></td> */}
+                                                <td>Mô tả: <>{data.description}</></td>
+                                                <td>Trạng thái: <>{data?.isReplacable && data?.isReplacable === 1 ? "Thay đổi" : data?.isReplacable === 0 ? "Cố định" : ""}</></td>
                                                 <td></td>
                                             </tr>
                                         ))}
@@ -442,7 +445,7 @@ function ProductListScreen(props) {
                         >
                             Tạo
                         </Button>
-                    </Col>              
+                    </Col>
                 </Form>
             </Container>
         );
@@ -727,26 +730,27 @@ function ProductListScreen(props) {
                                 },
                             }}
                             onCellClick={handleCellClick}
-                            
+
                         />
 
                         {selectedRow && (
-                            <Dialog open={Boolean(selectedRow)} onClose={handleCloseDialog} >
-                                <DialogTitle>{selectedRow.name}</DialogTitle>
+                            <Dialog maxWidth='md' fullWidth={true} open={Boolean(selectedRow)} onClose={handleCloseDialog} >
+
                                 <DialogContent >
                                     <Row>
                                         <Col md={6}>
                                             <Image src={selectedRow.imagePath1} alt={selectedRow.name} fluid />
                                         </Col>
                                         <Col md={6}>
+                                            <DialogTitle>{selectedRow.name}</DialogTitle>
                                             <ListGroup variant='flush'>
                                                 <ListGroup.Item>
                                                     <Rating
-                                                        value={selectedRow.rating}
-                                                        text={`${selectedRow.numReviews} reviews`}
+                                                        value={selectedRow.ratingAverage}
+                                                        text={`${selectedRow.feedBackQuantity && selectedRow.feedBackQuantity > 0 ? selectedRow.feedBackQuantity : '0'} đánh giá`}
                                                     />
                                                 </ListGroup.Item>
-                                                        <ListGroup.Item>Giá: {formatCurrency(selectedRow.price)}</ListGroup.Item>
+                                                <ListGroup.Item>Giá: {formatCurrency(selectedRow.price)}</ListGroup.Item>
                                                 <ListGroup.Item>
                                                     Mô tả: {selectedRow.description}
                                                 </ListGroup.Item>
@@ -757,7 +761,7 @@ function ProductListScreen(props) {
                                                     Độ bền: {selectedRow.durability}
                                                 </ListGroup.Item>
                                                 <ListGroup.Item>
-                                                    NSX: {selectedRow.uploadDate}
+                                                    NSX: {new Date(selectedRow.uploadDate).toLocaleDateString('en-GB')}
                                                 </ListGroup.Item>
                                             </ListGroup>
 

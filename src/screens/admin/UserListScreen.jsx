@@ -111,7 +111,7 @@ const UserListScreen = () => {
                         onCellClick={handleCellClick}
                     />
                     {selectedRow && (
-                        <Dialog open={Boolean(selectedRow)} onClose={handleCloseDialog}>
+                                <Dialog maxWidth='md' fullWidth={true} open={Boolean(selectedRow)} onClose={handleCloseDialog}>
                             <DialogTitle>{selectedRow.name}</DialogTitle>
                             <DialogContent>
                                 <Row>

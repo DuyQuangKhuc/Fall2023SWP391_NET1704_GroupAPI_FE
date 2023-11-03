@@ -21,6 +21,9 @@ import { BlockPicker } from 'react-color';
 import { ButtonBase, ButtonGroup, TextField } from '@material-ui/core';
 import { Autocomplete } from '@mui/lab';
 import { createFilterOptions } from '@mui/base';
+import ComUpImg from '../components/Input/ComUpImg';
+import ComInput from '../components/Input/ComInput';
+import { firebaseImgs } from '../upImgFirebase/firebaseImgs';
 
 const UserOrderScreen = () => {
 
@@ -43,7 +46,7 @@ const UserOrderScreen = () => {
 
     const [AddProductDetailClone, { isLoading: loadingaddComponent }] = useAddProductDetailCloneMutation();
 
-    console.log(userInfo?.accountId)
+    
 
     const encodedColor = encodeURIComponent(color);
 
@@ -68,19 +71,38 @@ const UserOrderScreen = () => {
 
         }
     };
+    const [description1, setDescription1] = useState('không');
+    const [imagePath, setImages] = useState('');
+   
 
+    const onChange = (data) => {
+        const selectedImages = data;
+        // Tạo một mảng chứa đối tượng 'originFileObj' của các tệp đã chọn
+        const newImages = selectedImages.map((file) => file.originFileObj);
+        // Cập nhật trạng thái 'image' bằng danh sách tệp mới
+        setImages(newImages);
+        console.log(imagePath);
+        // setFileList(data);
+    }
     const [getCompleteProduct] = useGetCompleteProductMutation()
 
-    const Handler = async () => {
+    const Handler = async (e) => {
         try {
-            const res = await getCompleteProduct(userInfo?.accountId);
+            const dataImg = await firebaseImgs(imagePath);     
+            const encoded = encodeURIComponent(dataImg[0]);
+            const res = await getCompleteProduct({
+                accountId: userInfo?.accountId,
+                imagePath: encoded,
+                description: description1,
+            });
             toast.success("Tạo thành công");
-            navigate('/')
-        } catch (err) {
-            // Handle error
+            navigate('/');
+            console.log(encoded);
+        } catch (error) {
+            toast.error('Hãy thêm ảnh');
         }
-    };
-
+    }
+    
     const { data: listComponent, refetch } = useGetListComponentOfProductUserCreatingQuery(userInfo?.accountId);
     useEffect(() => {
         if (listComponent) {
@@ -134,6 +156,8 @@ const UserOrderScreen = () => {
         );
         return filteredOptions;
     };
+
+
 
     return (
         <div className=" max-w-full  bg-repeat" style={{
@@ -304,12 +328,29 @@ const UserOrderScreen = () => {
                     <Col >
 
                         <Card title="Danh sách đã thêm"
-                            extra={
-                                <Button onClick={Handler}  >
+
+                        >
+                            <div >
+                                <Button onClick={Handler} >
                                     Hoàn thiện sản phẩm
                                 </Button>
-                            }
-                        >
+                                <div className='mt-4' style={{ display: 'flex', }}>
+                                    <Form.Group controlId='text-area'>
+                                        <Form.Label>Thêm ảnh</Form.Label>
+                                        <ComUpImg onChange={onChange} />
+                                    </Form.Group>
+                                    <Form.Group controlId='text-area'>
+                                        <Form.Label>Mô tả</Form.Label>
+                                        <Form.Control
+                                            style={{ width: '300px', }}
+                                            as='textarea'
+                                            placeholder=''
+                                            value={description1}
+                                            onChange={(e) => setDescription1(e.target.value)}
+                                        ></Form.Control>
+                                    </Form.Group>
+                                </div>
+                            </div>
                             {listComponent?.map((component) => (
                                 <Card
                                     style={{

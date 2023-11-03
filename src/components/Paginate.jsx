@@ -5,8 +5,6 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 
 const Paginate = ({ page, setPage, totalPage }) => {
-
-   
     const handleChange = (event, value) => {
         setPage(value);
     };

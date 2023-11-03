@@ -344,6 +344,8 @@ const ProfileScreen = () => {
                                                     <tr>
                                                         <th></th>
                                                         <th>Mã đơn hàng</th>
+                                                        <th>Ảnh</th>
+                                                        <th>Mô tả</th>
                                                         <th>Ngày tạo đơn</th>
                                                         <th>Trạng thái</th>
                                                     </tr>
@@ -358,6 +360,8 @@ const ProfileScreen = () => {
                                                                     </ButtonGroup>
                                                                 </td>
                                                                 <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order?.productId}</div></td>
+                                                                <td className='align-middle'><img src={order?.imagePath1} alt={order?.imagePath1} style={{ width: '50px', height: '50px' }} /></td>
+                                                                <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order?.description}</div></td>
                                                                 <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{new Date(order.uploadDate).toLocaleDateString('en-GB')}</div></td>
                                                                 <td className='align-middle'>
                                                                     <div style={{
@@ -382,7 +386,7 @@ const ProfileScreen = () => {
                                                                                     <th>Số lượng</th>
                                                                                     <th>Màu sắc</th> 
                                                                                     <th>Mô tả</th>
-                                                                                    <th>Trạng thái</th>
+                                                                                    <th>Bộ phận</th>
                                                                                 </tr>
                                                                             </thead>
                                                                             <tbody>
@@ -423,7 +427,9 @@ const ProfileScreen = () => {
                                                     <tr>
                                                         <th></th>
                                                         <th>Mã đơn hàng</th>
+                                                        <th>Ảnh</th>
                                                         <th>Giá</th>
+                                                        <th>Mô tả</th>
                                                         <th>Ngày tạo đơn</th>
                                                         <th>Trạng thái</th>
                                                         <th></th>
@@ -439,7 +445,9 @@ const ProfileScreen = () => {
                                                                     </ButtonGroup>
                                                                 </td>
                                                                 <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order?.productId}</div></td>
+                                                                <td className='align-middle'><img src={order?.imagePath1} alt={order?.imagePath1} style={{ width: '50px', height: '50px' }} /></td>
                                                                 <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{formatCurrency(order.price)}</div></td>
+                                                                <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order?.description}</div></td>
                                                                 <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{new Date(order.uploadDate).toLocaleDateString('en-GB')}</div></td>
                                                                 <td className='align-middle'>
                                                                     <div style={{
@@ -547,7 +555,7 @@ const ProfileScreen = () => {
                                                                                     <th>Số lượng</th>
                                                                                     <th>Màu sắc</th> 
                                                                                     <th>Mô tả</th>
-                                                                                    <th>Trạng thái</th>
+                                                                                    <th>Bộ phận</th>
                                                                                 </tr>
                                                                             </thead>
                                                                             <tbody>
@@ -588,7 +596,9 @@ const ProfileScreen = () => {
                                                     <tr>
                                                         <th></th>
                                                         <th>Mã đơn hàng</th>
+                                                        <th>Ảnh</th>
                                                         <th>Giá</th>
+                                                        <th>Mô tả</th>
                                                         <th>Ngày tạo đơn</th>
                                                         <th>Trạng thái</th>
                                                         <th></th>
@@ -604,7 +614,9 @@ const ProfileScreen = () => {
                                                                     </ButtonGroup>
                                                                 </td>
                                                                 <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order?.productId}</div></td>
+                                                                <td className='align-middle'><img src={order?.imagePath1} alt={order?.imagePath1} style={{ width: '50px', height: '50px' }} /></td>
                                                                 <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{formatCurrency(order.price)}</div></td>
+                                                                <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order?.description}</div></td>
                                                                 <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{new Date(order.uploadDate).toLocaleDateString('en-GB')}</div></td>
                                                                 <td className='align-middle'>
                                                                     <div style={{
@@ -631,7 +643,7 @@ const ProfileScreen = () => {
                                                                                     <th>Số lượng</th>
                                                                                     <th>Màu sắc</th> 
                                                                                     <th>Mô tả</th>
-                                                                                    <th>Trạng thái</th>
+                                                                                    <th>Bộ phận</th>
                                                                                 </tr>
                                                                             </thead>
                                                                             <tbody>
@@ -672,7 +684,9 @@ const ProfileScreen = () => {
                                                     <tr>
                                                         <th></th>
                                                         <th>Mã đơn hàng</th>
+                                                        <th>Ảnh</th>
                                                         <th>Giá</th>
+                                                        <th>Mô tả</th>
                                                         <th>Ngày tạo đơn</th>
                                                         <th>Trạng thái</th>
                                                         <th></th>
@@ -688,7 +702,9 @@ const ProfileScreen = () => {
                                                                     </ButtonGroup>
                                                                 </td>
                                                                 <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order?.productId}</div></td>
+                                                                <td className='align-middle'><img src={order?.imagePath1} alt={order?.imagePath1} style={{ width: '50px', height: '50px' }} /></td>
                                                                 <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{formatCurrency(order.price)}</div></td>
+                                                                <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order?.description}</div></td>
                                                                 <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{new Date(order.uploadDate).toLocaleDateString('en-GB')}</div></td>
                                                                 <td className='align-middle'>
                                                                     <div style={{
@@ -769,7 +785,7 @@ const ProfileScreen = () => {
                                                                                     <th>Số lượng</th>
                                                                                     <th>Màu sắc</th> 
                                                                                     <th>Mô tả</th>
-                                                                                    <th>Trạng thái</th>
+                                                                                    <th>Bộ phận</th>
                                                                                 </tr>
                                                                             </thead>
                                                                             <tbody>
@@ -810,7 +826,9 @@ const ProfileScreen = () => {
                                                     <tr>
                                                         <th></th>
                                                         <th>Mã đơn hàng</th>
+                                                        <th>Ảnh</th>
                                                         <th>Giá</th>
+                                                        <th>Mô tả</th>
                                                         <th>Ngày tạo đơn</th>
                                                         <th>Trạng thái</th>
                                                     </tr>
@@ -825,7 +843,9 @@ const ProfileScreen = () => {
                                                                     </ButtonGroup>
                                                                 </td>
                                                                 <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order?.productId}</div></td>
+                                                                <td className='align-middle'><img src={order?.imagePath1} alt={order?.imagePath1} style={{ width: '50px', height: '50px' }} /></td>
                                                                 <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{formatCurrency(order.price)}</div></td>
+                                                                <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order?.description}</div></td>
                                                                 <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{new Date(order.uploadDate).toLocaleDateString('en-GB')}</div></td>
                                                                 <td className='align-middle'>
                                                                     <div style={{
@@ -851,7 +871,7 @@ const ProfileScreen = () => {
                                                                                     <th>Số lượng</th>
                                                                                     <th>Màu sắc</th>
                                                                                     <th>Mô tả</th>
-                                                                                    <th>Trạng thái</th>
+                                                                                    <th>Bộ phận</th>
                                                                                 </tr>
                                                                             </thead>
                                                                             <tbody>
@@ -892,7 +912,9 @@ const ProfileScreen = () => {
                                                     <tr>
                                                         <th></th>
                                                         <th>Mã đơn hàng</th>
+                                                        <th>Ảnh</th>
                                                         <th>Giá</th>
+                                                        <th>Mô tả</th>
                                                         <th>Ngày tạo đơn</th>
                                                         <th>Trạng thái</th>
                                                     </tr>
@@ -907,7 +929,9 @@ const ProfileScreen = () => {
                                                                     </ButtonGroup>
                                                                 </td>
                                                                 <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order?.productId}</div></td>
+                                                                <td className='align-middle'><img src={order?.imagePath1} alt={order?.imagePath1} style={{ width: '50px', height: '50px' }} /></td>
                                                                 <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{formatCurrency(order.price)}</div></td>
+                                                                <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order?.description}</div></td>
                                                                 <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{new Date(order.uploadDate).toLocaleDateString('en-GB')}</div></td>
                                                                 <td className='align-middle'>
                                                                     <div style={{
@@ -933,7 +957,7 @@ const ProfileScreen = () => {
                                                                                     <th>Số lượng</th>
                                                                                     <th>Màu sắc</th> 
                                                                                     <th>Mô tả</th>
-                                                                                    <th>Trạng thái</th>
+                                                                                    <th>Bộ phận</th>
                                                                                 </tr>
                                                                             </thead>
                                                                             <tbody>
