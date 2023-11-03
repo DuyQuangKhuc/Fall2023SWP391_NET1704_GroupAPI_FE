@@ -62,6 +62,16 @@ export const userApiSlice = apiSlice.injectEndpoints({
                 url: `/api/Account/Get-Account-By-Id?id=${accountId}`,
             }),
         }),
+
+        updateChangeRole: builder.mutation({
+            query: (data) => ({
+                url: `/api/Account/ChangeRole?AccountId=${data.accountId}&Role=${data.role}`,
+                method: 'PUT',
+                body: data,
+            }),
+            invalidatesTags: ['User'],
+        }),
+
     }),
 });
 
@@ -75,4 +85,5 @@ export const {
     useUpdateUserMutation,
     useGetUserDetailsQuery,
     useGetAccountByIdQuery,
+    useUpdateChangeRoleMutation,
 } = userApiSlice;

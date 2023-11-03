@@ -189,6 +189,8 @@ const OrderListScreen = () => {
                                         <TableCell></TableCell>
                                         <TableCell>Mã đơn hàng</TableCell>
                                         <TableCell>ID Tài khoản đặt hàng</TableCell>
+                                        <TableCell>Ảnh</TableCell>
+                                        <TableCell>Mô tả</TableCell>
                                         <TableCell>Ngày đặt hàng</TableCell>
                                         <TableCell>Trạng thái</TableCell>
                                         <TableCell></TableCell>
@@ -206,6 +208,8 @@ const OrderListScreen = () => {
                                                 </TableCell>
                                                 <TableCell>{row.productId}</TableCell>
                                                 <TableCell>{row.name}</TableCell>
+                                                <TableCell className='align-middle'><img src={row?.imagePath1} alt={row?.imagePath1} style={{ width: '50px', height: '50px' }} /></TableCell>
+                                                <TableCell><div style={{ padding: '5px', borderRadius: '5px' }}>{row?.description}</div></TableCell> 
                                                 <TableCell>{new Date(row.uploadDate).toLocaleDateString('en-GB')}</TableCell>
                                                 <TableCell >
                                                     <div style={{ backgroundColor: getTabColor(row.isDeleted), padding: '5px', color: '#fff', borderRadius: '5px', width: 'fit-content' }}>
@@ -312,7 +316,9 @@ const OrderListScreen = () => {
                                         <TableCell></TableCell>
                                         <TableCell>Mã đơn hàng</TableCell>
                                         <TableCell>ID Tài khoản đặt hàng</TableCell>
+                                        <TableCell>Ảnh</TableCell>
                                         <TableCell>Tổng số tiền</TableCell>
+                                        <TableCell>Mô tả</TableCell>
                                         <TableCell>Ngày đặt hàng</TableCell>
                                         <TableCell>Trạng thái</TableCell>
                                         <TableCell></TableCell>
@@ -329,7 +335,9 @@ const OrderListScreen = () => {
                                                 </TableCell>
                                                 <TableCell>{row.productId}</TableCell>
                                                 <TableCell>{row.name}</TableCell>
+                                                <TableCell className='align-middle'><img src={row?.imagePath1} alt={row?.imagePath1} style={{ width: '50px', height: '50px' }} /></TableCell>
                                                 <TableCell>{formatCurrency(row.price)}</TableCell>
+                                                <TableCell><div style={{ padding: '5px', borderRadius: '5px' }}>{row?.description}</div></TableCell> 
                                                 <TableCell>{new Date(row.uploadDate).toLocaleDateString('en-GB')}</TableCell>
                                                 <TableCell >
                                                     <div style={{ backgroundColor: getTabColor(row.isDeleted), padding: '5px', color: '#fff', borderRadius: '5px', width: 'fit-content' }}>
@@ -394,7 +402,9 @@ const OrderListScreen = () => {
                                         <TableCell></TableCell>
                                         <TableCell>Mã đơn hàng</TableCell>
                                         <TableCell>ID Tài khoản đặt hàng</TableCell>
+                                        <TableCell>Ảnh</TableCell>
                                         <TableCell>Tổng số tiền</TableCell>
+                                        <TableCell>Mô tả</TableCell>
                                         <TableCell>Ngày đặt hàng</TableCell>
                                         <TableCell>Trạng thái</TableCell>
                                         <TableCell></TableCell>
@@ -411,7 +421,9 @@ const OrderListScreen = () => {
                                                 </TableCell>
                                                 <TableCell>{row.productId}</TableCell>
                                                 <TableCell>{row.name}</TableCell>
+                                                <TableCell className='align-middle'><img src={row?.imagePath1} alt={row?.imagePath1} style={{ width: '50px', height: '50px' }} /></TableCell>
                                                 <TableCell>{formatCurrency(row.price)}</TableCell>
+                                                <TableCell><div style={{ padding: '5px', borderRadius: '5px' }}>{row?.description}</div></TableCell> 
                                                 <TableCell>{new Date(row.uploadDate).toLocaleDateString('en-GB')}</TableCell>
                                                 <TableCell >
                                                     <div style={{ backgroundColor: getTabColor(row.isDeleted), padding: '5px', color: '#fff', borderRadius: '5px', width: 'fit-content' }}>
@@ -515,7 +527,9 @@ const OrderListScreen = () => {
                                         <TableCell></TableCell>
                                         <TableCell>Mã đơn hàng</TableCell>
                                         <TableCell>ID Tài khoản đặt hàng</TableCell>
+                                        <TableCell>Ảnh</TableCell>
                                         <TableCell>Tổng số tiền</TableCell>
+                                        <TableCell>Mô tả</TableCell>
                                         <TableCell>Ngày đặt hàng</TableCell>
                                         <TableCell>Trạng thái</TableCell>
                                         <TableCell></TableCell>
@@ -532,7 +546,9 @@ const OrderListScreen = () => {
                                                 </TableCell>
                                                 <TableCell>{row.productId}</TableCell>
                                                 <TableCell>{row.name}</TableCell>
+                                                <TableCell className='align-middle'><img src={row?.imagePath1} alt={row?.imagePath1} style={{ width: '50px', height: '50px' }} /></TableCell>
                                                 <TableCell>{formatCurrency(row.price)}</TableCell>
+                                                <TableCell><div style={{ padding: '5px', borderRadius: '5px' }}>{row?.description}</div></TableCell> 
                                                 <TableCell>{new Date(row.uploadDate).toLocaleDateString('en-GB')}</TableCell>
                                                 <TableCell >
                                                     <div style={{ backgroundColor: getTabColor(row.isDeleted), padding: '5px', color: '#fff', borderRadius: '5px', width: 'fit-content' }}>
@@ -597,7 +613,9 @@ const OrderListScreen = () => {
                                         <TableCell></TableCell>
                                         <TableCell>Mã đơn hàng</TableCell>
                                         <TableCell>ID Tài khoản đặt hàng</TableCell>
+                                        <TableCell>Ảnh</TableCell>
                                         <TableCell>Tổng số tiền</TableCell>
+                                        <TableCell>Mô tả</TableCell>
                                         <TableCell>Ngày đặt hàng</TableCell>
                                         <TableCell>Trạng thái</TableCell>
                                         <TableCell></TableCell>
@@ -614,7 +632,9 @@ const OrderListScreen = () => {
                                                 </TableCell>
                                                 <TableCell>{row.productId}</TableCell>
                                                 <TableCell>{row.name}</TableCell>
+                                                <TableCell className='align-middle'><img src={row?.imagePath1} alt={row?.imagePath1} style={{ width: '50px', height: '50px' }} /></TableCell>
                                                 <TableCell>{formatCurrency(row.price)}</TableCell>
+                                                <TableCell><div style={{ padding: '5px', borderRadius: '5px' }}>{row?.description}</div></TableCell> 
                                                 <TableCell>{new Date(row.uploadDate).toLocaleDateString('en-GB')}</TableCell>
                                                 <TableCell >
                                                     <div style={{ backgroundColor: getTabColor(row.isDeleted), padding: '5px', color: '#fff', borderRadius: '5px', width: 'fit-content' }}>
@@ -679,7 +699,9 @@ const OrderListScreen = () => {
                                         <TableCell></TableCell>
                                         <TableCell>Mã đơn hàng</TableCell>
                                         <TableCell>ID Tài khoản đặt hàng</TableCell>
+                                        <TableCell>Ảnh</TableCell>
                                         <TableCell>Tổng số tiền</TableCell>
+                                        <TableCell>Mô tả</TableCell>
                                         <TableCell>Ngày đặt hàng</TableCell>
                                         <TableCell>Trạng thái</TableCell>
                                         <TableCell></TableCell>
@@ -696,7 +718,9 @@ const OrderListScreen = () => {
                                                 </TableCell>
                                                 <TableCell>{row.productId}</TableCell>
                                                 <TableCell>{row.name}</TableCell>
+                                                <TableCell className='align-middle'><img src={row?.imagePath1} alt={row?.imagePath1} style={{ width: '50px', height: '50px' }} /></TableCell>
                                                 <TableCell>{formatCurrency(row.price)}</TableCell>
+                                                <TableCell><div style={{ padding: '5px', borderRadius: '5px' }}>{row?.description}</div></TableCell>                
                                                 <TableCell>{new Date(row.uploadDate).toLocaleDateString('en-GB')}</TableCell>
                                                 <TableCell >
                                                     <div style={{ backgroundColor: getTabColor(row.isDeleted), padding: '5px', color: '#fff', borderRadius: '5px', width: 'fit-content' }}>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { LinkContainer } from 'react-router-bootstrap';
 import { Table, Button, Container, ListGroup } from 'react-bootstrap';
 import { FaTrash, FaEdit, FaCheck, FaTimes } from 'react-icons/fa';
@@ -7,18 +7,18 @@ import Loader from '../../components/Loader';
 import {
     useDeleteUserMutation,
     useGetUsersQuery,
+    useUpdateChangeRoleMutation,
 } from '../../slices/usersApiSlice';
 import { toast } from 'react-toastify';
 import { Box, Dialog, DialogActions, DialogContent, DialogTitle } from '@material-ui/core';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import { Col, Image, Row } from 'antd';
+import { useDispatch } from 'react-redux';
 
-const VISIBLE_FIELDS = ['email', 'phone', 'address', 'point', 'role', 'status'];
+const VISIBLE_FIELDS = ['email', 'phone', 'address', 'point', 'role', 'isDeleted'];
 
 const UserListScreen = () => {
     const { data: users, refetch, isLoading, error } = useGetUsersQuery();
-
-    const getRowId = (row) => row.accountId;
 
     const roleMapping = {
         1: "Admin",
@@ -26,49 +26,26 @@ const UserListScreen = () => {
         3: "Staff",
         4: "User",
     };
-    // Otherwise filter will be applied on fields such as the hidden column id
-    const columns = React.useMemo(
-        () =>
-            VISIBLE_FIELDS?.map((field) => {
-                if (field === 'role') {
-                    return {
-                        field,
-                        headerName: field.toUpperCase(),
-                        width: 150,
-                        sortable: true,
-                        filterable: true,
-                        renderCell: (params) => (
-                            <div onClick={() => handleCellClick(params)}>
-                                {params?.value && roleMapping[params.value] ? roleMapping[params.value] : ''}
-                            </div>
-                        ),
-                    };
-                } else {
-                    return {
-                        field,
-                        headerName: field.toUpperCase(),
-                        width: 170,
-                        sortable: true,
-                        filterable: true,
+    const [role, setRole] = useState('');
+    const [updateChangeRole] = useUpdateChangeRoleMutation();
 
-                    };
-                }
-            }),
-        []
-    );
+    useEffect(() => {
+        setRole(role);     
+    }, []);
 
-    const [selectedRow, setSelectedRow] = useState(null);
 
-    function handleCellClick(params) {
-        // Set the selected row to the clicked row
-        setSelectedRow(params.row);
-    }
-
-    function handleCloseDialog() {
-        // Clear the selected row when the dialog is closed
-        setSelectedRow(null);
-    }
-
+    const submitHandler = async (e, accountId) => {
+        e.preventDefault();
+        try {
+            const res = await updateChangeRole({
+                accountId,
+                role
+            }).unwrap();
+            toast.success('Cập nhập thành công');
+        } catch (err) {
+            toast.error("lỗi");
+        }
+    };
 
     const [deleteUser] = useDeleteUserMutation();
 
@@ -93,112 +70,48 @@ const UserListScreen = () => {
                     {error?.data?.message || error.error}
                 </Message>
             ) : (
-
-                <Box sx={{ height: 600, width: 1 }}>
-                    <DataGrid
-                        rows={users}
-                        getRowId={getRowId}
-                        disableColumnFilter
-                        disableColumnSelector
-                        disableDensitySelector
-                        columns={columns}
-                        slots={{ toolbar: GridToolbar }}
-                        slotProps={{
-                            toolbar: {
-                                showQuickFilter: true,
-                            },
-                        }}
-                        onCellClick={handleCellClick}
-                    />
-                    {selectedRow && (
-                                <Dialog maxWidth='md' fullWidth={true} open={Boolean(selectedRow)} onClose={handleCloseDialog}>
-                            <DialogTitle>{selectedRow.name}</DialogTitle>
-                            <DialogContent>
-                                <Row>
-                                    {/* <Col md={6}>
-                                                <Image src={selectedRow.imagePath1} alt={selectedRow.name} fluid />
-                                            </Col> */}
-                                    <Col >
-                                        <ListGroup variant='flush'>
-                                            <ListGroup.Item>ID: {selectedRow.accountId}</ListGroup.Item>
-                                            <ListGroup.Item>
-                                                Email: {selectedRow.email}
-                                            </ListGroup.Item>
-                                            <ListGroup.Item>
-                                                Địa chỉ: {selectedRow.address}
-                                            </ListGroup.Item>
-                                            <ListGroup.Item>
-                                                Số điện thoại: {selectedRow.phone}
-                                            </ListGroup.Item>
-                                            <ListGroup.Item>
-                                                Điểm: {selectedRow.point}
-                                            </ListGroup.Item>
-                                            <ListGroup.Item>
-                                                Role: {selectedRow.role === 1 ? "Admin" : selectedRow.role === 2 ? "Manager" : selectedRow.role === 3 ? "Staff" : selectedRow.role === 4 ? "User" : ''}
-                                            </ListGroup.Item>
-                                            <ListGroup.Item>
-                                                Status: {selectedRow.status}
-                                            </ListGroup.Item>
-                                        </ListGroup>
-                                    </Col>
-                                </Row>
-                            </DialogContent>
-                            <DialogActions style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                <Button onClick={handleCloseDialog}>Close</Button>
-                                <div style={{ display: 'flex' }}>
-                                    <LinkContainer to={`/admin/user/${selectedRow.accountId}/edit`}>
-                                        <Button variant='light' className='btn-sm mx-2'>
-                                            <FaEdit />
-                                        </Button>
-                                    </LinkContainer>
-                                    <Button
-                                        variant='danger'
-                                        className='btn-sm'
-                                        onClick={() => deleteHandler(selectedRow.accountId)}
-                                    >
-                                        <FaTrash style={{ color: 'white' }} />
-                                    </Button>
-                                </div>
-                            </DialogActions>
-                        </Dialog>
-                    )}
-                </Box>
-                /* <Table striped bordered hover responsive className='table-sm'>
+                <Table striped bordered hover responsive className='table-sm'>
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>NAME</th>
+                            <th>Tên</th>
+                            <th>Địa chỉ</th>
                             <th>EMAIL</th>
-                            <th>ADMIN</th>
+                            <th>Vai trò</th>
+                            <th>Hoạt động</th>
                             <th></th>
                         </tr>
                     </thead>
                     <tbody>
                         {users.map((user) => (
-                            <tr key={user._id}>
-                                <td>{user._id}</td>
+                            <tr key={user.accountId}>
+                                <td>{user.accountId}</td>
                                 <td>{user.name}</td>
+                                <td>{user.address}</td>
                                 <td>
                                     <a href={`mailto:${user.email}`}>{user.email}</a>
                                 </td>
+                                <td>{user.role && user.role === 1 ? 'Admin' : user.role === 2 ? 'Manager' : user.role === 3 ? 'Staff' : user.role === 4 ? 'User' : ''}</td>
                                 <td>
-                                    {user.isAdmin ? (
+                                    {user.isDeleted === 0 ? (
                                         <FaCheck style={{ color: 'green' }} />
                                     ) : (
                                         <FaTimes style={{ color: 'red' }} />
                                     )}
                                 </td>
                                 <td>
-                                    {!user.isAdmin && (
+                                    {user.role === 4 && (
                                         <>
-                                            <LinkContainer
-                                                to={`/admin/user/${user._id}/edit`}
-                                                style={{ marginRight: '10px' }}
-                                            >
-                                                <Button variant='light' className='btn-sm'>
-                                                    <FaEdit />
-                                                </Button>
-                                            </LinkContainer>
+                                            <form onSubmit={(e) => submitHandler(e, user.accountId)}>
+                                                <select value={role} onChange={(e) => setRole(e.target.value)}>
+                                                    <option value="">Select Role</option>
+                                                    <option value="1">Admin</option>
+                                                    <option value="2">Manager</option>
+                                                    <option value="3">Staff</option>
+                                                    <option value="4">User</option>
+                                                </select>
+                                                <button type="submit">Change Role</button>
+                                            </form>
                                             <Button
                                                 variant='danger'
                                                 className='btn-sm'
@@ -212,7 +125,7 @@ const UserListScreen = () => {
                             </tr>
                         ))}
                     </tbody>
-                </Table> */
+                </Table>
             )}
         </Container>
     );
