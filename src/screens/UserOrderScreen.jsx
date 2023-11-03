@@ -9,7 +9,7 @@ import {
     Button,
     Col,
 } from 'react-bootstrap';
-import { useAddProductDetailCloneMutation, useGetCompleteProductMutation, useGetListComponentOfProductUserCreatingQuery } from '../slices/productsApiSlice';
+import { useAddProductDetailCloneMutation, useDeleteAllComponentOfProductMutation, useDeleteComponentOfProductMutation, useGetCompleteProductMutation, useGetListComponentOfProductUserCreatingQuery } from '../slices/productsApiSlice';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import FormContainer from '../components/FormContainer';
@@ -24,6 +24,8 @@ import { createFilterOptions } from '@mui/base';
 import ComUpImg from '../components/Input/ComUpImg';
 import ComInput from '../components/Input/ComInput';
 import { firebaseImgs } from '../upImgFirebase/firebaseImgs';
+import { FaTrash } from 'react-icons/fa';
+import Message from '../components/Message';
 
 const UserOrderScreen = () => {
 
@@ -46,7 +48,7 @@ const UserOrderScreen = () => {
 
     const [AddProductDetailClone, { isLoading: loadingaddComponent }] = useAddProductDetailCloneMutation();
 
-    
+
 
     const encodedColor = encodeURIComponent(color);
 
@@ -73,7 +75,7 @@ const UserOrderScreen = () => {
     };
     const [description1, setDescription1] = useState('không');
     const [imagePath, setImages] = useState('');
-   
+
 
     const onChange = (data) => {
         const selectedImages = data;
@@ -88,7 +90,7 @@ const UserOrderScreen = () => {
 
     const Handler = async (e) => {
         try {
-            const dataImg = await firebaseImgs(imagePath);     
+            const dataImg = await firebaseImgs(imagePath);
             const encoded = encodeURIComponent(dataImg[0]);
             const res = await getCompleteProduct({
                 accountId: userInfo?.accountId,
@@ -102,7 +104,7 @@ const UserOrderScreen = () => {
             toast.error('Hãy thêm ảnh');
         }
     }
-    
+
     const { data: listComponent, refetch } = useGetListComponentOfProductUserCreatingQuery(userInfo?.accountId);
     useEffect(() => {
         if (listComponent) {
@@ -157,7 +159,32 @@ const UserOrderScreen = () => {
         return filteredOptions;
     };
 
+    const [deleteComponentOfProduct, { isLoading: loadingDelete, }] = useDeleteComponentOfProductMutation();
 
+    const deleteHandler = async (productDetailId) => {
+        if (window.confirm('Bạn có muốn xóa ?')) {
+            try {
+                await deleteComponentOfProduct(productDetailId);
+                toast.success('Xóa thành công');
+            } catch (err) {
+                toast.error(err?.data?.message || err.error);
+            }
+        }
+    };
+
+    const [deleteAllComponentOfProduct] = useDeleteAllComponentOfProductMutation();
+
+
+    const deleteAllHandler = async (accountId) => {
+        if (window.confirm('Bạn muốn xóa tât cả ?')) {
+            try {
+                await deleteAllComponentOfProduct(accountId);
+                toast.success('Xóa thành công');
+            } catch (err) {
+                toast.error(err?.data?.message || err.error);
+            }
+        }
+    };
 
     return (
         <div className=" max-w-full  bg-repeat" style={{
@@ -350,6 +377,22 @@ const UserOrderScreen = () => {
                                         ></Form.Control>
                                     </Form.Group>
                                 </div>
+                                {(listComponent?.length === 0 || listComponent === undefined) ? (
+                                    <Message>
+                                        Danh sách trống
+                                    </Message>
+                                ) : (
+                                    <Button
+                                        style={{ justifyContent: 'end' }}
+                                        className='mb-2 mt-2'
+                                        type='button'
+                                        variant='light'
+                                        onClick={() => deleteAllHandler(userInfo?.accountId)}
+                                    >
+                                        <FaTrash /> Xóa tất cả danh sách đã tạo
+                                    </Button>
+                                )}
+
                             </div>
                             {listComponent?.map((component) => (
                                 <Card
@@ -357,8 +400,19 @@ const UserOrderScreen = () => {
                                         marginTop: 16,
                                     }}
                                     type="inner"
-                                    title={component.name}
-                                // extra={<a href="#">More</a>}
+                                    title={<span style={{ color: 'Green' }}>{component.name}</span>}
+                                    extra={
+                                        <Col md={2}>
+                                            <Button
+                                                style={{ color: '' }}
+                                                type='button'
+                                                variant='light'
+                                                onClick={() => deleteHandler(component.productDetailId)}
+                                            >
+                                                <FaTrash />
+                                            </Button>
+                                        </Col>
+                                    }
                                 >
                                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                         <p>▣ Chất liệu: {component.material}</p>
@@ -375,6 +429,7 @@ const UserOrderScreen = () => {
 
                                     </div>
                                     <p>▣ Mô tả: {component.description}</p>
+
                                 </Card>
                             ))}
 

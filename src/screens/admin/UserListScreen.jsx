@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { LinkContainer } from 'react-router-bootstrap';
-import { Table, Button, Container, ListGroup } from 'react-bootstrap';
+import { Table, Button, Container, ListGroup, Form, Dropdown } from 'react-bootstrap';
 import { FaTrash, FaEdit, FaCheck, FaTimes } from 'react-icons/fa';
 import Message from '../../components/Message';
 import Loader from '../../components/Loader';
@@ -10,10 +10,6 @@ import {
     useUpdateChangeRoleMutation,
 } from '../../slices/usersApiSlice';
 import { toast } from 'react-toastify';
-import { Box, Dialog, DialogActions, DialogContent, DialogTitle } from '@material-ui/core';
-import { DataGrid, GridToolbar } from '@mui/x-data-grid';
-import { Col, Image, Row } from 'antd';
-import { useDispatch } from 'react-redux';
 
 const VISIBLE_FIELDS = ['email', 'phone', 'address', 'point', 'role', 'isDeleted'];
 
@@ -29,9 +25,6 @@ const UserListScreen = () => {
     const [role, setRole] = useState('');
     const [updateChangeRole] = useUpdateChangeRoleMutation();
 
-    useEffect(() => {
-        setRole(role);     
-    }, []);
 
 
     const submitHandler = async (e, accountId) => {
@@ -58,6 +51,17 @@ const UserListScreen = () => {
                 toast.error(err?.data?.message || err.error);
             }
         }
+    };
+
+    const [open, setOpen] = React.useState(false);
+
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
     };
 
     return (
@@ -100,26 +104,37 @@ const UserListScreen = () => {
                                     )}
                                 </td>
                                 <td>
-                                    {user.role === 4 && (
-                                        <>
-                                            <form onSubmit={(e) => submitHandler(e, user.accountId)}>
-                                                <select value={role} onChange={(e) => setRole(e.target.value)}>
-                                                    <option value="">Select Role</option>
-                                                    <option value="1">Admin</option>
-                                                    <option value="2">Manager</option>
-                                                    <option value="3">Staff</option>
-                                                    <option value="4">User</option>
-                                                </select>
-                                                <button type="submit">Change Role</button>
-                                            </form>
+                                    {user.role !== 1 && (
+                                        <div style={{ display: 'flex', justifyContent: 'center' }}>
+
+                                            <Dropdown >
+                                                <Dropdown.Toggle variant='light' className='btn-sm'>
+                                                    <FaEdit />
+                                                </Dropdown.Toggle>
+                                                <Dropdown.Menu size="sm">
+                                                    <form style={{display: 'flex' }} onSubmit={(e) => submitHandler(e, user.accountId)}>
+                                                        <select value={role} onChange={(e) => setRole(e.target.value)} style={{ marginInlineStart: 10 }}>
+                                                            <option value="">Đổi vai trò</option>
+                                                            <option value="1">Admin</option>
+                                                            <option value="2">Manager</option>
+                                                            <option value="3">Staff</option>
+                                                            <option value="4">User</option>
+                                                        </select>
+                                                        <Button className='btn-sm' type="submit" style={{  marginInlineStart: 10 }}>Lưu</Button>
+                                                    </form>
+                                                </Dropdown.Menu>
+                                            </Dropdown>
+                                            
+
                                             <Button
+                                                style={{ marginInlineStart: 30 }}
                                                 variant='danger'
                                                 className='btn-sm'
                                                 onClick={() => deleteHandler(user._id)}
                                             >
                                                 <FaTrash style={{ color: 'white' }} />
                                             </Button>
-                                        </>
+                                        </div>
                                     )}
                                 </td>
                             </tr>

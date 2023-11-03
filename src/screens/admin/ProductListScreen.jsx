@@ -36,6 +36,8 @@ import { postData } from '../../api/api';
 import { firebaseImgs } from '../../upImgFirebase/firebaseImgs'
 import ComUpImg from '../../components/Input/ComUpImg';
 import FormContainer from '../../components/FormContainer';
+import { BlockPicker } from 'react-color';
+
 
 const VISIBLE_FIELDS = ['productId', 'name', 'imagePath1', 'price', 'uploadDate', 'quantity', 'status'];
 
@@ -453,24 +455,37 @@ function ProductListScreen(props) {
 
     const [material, setMaterial] = useState('');
     const [name, setName] = useState('');
-    const [description, setDescription] = useState('');
-    const [color, setColor] = useState('');
+    const [description, setDescription] = useState('không');
+    const [color, setColor] = useState('#555555');
     const [isReplacable, setIsReplacable] = useState('');
+    const [showPicker, setShowPicker] = React.useState(false);
+
     const [addComponent, { isLoading: loadingaddComponent }] = useAddComponentMutation();
 
+    const handleTogglePicker = () => {
+        setShowPicker(!showPicker);
+    };
+    const handleChangeColor = (selectedColor) => {
+        setColor(selectedColor.hex);
+    };
+
+   
+    const encodedColor = encodeURIComponent(color);
 
     const submitHandler = async (e) => {
         e.preventDefault();
         try {
+            
             const res = await addComponent({
                 material,
                 name,
                 description,
-                color,
+                color: encodedColor,    
                 isReplacable,
             }).unwrap();
-            setIsModalOpen2(false);
+            setIsModalOpen2(false);      
             toast.success("Tạo thành công");
+            window.location.reload();
         } catch (err) {
             toast.error("đã tồn tại");
 
@@ -525,6 +540,7 @@ function ProductListScreen(props) {
                                         // label={textApp.CreateProduct.label.name}
                                         placeholder={textApp.CreateProduct.placeholder.name}
                                         {...register("name")}
+                                        autoComplete="off"
                                         required
                                     />
 
@@ -634,13 +650,30 @@ function ProductListScreen(props) {
                         <Form onSubmit={submitHandler}>
                             <Form.Group className='my-3' controlId='name'>
                                 <Form.Label className="font-semibold">Tên thành phần</Form.Label>
-                                <Form.Control
+                                {/* <Form.Control
                                     type='name'
                                     placeholder='Enter name'
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
                                     required
-                                ></Form.Control>
+                                ></Form.Control> */}
+                                <Select
+                                    value={name}
+                                    onChange={(event) => setName(event.target.value)}
+                                    displayEmpty
+                                    style={{
+                                        width: 350,
+                                    }}
+                                >
+                                    <MenuItem value="" disabled>
+                                        Chọn
+                                    </MenuItem>
+                                    <MenuItem value="Cửa">Cửa</MenuItem>
+                                    <MenuItem value="Đáy">Đáy</MenuItem>
+                                    <MenuItem value="Khung">Khung</MenuItem>
+                                    <MenuItem value="Khay đựng">Khay đựng</MenuItem>
+                                    <MenuItem value="Móc treo">Móc treo</MenuItem>
+                                </Select>
                             </Form.Group>
                             <Form.Group className='my-3' controlId='material'>
                                 <Form.Label>Chất liệu</Form.Label>
@@ -657,13 +690,22 @@ function ProductListScreen(props) {
                             <Form.Group className='my-3' controlId='color' style={{ display: 'flex', justifyContent: 'space-between' }}>
                                 <div >
                                     <Form.Label >Màu sắc</Form.Label>
-                                    <Form.Control
-                                        style={{ display: 'flex' }}
-                                        type='color'
-                                        placeholder='Confirm color'
-                                        value={color}
-                                        onChange={(e) => setColor(e.target.value)}
-                                    ></Form.Control>
+                                    <div
+                                        style={{
+                                            backgroundColor: `${color}`,
+                                            width: 100,
+                                            height: 50,
+                                            border: "2px solid white",
+                                        }}
+                                        onClick={handleTogglePicker}
+                                    ></div>
+                                    <p></p>
+                                    {showPicker && (
+                                        <BlockPicker
+                                            color={color}
+                                            onChange={handleChangeColor}
+                                        />
+                                    )}
                                 </div>
 
                                 <div >

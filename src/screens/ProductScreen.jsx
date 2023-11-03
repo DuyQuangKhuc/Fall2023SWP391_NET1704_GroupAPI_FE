@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
     Row,
     Col,
-    Image,
     ListGroup,
     Card,
     Button,
@@ -24,7 +23,7 @@ import Rating from '../components/Rating';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
 import Meta from '../components/Meta';
-import { addToCart } from '../slices/cartSlice';
+import { Image } from 'antd';
 import { Tabs } from 'antd/lib';
 import { Timeline } from 'antd';
 import { useAddOrderDetailByAccountIdProductIdQuantityMutation } from '../slices/ordersApiSlice';
@@ -273,7 +272,7 @@ const ProductScreen = () => {
                                                     <th>Chất liệu</th>
                                                     <th>Màu sắc</th>
                                                     <th>Mô tả</th>
-                                                    <th>Trạng thái</th>
+                                                    <th>Bộ phận</th>
 
                                                 </tr>
                                             </thead>

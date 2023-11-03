@@ -47,7 +47,7 @@ const CartScreen = () => {
 
 
     const deleteHandler = async (orderDetailId) => {
-        if (window.confirm('Bạn muốn xóa sản phẩm khỏi giỏi hàng?')) {
+        if (window.confirm('Bạn muốn xóa sản phẩm khỏi giỏ hàng?')) {
             try {
                 await deleteOrderDetail(orderDetailId);
             } catch (err) {
@@ -60,7 +60,7 @@ const CartScreen = () => {
 
 
     const deleteAllHandler = async (orderId) => {
-        if (window.confirm('Bạn muốn xóa sản phẩm khỏi giỏi hàng?')) {
+        if (window.confirm('Bạn muốn xóa sản phẩm khỏi giỏ hàng?')) {
             try {
                 await deleteAllOrderDetailInOrder(orderId);
             } catch (err) {

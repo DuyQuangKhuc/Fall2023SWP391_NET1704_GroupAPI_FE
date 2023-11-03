@@ -15,7 +15,7 @@ const Product = ({ product }) => {
     return (
         <Card className='my-3 p-3 rounded'>
             <Link to={`/product/${product.productId}`}>
-                <Card.Img src={product.imagePath1} variant='top' />
+                <Card.Img src={product.imagePath1} style={{ width : 266 , height : 354 }} variant='top' />
             </Link>
 
             <Card.Body>
@@ -36,7 +36,7 @@ const Product = ({ product }) => {
                 <div style={{ display: 'flex', }}>
                     <Card.Text as='div'>Số lượng: {product.quantity && product.quantity > 0 ? product.quantity : <span style={{ color: 'red', }}>Hết hàng</span>}</Card.Text>
                     <Link to={`/product/${product.productId}`}>
-                    <FaShoppingCart as='div' style={{ height: 20, width: 38, marginLeft: '100px', }} />
+                        <FaShoppingCart as='div' style={{ height: 20, width: 38, marginInlineStart: '50px', }} />
                     </Link>
                 </div>
             </Card.Body>

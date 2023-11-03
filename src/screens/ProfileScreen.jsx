@@ -26,6 +26,7 @@ const ProfileScreen = () => {
     const [phone, setPhone] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [address1, setAddress1] = useState('');
     const { userInfo } = useSelector((state) => state.auth);
 
     const [value, setValue] = React.useState('1');
@@ -180,16 +181,14 @@ const ProfileScreen = () => {
 
     const [product] = useState(JSON.parse(localStorage.getItem('ListProductCreatedByUser')));
 
-
-
-
     const [updateUser, { isLoading: loadingUpdateProfile }] = useUpdateUserMutation(accountId);
     useEffect(() => {
         setPhone(userInfo.phone);
         setEmail(userInfo.email);
         setUser(userInfo.name)
         setPassword(userInfo.password);
-    }, [userInfo.email, userInfo.phone, userInfo.name, userInfo.password]);
+        setAddress1(userInfo.address)
+    }, [userInfo.email, userInfo.phone, userInfo.name, userInfo.password, userInfo.address]);
 
     const dispatch = useDispatch();
 
@@ -202,6 +201,7 @@ const ProfileScreen = () => {
                 phone,
                 email,
                 password,
+                address: address1
             }).unwrap();
             dispatch(setCredentials({ ...res }));
             toast.success('Cập nhập thành công');
@@ -265,13 +265,23 @@ const ProfileScreen = () => {
                             </Form.Group>
 
                             <Form.Group className='my-2' controlId='email'>
-                                <Form.Label>Địa chỉ email</Form.Label>
+                                <Form.Label>Email</Form.Label>
                                 <Form.Control
                                     type='email'
                                     placeholder='Enter email'
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     disabled
+                                ></Form.Control>
+                            </Form.Group>
+
+                            <Form.Group className='my-2' controlId='address'>
+                                <Form.Label>Địa chỉ</Form.Label>
+                                <Form.Control
+                                    type='address'
+                                    placeholder=''
+                                    value={address1}
+                                    onChange={(e) => setAddress1(e.target.value)}
                                 ></Form.Control>
                             </Form.Group>
 
@@ -292,7 +302,6 @@ const ProfileScreen = () => {
                                     placeholder='Enter password'
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-
                                     hidden
                                 ></Form.Control>
                             </Form.Group>

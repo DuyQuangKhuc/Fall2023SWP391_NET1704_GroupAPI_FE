@@ -86,10 +86,10 @@ const ProductEditScreen = () => {
         <Container>
 
             <Link to='/admin/productlist' className='btn btn-light my-3'>
-                Go Back
+                Quay lại
             </Link>
             <FormContainer>
-                <h1>Edit Product</h1>
+                <h1>Chỉnh sửa sản phẩm</h1>
                 {loadingUpdate && <Loader />}
                 {isLoading ? (
                     <Loader />

@@ -14,7 +14,7 @@ export const productsApiSlice = apiSlice.injectEndpoints({
 
         getProducts1: builder.query({
             query: (data) => ({
-                url: `/api/Product/List-Product-Paging?page=${data.page}&size=5`,
+                url: `/api/Product/List-Product-Paging?page=${data.page}&size=12`,
                 params: data,
             }),
             keepUnusedDataFor: 5,
@@ -24,7 +24,7 @@ export const productsApiSlice = apiSlice.injectEndpoints({
 
         getProductSize: builder.query({
             query: (data) => ({
-                url: `/api/Product/PagesNumber?size=5`,
+                url: `/api/Product/PagesNumber?size=12`,
                 params: data,
             }),
             keepUnusedDataFor: 5,
@@ -218,11 +218,27 @@ export const productsApiSlice = apiSlice.injectEndpoints({
             refetchInterval: 1000,
         }),
 
-        getVoucherOfUser : builder.query({
+        getVoucherOfUser: builder.query({
             query: (accountId) => ({
                 url: `/api/Voucher/List-Voucher-Of-User?accountId=${accountId}`,
             }),
             keepUnusedDataFor: 5,
+            refetchInterval: 1000,
+        }),
+
+        deleteComponentOfProduct: builder.mutation({
+            query: (productDetailId) => ({
+                url: `/api/Product/Delete-Component-Of-Product?productDetailId=${productDetailId}`,
+                method: 'DELETE',
+            }),
+            refetchInterval: 1000,
+        }),
+
+        deleteAllComponentOfProduct: builder.mutation({
+            query: (accountId) => ({
+                url: `/api/Product/Delete-All-Component-Of-Product-Of-Account?accountId=${accountId}`,
+                method: 'DELETE',
+            }),
             refetchInterval: 1000,
         }),
 
@@ -257,4 +273,6 @@ export const {
     useGetVoucherQuery,
     useBuyVoucherMutation,
     useGetVoucherOfUserQuery,
+    useDeleteComponentOfProductMutation,
+    useDeleteAllComponentOfProductMutation
 } = productsApiSlice;
