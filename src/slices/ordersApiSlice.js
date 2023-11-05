@@ -134,6 +134,13 @@ export const orderApiSlice = apiSlice.injectEndpoints({
             refetchInterval: 1000,
         }),
 
+        getListOrderDetailClone: builder.query({
+            query: () => ({
+                url: `/api/Order/List-Order-Detail-Clone`,
+            }),
+            refetchInterval: 1000,
+        }),
+
     }),
 });
 
@@ -154,5 +161,6 @@ export const {
     useGetListPaymentMethodQuery,
     useAddPaymentPromaxMutation,
     useGetListOrderOfUserQuery,
-    useAcceptPriceFromProductOfUserMutation
+    useAcceptPriceFromProductOfUserMutation,
+    useGetListOrderDetailCloneQuery
 } = orderApiSlice;

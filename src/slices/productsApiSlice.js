@@ -22,6 +22,16 @@ export const productsApiSlice = apiSlice.injectEndpoints({
             refetchInterval: 1000,
         }),
 
+        getProducts2: builder.query({
+            query: (data) => ({
+                url: `/api/Product/List-Product-Paging-Top?page=${data.page}&size=4`,
+                params: data,
+            }),
+            keepUnusedDataFor: 5,
+            //providesTags: ['Products'],
+            refetchInterval: 1000,
+        }),
+
         getProductSize: builder.query({
             query: (data) => ({
                 url: `/api/Product/PagesNumber?size=12`,
@@ -242,12 +252,15 @@ export const productsApiSlice = apiSlice.injectEndpoints({
             refetchInterval: 1000,
         }),
 
+        
+
     }),
 });
 
 export const {
     useGetProductsQuery,
     useGetProducts1Query,
+    useGetProducts2Query,
     useGetProductSizeQuery,
     useGetProductDetailsQuery,
     useCreateProductMutation,

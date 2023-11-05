@@ -5,7 +5,7 @@ import { FaCheck, FaTimes, FaPlus, FaWindowMinimize, FaRegEdit } from 'react-ico
 import { toast } from 'react-toastify';
 import Loader from '../components/Loader';
 import { useUpdateUserMutation } from '../slices/usersApiSlice';
-import { useAcceptPriceFromProductOfUserMutation, useGetListOrderOfUserQuery, useGetListPaymentMethodQuery, useGetMyOrdersQuery } from '../slices/ordersApiSlice';
+import { useAcceptPriceFromProductOfUserMutation, useGetListOrderDetailCloneQuery, useGetListOrderOfUserQuery, useGetListPaymentMethodQuery, useGetMyOrdersQuery } from '../slices/ordersApiSlice';
 import { setCredentials } from '../slices/authSlice';
 import { useParams } from 'react-router-dom';
 import { Tabs } from 'antd';
@@ -41,7 +41,15 @@ const ProfileScreen = () => {
             return () => clearInterval(intervalId); // Cleanup the interval on component unmount or 'order' change
         }
     }, [getListAllComponent, getListAllComponentRefetch]);
-    console.log(getListAllComponent);
+
+    const { data: getListOrderDetailClone, refetch: getListOrderDetailCloneRefetch } = useGetListOrderDetailCloneQuery();
+    useEffect(() => {
+        if (getListOrderDetailClone) {
+            const intervalId = setInterval(getListOrderDetailCloneRefetch, 1000); // Refresh every 1 seconds
+            return () => clearInterval(intervalId); // Cleanup the interval on component unmount or 'order' change
+        }
+    }, [getListOrderDetailClone, getListOrderDetailCloneRefetch]);
+    
     // Define useState hook to track the expanded rows
     const [expandedRows, setExpandedRows] = useState([]);
 
@@ -393,7 +401,7 @@ const ProfileScreen = () => {
                                                                                     <th>Tên</th>
                                                                                     <th>Chất liệu</th>
                                                                                     <th>Số lượng</th>
-                                                                                    <th>Màu sắc</th> 
+                                                                                    <th>Màu sắc</th>
                                                                                     <th>Mô tả</th>
                                                                                     <th>Bộ phận</th>
                                                                                 </tr>
@@ -562,7 +570,7 @@ const ProfileScreen = () => {
                                                                                     <th>Tên</th>
                                                                                     <th>Chất liệu</th>
                                                                                     <th>Số lượng</th>
-                                                                                    <th>Màu sắc</th> 
+                                                                                    <th>Màu sắc</th>
                                                                                     <th>Mô tả</th>
                                                                                     <th>Bộ phận</th>
                                                                                 </tr>
@@ -650,7 +658,7 @@ const ProfileScreen = () => {
                                                                                     <th>Tên</th>
                                                                                     <th>Chất liệu</th>
                                                                                     <th>Số lượng</th>
-                                                                                    <th>Màu sắc</th> 
+                                                                                    <th>Màu sắc</th>
                                                                                     <th>Mô tả</th>
                                                                                     <th>Bộ phận</th>
                                                                                 </tr>
@@ -792,7 +800,7 @@ const ProfileScreen = () => {
                                                                                     <th>Tên</th>
                                                                                     <th>Chất liệu</th>
                                                                                     <th>Số lượng</th>
-                                                                                    <th>Màu sắc</th> 
+                                                                                    <th>Màu sắc</th>
                                                                                     <th>Mô tả</th>
                                                                                     <th>Bộ phận</th>
                                                                                 </tr>
@@ -964,7 +972,7 @@ const ProfileScreen = () => {
                                                                                     <th>Tên</th>
                                                                                     <th>Chất liệu</th>
                                                                                     <th>Số lượng</th>
-                                                                                    <th>Màu sắc</th> 
+                                                                                    <th>Màu sắc</th>
                                                                                     <th>Mô tả</th>
                                                                                     <th>Bộ phận</th>
                                                                                 </tr>
@@ -1007,6 +1015,7 @@ const ProfileScreen = () => {
                                 <Table striped hover responsive className='table-sm'>
                                     <thead>
                                         <tr>
+                                            <th></th>
                                             <th>Mã đơn hàng</th>
                                             <th>Ngày mua hàng</th>
                                             <th>Tổng số tiền</th>
@@ -1015,19 +1024,53 @@ const ProfileScreen = () => {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {getListOrderOfUser && getListOrderOfUser?.map((order, index) => (
-                                            <tr key={index}>
-                                                <td>{order.orderId}</td>
-                                                <td>{order.orderDate}</td>
-                                                <td>{formatCurrency(order.totalPrice)}</td>
-                                                <td>
-                                                    {order.status === 1 ? (
-                                                        <FaCheck style={{ color: 'green' }} />
-                                                    ) : (
-                                                        <FaTimes style={{ color: 'red' }} />
-                                                    )}
-                                                </td>
-                                            </tr>
+                                        {getListOrderOfUser?.map((order) => (
+                                            <React.Fragment key={order?.orderId}>
+                                                <tr>
+                                                    <td className='align-middle'>
+                                                        <ButtonGroup onClick={() => toggleRow(order.orderId)}>
+                                                            {isRowExpanded(order?.orderId) ? <FaWindowMinimize /> : <FaPlus />}
+                                                        </ButtonGroup>
+                                                    </td>
+                                                    <td>{order.orderId}</td>
+                                                    <td>{order.orderDate}</td>
+                                                    <td>{formatCurrency(order.totalPrice)}</td>
+                                                    <td>
+                                                        {order.status === 1 ? (
+                                                            <FaCheck style={{ color: 'green' }} />
+                                                        ) : (
+                                                            <FaTimes style={{ color: 'red' }} />
+                                                        )}
+                                                    </td>
+                                                </tr>
+                                                {isRowExpanded(order?.orderId) && (
+                                                    <tr>
+                                                        <td colSpan={4}>
+                                                            <table class="table table-bordered ">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>Tên</th>
+                                                                        <th>Ảnh</th>
+                                                                        <th>Số lượng</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    {getListOrderDetailClone
+                                                                        .filter((component) => component.orderId === order?.orderId)
+                                                                        .map((component, index) => (
+                                                                            <tr key={index}>
+                                                                                <td>{component.name}</td>
+                                                                                <td className='align-middle'><img src={order?.image} alt={order?.image} style={{ width: '50px', height: '60px' }} /></td>
+                                                                                <td>{component.quantity}</td>
+                                                                            </tr>
+                                                                        ))
+                                                                    }
+                                                                </tbody>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                )}
+                                            </React.Fragment>
                                         ))}
                                     </tbody>
                                 </Table>

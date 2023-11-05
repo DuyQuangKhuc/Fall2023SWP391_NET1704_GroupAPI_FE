@@ -227,7 +227,7 @@ const ProductScreen = () => {
                                                 <Button
                                                     className='btn-block'
                                                     type='button'
-                                                    disabled={product.quantity === 0}
+                                                    disabled={product?.quantity === 0}
                                                     onClick={addToCartHandler}
                                                 >
                                                     Thêm vào giỏ hàng

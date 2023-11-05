@@ -112,10 +112,10 @@ const Header = () => {
                             {userInfo && userInfo?.role === 4 ? (
                                 <NavDropdown title={userInfo?.email} id='username'>
                                     <LinkContainer to={`/profile/${userInfo.accountId}`}>
-                                        <NavDropdown.Item>Profile</NavDropdown.Item>
+                                        <NavDropdown.Item>Trang cá nhân</NavDropdown.Item>
                                     </LinkContainer>
                                     <NavDropdown.Item onClick={logoutHandler}>
-                                        Logout
+                                        Đăng xuất
                                     </NavDropdown.Item>
                                 </NavDropdown>
                             ) : (
@@ -125,22 +125,22 @@ const Header = () => {
                                             <NavDropdown.Item>Dasboard</NavDropdown.Item>
                                         </LinkContainer> */}
                                         <LinkContainer to='/admin/productlist'>
-                                            <NavDropdown.Item>Products</NavDropdown.Item>
+                                                <NavDropdown.Item>Quản lí sản phẩm</NavDropdown.Item>
                                         </LinkContainer>
                                         <LinkContainer to='/admin/orderlist'>
-                                            <NavDropdown.Item>Orders</NavDropdown.Item>
+                                                <NavDropdown.Item>Quản lí đơn hàng</NavDropdown.Item>
                                         </LinkContainer>
                                         <LinkContainer to='/admin/userlist'>
-                                            <NavDropdown.Item>Users</NavDropdown.Item>
+                                                <NavDropdown.Item>Quản lí tài khoản</NavDropdown.Item>
                                         </LinkContainer>
                                         <NavDropdown.Item onClick={logoutHandler}>
-                                            Logout
+                                            Đăng xuất
                                         </NavDropdown.Item>
                                     </NavDropdown>
                                 ) : (
                                     <LinkContainer to='/login'>
                                         <Nav.Link>
-                                            <FaUser /> Sign In
+                                            <FaUser /> Đăng nhập
                                         </Nav.Link>
                                     </LinkContainer>
                                 )

@@ -39,7 +39,7 @@ import FormContainer from '../../components/FormContainer';
 import { BlockPicker } from 'react-color';
 
 
-const VISIBLE_FIELDS = ['productId', 'name', 'imagePath1', 'price', 'uploadDate', 'quantity', 'status'];
+const VISIBLE_FIELDS = ['productId', 'name', 'imagePath1', 'price', 'uploadDate', 'quantity'];
 
 const options = [
     {
@@ -108,9 +108,9 @@ function ProductListScreen(props) {
                         case 'quantity':
                             headerName = 'Số lượng';
                             break;
-                        case 'status':
-                            headerName = 'Trạng thái';
-                            break;
+                        // case 'status':
+                        //     headerName = 'Trạng thái';
+                        //     break;
                         default:
                             headerName = '';
                     }
@@ -469,8 +469,6 @@ function ProductListScreen(props) {
         setColor(selectedColor.hex);
     };
 
-   
-    const encodedColor = encodeURIComponent(color);
 
     const submitHandler = async (e) => {
         e.preventDefault();
@@ -480,7 +478,7 @@ function ProductListScreen(props) {
                 material,
                 name,
                 description,
-                color: encodedColor,    
+                color: encodeURI(color),    
                 isReplacable,
             }).unwrap();
             setIsModalOpen2(false);      
@@ -496,7 +494,7 @@ function ProductListScreen(props) {
         <Container >
             <Row className='align-items-center'>
                 <Col>
-                    <h1>Products</h1>
+                    <h1>Quản lí sản phẩm</h1>
                 </Col>
 
                 <Col className='text-end'>

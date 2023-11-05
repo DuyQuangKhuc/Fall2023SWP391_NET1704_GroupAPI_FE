@@ -1,6 +1,6 @@
 import { Row, Col, Container } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
-import { useGetProductSizeQuery, useGetProducts1Query, useGetProductsQuery } from '../slices/productsApiSlice';
+import { useGetProductSizeQuery, useGetProducts1Query, useGetProducts2Query, useGetProductsQuery } from '../slices/productsApiSlice';
 import { Link } from 'react-router-dom';
 import Product from '../components/Product';
 import Loader from '../components/Loader';
@@ -17,15 +17,18 @@ const HomeScreen = () => {
     const { pageNumber, keyword } = useParams();
     const [page, setPage] = useState(1);
     const [totalPage, setTotalPage] = useState(1);
-    
+
     const { data, isLoading, error, } = useGetProducts1Query({
+        page
+    });
+    const { data: GetProducts2 } = useGetProducts2Query({
         page
     });
 
     const { data: GetProducts, } = useGetProductsQuery();
-    
+
     const { data: GetProductSize, } = useGetProductSizeQuery();
-    useEffect(() => { 
+    useEffect(() => {
         setTotalPage(GetProductSize)
     }, [GetProductSize]);
     const { userInfo } = useSelector((state) => state.auth);
@@ -48,9 +51,19 @@ const HomeScreen = () => {
             <Container>
                 <>
                     {!keyword ? (
-                        <ProductCarousel />
+                        <>
+                            <ProductCarousel />
+                            <h1>Sản phẩm mới cập nhập</h1>
+                            <Row>
+                                {GetProducts2?.map((product) => (
+                                    <Col key={product.productId} sm={12} md={6} lg={4} xl={3}>
+                                        <Product product={product} />
+                                    </Col>
+                                ))}
+                            </Row>
+                        </>
                     ) : (
-                        <Link to='/' className='btn btn-light mb-4'>
+                        <Link to='/' className='btn btn-light mb-4 mt-4'>
                             Quay lại
                         </Link>
                     )}
@@ -70,7 +83,8 @@ const HomeScreen = () => {
                                     </div>
                                 ))}
                             </Carousel> */}
-                            <h1>Danh sách sản phẩm</h1>
+
+                            <h1 className='mt-4'>Tất cả sản phẩm</h1>
                             <Row>
                                 {/* {data.products.map((product) => ( */}
                                 {data.map((product) => (
