@@ -23,10 +23,12 @@ import Rating from '../components/Rating';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
 import Meta from '../components/Meta';
-import { Image } from 'antd';
+import { Image, Rate } from 'antd';
 import { Tabs } from 'antd/lib';
-import { Timeline } from 'antd';
+import { Timeline, Progress, Space } from 'antd';
 import { useAddOrderDetailByAccountIdProductIdQuantityMutation } from '../slices/ordersApiSlice';
+
+const desc = ['Tệ', 'Ổn', 'Tốt', 'Rất tốt', 'Chất lượng'];
 
 const ProductScreen = () => {
     const { productId } = useParams();
@@ -36,7 +38,7 @@ const ProductScreen = () => {
     const navigate = useNavigate();
 
     const [quantity, setquantity] = useState(1);
-    const [rating, setRating] = useState();
+    const [rating, setRating] = useState(3);
     const [comment, setComment] = useState('');
     const [order] = useState(JSON.parse(localStorage.getItem('getOrder')));
     const [addOrderDetailByAccountIdProductIdQuantity] = useAddOrderDetailByAccountIdProductIdQuantityMutation();
@@ -308,8 +310,8 @@ const ProductScreen = () => {
                                                         {userInfo ? (
                                                             <Form onSubmit={submitHandler}>
                                                                 <Form.Group className='my-2' controlId='rating'>
-                                                                    <Form.Label>Đánh giá</Form.Label>
-                                                                    <Form.Control
+                                                                    {/* <Form.Label>Xếp hạng: </Form.Label> */}
+                                                                    {/* <Form.Control
                                                                         as='select'
                                                                         required
                                                                         value={rating}
@@ -321,7 +323,17 @@ const ProductScreen = () => {
                                                                         <option value='3'>3 - Tốt</option>
                                                                         <option value='4'>4 - Rất tốt</option>
                                                                         <option value='5'>5 - Chất lượng cao</option>
-                                                                    </Form.Control>
+                                                                    </Form.Control> */}
+                                                                    <Space wrap>
+                                                                        <Progress strokeColor={{
+                                                                            '0%': '#d4c528',
+                                                                            '100%': '#d4c204',
+                                                                        }} type="circle" percent={(product.ratingAverage / 5) * 100} format={(percent) => <span style={{ fontSize: 35 }}>{product.ratingAverage}<span style={{ fontSize: 20 }}>/ 5</span> <p style={{ fontSize: 15, marginTop: 10, marginBottom: 0}}>Xếp hạng</p></span> } />
+                                                                    </Space>
+                                                                    <span style={{ marginLeft: 20 }}>
+                                                                        <Rate style={{ fontSize: 35 }} tooltips={desc} onChange={setRating} value={rating} />
+                                                                        {rating ? <span className="ant-rate-text">{desc[rating - 1]}</span> : ''}
+                                                                    </span>
                                                                 </Form.Group>
                                                                 <Form.Group className='my-2' controlId='comment'>
                                                                     <Form.Label>Viết bình luận</Form.Label>
