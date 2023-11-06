@@ -159,8 +159,9 @@ const PaymentScreen = () => {
                                     </ListGroup.Item>
                                     <ListGroup.Item>
                                         <Row>
+                                            {/* Số-tiền-sau-khi-giảm-giá = Giá-tiền x [(100 –  %giảm-giá)/100] */}
                                             <Col>Giảm còn</Col>
-                                            <Col>{formatCurrency((getListOrderDetailCloneByOrderIdorderId?.reduce((acc, item) => acc + item.quantity * item.price, 0)) * (1 - (getVoucherOfUser?.filter((voucher) => voucher.voucherId === voucherId)) / 100))}</Col>
+                                            <Col>{formatCurrency((getListOrderDetailCloneByOrderIdorderId?.reduce((acc, item) => acc + item.quantity * item.price, 0)) * (1 - (getVoucherOfUser?.filter((voucher) => voucher.voucherId === voucherId)) / 100))}</Col> 
                                         </Row>
                                     </ListGroup.Item>
 

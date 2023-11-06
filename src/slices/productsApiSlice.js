@@ -252,7 +252,14 @@ export const productsApiSlice = apiSlice.injectEndpoints({
             refetchInterval: 1000,
         }),
 
-        
+        addProductAutomatic : builder.mutation({
+            query: (data) => ({
+                url: `/api/Product/Add-Product-Automatic`,
+                method: 'POST',
+                body: data,
+            }),
+            refetchInterval: 1000,
+        }),
 
     }),
 });
@@ -287,5 +294,6 @@ export const {
     useBuyVoucherMutation,
     useGetVoucherOfUserQuery,
     useDeleteComponentOfProductMutation,
-    useDeleteAllComponentOfProductMutation
+    useDeleteAllComponentOfProductMutation,
+    useAddProductAutomaticMutation
 } = productsApiSlice;
