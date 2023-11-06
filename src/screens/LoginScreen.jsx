@@ -48,30 +48,30 @@ const LoginScreen = () => {
     return (
         <Container className='my-3'>
             <FormContainer className='my-2'>
-                <h1 className='my-2'>Sign In</h1>
+                <h1 className='my-2'>Đăng nhập</h1>
                 <Form onSubmit={submitHandler} className='my-2'>
                     <Form.Group className='my-2' controlId='email'>
-                        <Form.Label>Email Address</Form.Label>
+                        <Form.Label>Email</Form.Label>
                         <Form.Control
                             type='email'
-                            placeholder='Enter email'
+                            placeholder='Nhập email'
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                         ></Form.Control>
                     </Form.Group>
 
                     <Form.Group className='my-2' controlId='password'>
-                        <Form.Label>Password</Form.Label>
+                        <Form.Label>Mật khẩu</Form.Label>
                         <Form.Control
                             type='password'
-                            placeholder='Enter password'
+                            placeholder='Nhập mật khẩu'
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                         ></Form.Control>
                     </Form.Group>
 
                     <Button disabled={isLoading} type='submit' variant='primary'>
-                        Sign In
+                        Đăng nhập
                     </Button>
                     
                     {isLoading && <Loader />}
@@ -79,9 +79,9 @@ const LoginScreen = () => {
 
                 <Row className='py-3'>
                     <Col>
-                        New Customer?{' '}
+                        Bạn chưa có tài khoản?{' '}
                         <Link to={redirect ? `/register?redirect=${redirect}` : '/register'}>
-                            Register
+                            Đăng kí
                         </Link>
                     </Col>
                 </Row>

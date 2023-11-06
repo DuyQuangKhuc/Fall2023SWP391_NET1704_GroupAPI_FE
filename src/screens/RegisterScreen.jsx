@@ -12,6 +12,7 @@ import { toast } from 'react-toastify';
 const RegisterScreen = () => {
     const [phone, setPhone] = useState('');
     const [email, setEmail] = useState('');
+    const [name, setName] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
 
@@ -39,9 +40,8 @@ const RegisterScreen = () => {
             toast.error('Mật khẩu không giống nhau');
         } else {
             try {
-                const res = await register({ phone, email, password }).unwrap();
-                //dispatch(setCredentials({ ...res }));
-
+                const res = await register({ phone, email, name, password }).unwrap();
+                dispatch(setCredentials({ ...res }));
                 navigate('/login');
                 setSuccessAlert(true);
                 setTimeout(() => {
@@ -56,41 +56,50 @@ const RegisterScreen = () => {
     return (
         <Container className='my-3'>
             <FormContainer>
-                <h1>Register</h1>
+                <h1>Đăng ký</h1>
                 <Form onSubmit={submitHandler}>
+                    <Form.Group className='my-2' controlId='name'>
+                        <Form.Label>Tên</Form.Label>
+                        <Form.Control
+                            type='name'
+                            placeholder='Nhập tên'
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                        ></Form.Control>
+                    </Form.Group>
 
                     <Form.Group className='my-2' controlId='email'>
-                        <Form.Label>Email Address</Form.Label>
+                        <Form.Label>Email</Form.Label>
                         <Form.Control
                             type='email'
-                            placeholder='Enter email'
+                            placeholder='Nhập email'
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                         ></Form.Control>
                     </Form.Group>
                     <Form.Group className='my-2' controlId='phone'>
-                        <Form.Label>Phone Number</Form.Label>
+                        <Form.Label>Số điện thoại</Form.Label>
                         <Form.Control
                             type='phone'
-                            placeholder='Enter phone'
+                            placeholder='Nhập số điện thoại'
                             value={phone}
                             onChange={(e) => setPhone(e.target.value)}
                         ></Form.Control>
                     </Form.Group>
                     <Form.Group className='my-2' controlId='password'>
-                        <Form.Label>Password</Form.Label>
+                        <Form.Label>Mật khẩu</Form.Label>
                         <Form.Control
                             type='password'
-                            placeholder='Enter password'
+                            placeholder='Nhập mật khẩu'
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                         ></Form.Control>
                     </Form.Group>
                     <Form.Group className='my-2' controlId='confirmPassword'>
-                        <Form.Label>Confirm Password</Form.Label>
+                        <Form.Label>Xác nhận mật khẩu</Form.Label>
                         <Form.Control
                             type='password'
-                            placeholder='Confirm password'
+                            placeholder='Xác nhận mật khẩu'
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
                         ></Form.Control>
@@ -101,7 +110,7 @@ const RegisterScreen = () => {
                     </Button>
                     {successAlert && (
                         <Paper>
-                            <Alert variant="contained" color="success">Success !!</Alert>
+                            <Alert variant="contained" color="success">Thành công !!</Alert>
                         </Paper>
                     )}
                     {isLoading && <Loader />}
@@ -109,9 +118,9 @@ const RegisterScreen = () => {
 
                 <Row className='py-3'>
                     <Col>
-                        Already have an account?{' '}
+                        Bạn đã có tài khoản?{' '}
                         <Link to={redirect ? `/login?redirect=${redirect}` : '/login'}>
-                            Login
+                            Đăng nhập
                         </Link>
                     </Col>
                 </Row>

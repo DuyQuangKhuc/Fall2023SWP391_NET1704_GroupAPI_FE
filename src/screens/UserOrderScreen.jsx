@@ -89,19 +89,26 @@ const UserOrderScreen = () => {
     const [getCompleteProduct] = useGetCompleteProductMutation()
 
     const Handler = async (e) => {
-        try {
-            const dataImg = await firebaseImgs(imagePath);
-            const encoded = encodeURIComponent(dataImg[0]);
-            const res = await getCompleteProduct({
-                accountId: userInfo?.accountId,
-                imagePath: encoded,
-                description: description1,
-            });
-            toast.success("Tạo thành công");
-            navigate('/');
-            console.log(encoded);
-        } catch (error) {
-            toast.error('Hãy thêm ảnh');
+        const requiredComponents = ['Cửa', 'Đáy', 'Khung', 'Móc treo'];
+        const hasAllComponents = requiredComponents.every(component => listComponent.includes(component));
+        
+        if (hasAllComponents) {
+            try {
+                const dataImg = await firebaseImgs(imagePath);
+                const encoded = encodeURIComponent(dataImg[0]);
+                const res = await getCompleteProduct({
+                    accountId: userInfo?.accountId,
+                    imagePath: encoded,
+                    description: description1,
+                });
+                toast.success("Tạo thành công");
+                navigate('/');
+                console.log(encoded);
+            } catch (error) {
+                toast.error('Hãy thêm ảnh');
+            }
+        } else {
+            toast.error('Bạn chưa chọn đủ thành phần tạo lồng chim');
         }
     }
 
@@ -200,7 +207,7 @@ const UserOrderScreen = () => {
                         <FormContainer>
                             <Form onSubmit={submitHandler}>
                                 <Form.Group className='my-3' controlId='name'>
-                                    <Form.Label className="font-semibold">Tên bộ phận</Form.Label>
+                                    <Form.Label className="font-semibold">Tên bộ phận <span style={{ color: 'red' }}>*</span></Form.Label>
                                     <Select
                                         showSearch
                                         style={{
@@ -211,29 +218,30 @@ const UserOrderScreen = () => {
                                         optionFilterProp="children"
                                         filterOption={(input, option) => (option?.label ?? '').includes(input)}
                                         filterSort={(optionA, optionB) =>
-                                            (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                                            String(optionA?.label ?? '').toLowerCase().localeCompare(String(optionB?.label ?? '').toLowerCase())
                                         }
                                         options={[
                                             {
                                                 value: 'Cửa',
-                                                label: 'Cửa',
+                                                label: <span>Cửa <span style={{ color: 'red' }}>*</span></span>,
                                             },
                                             {
                                                 value: 'Đáy',
-                                                label: 'Đáy',
+                                                label: <span>Đáy <span style={{ color: 'red' }}>*</span></span>,
                                             },
                                             {
                                                 value: 'Khung',
-                                                label: 'Khung',
+                                                label: <span>Khung <span style={{ color: 'red' }}>*</span></span>,
+                                            },
+                                            {
+                                                value: 'Móc treo',
+                                                label: <span>Móc treo <span style={{ color: 'red' }}>*</span></span>,
                                             },
                                             {
                                                 value: 'Khay đựng',
                                                 label: 'Khay đựng',
                                             },
-                                            {
-                                                value: 'Móc treo',
-                                                label: 'Móc treo',
-                                            },
+
 
                                         ]}
                                         value={name}
@@ -241,8 +249,9 @@ const UserOrderScreen = () => {
 
                                     />
                                 </Form.Group>
+
                                 <Form.Group className='my-3' controlId='quantity'>
-                                    <Form.Label>Số lượng</Form.Label>
+                                    <Form.Label>Số lượng <span style={{ color: 'red' }}>*</span></Form.Label>
                                     <Form.Control
                                         type='number'
                                         placeholder='Nhập số lượng'
@@ -257,7 +266,7 @@ const UserOrderScreen = () => {
                                 </Form.Group>
 
                                 <Form.Group className='my-3' controlId='material'>
-                                    <Form.Label>Chất liệu</Form.Label>
+                                    <Form.Label>Chất liệu <span style={{ color: 'red' }}>*</span></Form.Label>
                                     {/* <Form.Control
                                         type='material'
                                         placeholder='Ví dụ như gỗ, sắc, nhôm, ....'
@@ -354,12 +363,12 @@ const UserOrderScreen = () => {
                     </Col>
                     <Col >
 
-                        <Card title="Danh sách đã thêm"
+                        <Card title="Danh sách đã thêm (Yêu cầu phải tạo đủ 4 thành phần trở lên)"
 
                         >
                             <div >
                                 <Button onClick={Handler} >
-                                    Hoàn thiện sản phẩm
+                                    Hoàn thiện đơn đặt riêng lồng chim
                                 </Button>
                                 <div className='mt-4' style={{ display: 'flex', }}>
                                     <Form.Group controlId='text-area'>

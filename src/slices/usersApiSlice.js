@@ -11,7 +11,7 @@ export const userApiSlice = apiSlice.injectEndpoints({
         }),
         register: builder.mutation({
             query: (data) => ({
-                url: `/api/LoginAndRegister/Add-Account?email=${data.email}&phone_number=${data.phone}&password=${data.password}`,
+                url: `/api/LoginAndRegister/Add-Account?email=${data.email}&name=${data.name}&phone_number=${data.phone}&password=${data.password}`,
                 method: 'POST',
                 body: data,
             }),

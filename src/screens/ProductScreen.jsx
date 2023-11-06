@@ -301,7 +301,7 @@ const ProductScreen = () => {
                                             <Row className='review'>
                                                 <Col md={6}>
                                                     <ListGroup.Item>
-                                                        <h2>Viết đánh giá về sản phẩm</h2>
+                                                        <h2>Đánh giá sản phẩm</h2>
 
                                                         {loadingProductReview && <Loader />}
 
