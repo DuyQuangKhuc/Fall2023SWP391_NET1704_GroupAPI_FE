@@ -90,7 +90,7 @@ const UserOrderScreen = () => {
 
     const Handler = async (e) => {
         const requiredComponents = ['Cửa', 'Đáy', 'Khung', 'Móc treo'];
-        const hasAllComponents = requiredComponents.every(component => listComponent.includes(component));
+        const hasAllComponents = requiredComponents.every(component => listComponentData.map(item => item.name).includes(component));
         
         if (hasAllComponents) {
             try {
@@ -108,17 +108,21 @@ const UserOrderScreen = () => {
                 toast.error('Hãy thêm ảnh');
             }
         } else {
-            toast.error('Bạn chưa chọn đủ thành phần tạo lồng chim');
+            const missingComponents = requiredComponents.filter(component => !listComponentData.map(item => item.name).includes(component));
+            const missingComponentsString = missingComponents.join(', ');
+            toast.error(`Bạn chưa chọn ${missingComponentsString}`);
         }
     }
-
+    const [listComponentData, setListComponentData] = useState([]);
+    console.log("dâ", listComponentData.map(item => item.name));
     const { data: listComponent, refetch } = useGetListComponentOfProductUserCreatingQuery(userInfo?.accountId);
     useEffect(() => {
         if (listComponent) {
-            const intervalId = setInterval(refetch, 1000); // Refresh every 1 seconds
+            const intervalId = setInterval(refetch, 1000);
+            setListComponentData(listComponent); // Refresh every 1 seconds
             return () => clearInterval(intervalId); // Cleanup the interval on component unmount or 'order' change
         }
-    }, [listComponent, refetch]);
+    }, [listComponent, listComponentData, refetch]);
 
     const [nameCustom, setCustom] = useState(null);
     const [customValue, setCustomValue] = useState(null);
@@ -363,7 +367,7 @@ const UserOrderScreen = () => {
                     </Col>
                     <Col >
 
-                        <Card title="Danh sách đã thêm (Yêu cầu phải tạo đủ 4 thành phần trở lên)"
+                        <Card title=<span> Danh sách đã thêm (Yêu cầu phải tạo đủ những bộ phận có <span style={{ color: 'red' }}>*</span> )</span>
 
                         >
                             <div >
