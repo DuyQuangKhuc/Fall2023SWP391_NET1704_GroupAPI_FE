@@ -814,7 +814,7 @@ function ProductListScreen(props) {
                 </DialogContent>
                 <DialogActions>
                     {/* <Button onClick={handleCancel}>Thoát</Button> */}
-                    <Button onSubmit={handleSubmit(onSubmit)} disabled={disabled}> Tạo sản phẩm</Button>
+                    <Button onClick={handleSubmit(onSubmit)} disabled={disabled}> Tạo sản phẩm</Button>
                 </DialogActions>
             </Dialog>
 
