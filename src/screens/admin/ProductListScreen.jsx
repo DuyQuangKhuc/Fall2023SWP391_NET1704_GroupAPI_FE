@@ -494,7 +494,7 @@ function ProductListScreen(props) {
                                 <td>{component?.quantity}</td>
                                 <td>{component?.material}</td>
                                 <td><div style={{
-                                    marginLeft: '70px',
+                                    marginLeft: '170px',
                                     backgroundColor: `${component.color}`,
                                     width: 50,
                                     height: 28,
@@ -599,7 +599,7 @@ function ProductListScreen(props) {
                     <Col className='text-end'>
                         <Button
                             type='submit'
-                            variant='primary'
+                            variant='light'
                         >
                             Thêm thành phần
                         </Button>

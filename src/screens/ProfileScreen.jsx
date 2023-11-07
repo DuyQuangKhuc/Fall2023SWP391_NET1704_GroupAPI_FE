@@ -1019,6 +1019,7 @@ const ProfileScreen = () => {
                                             <th>Mã đơn hàng</th>
                                             <th>Ngày mua hàng</th>
                                             <th>Tổng số tiền</th>
+                                            <th>Số điểm được cộng</th>
                                             <th>Thanh toán</th>
                                             <th></th>
                                         </tr>
@@ -1035,6 +1036,7 @@ const ProfileScreen = () => {
                                                     <td>{order.orderId}</td>
                                                     <td>{order.orderDate}</td>
                                                     <td>{formatCurrency(order.totalPrice)}</td>
+                                                    <td>{Math.round(order.totalPrice / 1000)}</td>
                                                     <td>
                                                         {order.status === 1 ? (
                                                             <FaCheck style={{ color: 'green' }} />
