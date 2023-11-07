@@ -261,6 +261,21 @@ export const productsApiSlice = apiSlice.injectEndpoints({
             refetchInterval: 1000,
         }),
 
+        addComponentIntoProductCreating: builder.mutation({
+            query: (data) => ({
+                url: `/api/Product/Add-Component-Into-Product-Creating?componentId=${data.componentId}&quantity=${data.quantity}`,
+                method: 'POST',
+            }),
+            refetchInterval: 1000,
+        }),
+
+        getListComponentOfProductCreating : builder.query({
+            query: () => ({
+                url: `/api/Product/List-Component-Of-Product-Creating`,
+            }),
+            refetchInterval: 1000,
+        }),
+
     }),
 });
 
@@ -295,5 +310,7 @@ export const {
     useGetVoucherOfUserQuery,
     useDeleteComponentOfProductMutation,
     useDeleteAllComponentOfProductMutation,
-    useAddProductAutomaticMutation
+    useAddProductAutomaticMutation,
+    useAddComponentIntoProductCreatingMutation,
+    useGetListComponentOfProductCreatingQuery
 } = productsApiSlice;

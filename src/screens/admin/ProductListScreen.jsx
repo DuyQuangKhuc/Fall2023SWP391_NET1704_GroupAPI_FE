@@ -11,11 +11,12 @@ import {
     useDeleteProductMutation,
     useCreateProductMutation,
     useAddComponentMutation,
-    useGetListComponentQuery,
     useGetListComponentCreatedBySystemQuery,
     useAddComponentIntoProductMutation,
     useGetListAllComponentQuery,
     useAddProductAutomaticMutation,
+    useAddComponentIntoProductCreatingMutation,
+    useGetListComponentOfProductCreatingQuery,
 } from '../../slices/productsApiSlice';
 import { toast } from 'react-toastify';
 import { Modal, notification } from 'antd';
@@ -333,29 +334,24 @@ function ProductListScreen(props) {
                             <th>Trạng thái</th>
                         </tr>
                     </thead>
-                    {(filteredComponents?.length === 0 || filteredComponents === undefined) ? (
-                        <tbody>
-                            {filteredComponents?.map((component, index) => (
-                                <tr key={index}>
-                                    <td>{component?.name}</td>
-                                    <td>{component?.quantity}</td>
-                                    <td>{component?.material}</td>
-                                    <td><div style={{
-                                        marginLeft: '70px',
-                                        backgroundColor: `${component.color}`,
-                                        width: 50,
-                                        height: 28,
-                                    }}></div> </td>
-                                    <td>{component?.description}</td>
-                                    <td>{component?.isReplacable && component?.isReplacable === 1 ? "Thay đổi" : component?.isReplacable === 0 ? "Cố định" : ""}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    ) : (
-                        <Message style={{ marginLeft: '70px', }}>
-                            Trống
-                        </Message>
-                    )}
+                    <tbody>
+                        {filteredComponents?.map((component, index) => (
+                            <tr key={index}>
+                                <td>{component?.name}</td>
+                                <td>{component?.quantity}</td>
+                                <td>{component?.material}</td>
+                                <td><div style={{
+                                    marginLeft: '70px',
+                                    backgroundColor: `${component.color}`,
+                                    width: 50,
+                                    height: 28,
+                                }}></div> </td>
+                                <td>{component?.description}</td>
+                                <td>{component?.isReplacable && component?.isReplacable === 1 ? "Thay đổi" : component?.isReplacable === 0 ? "Cố định" : ""}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+
                 </Table>
             </Container>
         );
@@ -471,18 +467,65 @@ function ProductListScreen(props) {
         );
     };
 
+    const TableComponentInAddProduct = () => {
+        const { data: getListComponentOfProductCreating, refetch: ListComponentOfProductCreatingRefetch } = useGetListComponentOfProductCreatingQuery();
+        useEffect(() => {
+            if (getListComponentOfProductCreating) {
+                const intervalId = setInterval(ListComponentOfProductCreatingRefetch, 1000); // Refresh every 1 seconds
+                return () => clearInterval(intervalId); // Cleanup the interval on component unmount or 'order' change
+            }
+        }, [getListComponentOfProductCreating, ListComponentOfProductCreatingRefetch]);
+
+
+        return (
+            <Container>
+                <Table striped hover responsive className='table-auto'>
+                    <thead>
+                        <tr>
+                            <th>Tên thành phần</th>
+                            <th>Số lượng</th>
+                            <th>Chất liệu</th>
+                            <th>Màu sắc</th>
+                            <th>Mô tả</th>
+                            <th>Trạng thái</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {getListComponentOfProductCreating?.map((component, index) => (
+                            <tr key={index}>
+                                <td>{component?.name}</td>
+                                <td>{component?.quantity}</td>
+                                <td>{component?.material}</td>
+                                <td><div style={{
+                                    marginLeft: '70px',
+                                    backgroundColor: `${component.color}`,
+                                    width: 50,
+                                    height: 28,
+                                }}></div> </td>
+                                <td>{component?.description}</td>
+                                <td>{component?.isReplacable && component?.isReplacable === 1 ? "Thay đổi" : component?.isReplacable === 0 ? "Cố định" : ""}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+
+                </Table>
+            </Container>
+        );
+    };
+
     const MySelectComponentInAddProduct = () => {
         const [quantity, setQuantity] = useState(0);
         const [componentId, setComponentId] = useState('');
 
         const { data: getListComponentCreatedBySystem } = useGetListComponentCreatedBySystemQuery();
 
-        const [addComponentIntoProduct] = useAddComponentIntoProductMutation();
+        const [addComponentIntoProductCreating] = useAddComponentIntoProductCreatingMutation();
 
         const submitComponent = async (e) => {
             e.preventDefault();
             try {
-                await addComponentIntoProduct({
+                await addComponentIntoProductCreating({
                     componentId,
                     quantity,
                 }).unwrap();
@@ -541,7 +584,7 @@ function ProductListScreen(props) {
                                         .map((data, index) => (
                                             <tr key={index}>
                                                 <td>Tên: {data.name}</td>
-                                                <td style={{ display: 'flex' }}>Màu sắc: <div style={{
+                                                <td style={{ display: 'flex' }}>Màu: <div style={{
                                                     marginLeft: '5px',
                                                     backgroundColor: `${data.color}`,
                                                     width: 50,
@@ -625,7 +668,7 @@ function ProductListScreen(props) {
                 </Col>
             </Row>
 
-            <Modal
+            {/* <Modal
                 title={
                     <Col>
                         <h1>Tạo sản phẩm</h1>
@@ -633,126 +676,147 @@ function ProductListScreen(props) {
                 }
                 // okType="primary text-black border-gray-700"
                 open={isModalOpen}
-                maxWidth='md'
+                
                 width={1800}
                 style={{ top: 10 }}
 
                 onCancel={handleCancel}
 
                 footer={[
-
                 ]}
             >
 
-                <FormProvider {...methods} >
-                    <Form onSubmit={handleSubmit(onSubmit)} className="mx-auto mt-4 max-w-xl sm:mt-8">
-                        <Row>
-                            <Col md={6}>
-                                <div className=' overflow-y-auto p-4'>
-                                    <div className="grid"
-                                        style={{ height: "62vh" }}>
-                                        <Form.Group className='mx-auto  max-w-xl mb-3'>
-                                            <Form.Label>Tên sản phẩm</Form.Label>
-                                            <ComInput
-                                                type="text"
-                                                // label={textApp.CreateProduct.label.name}
-                                                placeholder={textApp.CreateProduct.placeholder.name}
-                                                {...register("name")}
-                                                autoComplete="off"
-                                                required
-                                            />
+                
+                
+            </Modal> */}
 
-                                        </Form.Group>
+            <Dialog maxWidth='lg' open={isModalOpen} onClose={handleCancel}>
+                <DialogTitle>Tạo sản phẩm</DialogTitle>
+                <DialogContent>
+                    <Row>
+                        <Col md={6}>
+                            <FormProvider {...methods} >
+                                <Form className="mx-auto mt-4 max-w-xl sm:mt-8">
+                                    <Row>
+                                        <Col md={6}>
+                                            <div className=' overflow-y-auto p-4'>
+                                                <div className="grid"
+                                                    style={{ height: "62vh" }}>
+                                                    <Form.Group className='mx-auto  max-w-xl mb-3'>
+                                                        <Form.Label>Tên sản phẩm</Form.Label>
+                                                        <ComInput
+                                                            type="text"
+                                                            // label={textApp.CreateProduct.label.name}
+                                                            placeholder={textApp.CreateProduct.placeholder.name}
+                                                            {...register("name")}
+                                                            autoComplete="off"
+                                                            required
+                                                        />
 
-                                        <Form.Group className='mx-auto mt-4 max-w-xl mb-3'>
-                                            <ComInput
-                                                label={textApp.CreateProduct.label.size}
-                                                placeholder={textApp.CreateProduct.placeholder.size}
-                                                required
-                                                type="text"
-                                                {...register("size")}
-                                            />
-                                        </Form.Group>
+                                                    </Form.Group>
 
-                                        <ComInput className='mx-auto mt-4 max-w-xl mb-3'
-                                            label={textApp.CreateProduct.label.durability}
-                                            placeholder={textApp.CreateProduct.placeholder.durability}
-                                            rows={4}
-                                            defaultValue={''}
-                                            required
-                                            maxLength={1000}
-                                            {...register("durability")}
-                                        />
-                                        <div className='mx-auto mt-4 max-w-xl mb-3'>
-                                            <ComUpImg onChange={onChange} />
-                                        </div>
-                                    </div>
-                                </div>
-                            </Col>
-                            <Col md={6}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                    <Form.Group className=' mt-4 sm:mt-8'>
-                                        <Form.Label>Giá tiền</Form.Label>
-                                        <ComNumber
-                                            //label={textApp.CreateProduct.label.price}
-                                            placeholder={textApp.CreateProduct.placeholder.price}
-                                            // type="money"
-                                            defaultValue={0}
-                                            min={0}
-                                            money
-                                            onChangeValue={handleValueChange}
-                                            {...register("price")}
-                                            required
-                                        />
+                                                    <Form.Group className='mx-auto mt-4 max-w-xl mb-3'>
+                                                        <ComInput
+                                                            label={textApp.CreateProduct.label.size}
+                                                            placeholder={textApp.CreateProduct.placeholder.size}
+                                                            required
+                                                            type="text"
+                                                            {...register("size")}
+                                                        />
+                                                    </Form.Group>
 
-                                    </Form.Group>
+                                                    <ComInput className='mx-auto mt-4 max-w-xl mb-3'
+                                                        label={textApp.CreateProduct.label.durability}
+                                                        placeholder={textApp.CreateProduct.placeholder.durability}
+                                                        rows={4}
+                                                        defaultValue={''}
+                                                        required
+                                                        maxLength={1000}
+                                                        {...register("durability")}
+                                                    />
+                                                    <div className='mx-auto mt-4 max-w-xl mb-3'>
+                                                        <ComUpImg onChange={onChange} />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </Col>
+                                        <Col md={5}>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', }}>
+                                                <Form.Group className=' mt-4 sm:mt-8'>
+                                                    <Form.Label>Giá tiền</Form.Label>
+                                                    <ComNumber
+                                                        //label={textApp.CreateProduct.label.price}
+                                                        placeholder={textApp.CreateProduct.placeholder.price}
+                                                        // type="money"
+                                                        defaultValue={0}
+                                                        min={0}
+                                                        money
+                                                        onChangeValue={handleValueChange}
+                                                        {...register("price")}
+                                                        required
+                                                    />
+
+                                                </Form.Group>
 
 
-                                    <Form.Group className='mx-auto mt-4 max-w-xl sm:mt-8'>
-                                        <Form.Label>Số lượng sản phẩm</Form.Label>
-                                        <ComNumber
-                                            placeholder={textApp.CreateProduct.placeholder.quantity}
-                                            type="numbers"
-                                            min={1}
-                                            {...register("quantity")}
-                                            required
-                                        />
+                                                <Form.Group className='mx-auto mt-4 max-w-xl sm:mt-8' >
+                                                    <Form.Label style={{ marginLeft: 20 }}>Số lượng</Form.Label>
+                                                    <ComNumber
+                                                        style={{ marginLeft: 20 }}
+                                                        placeholder={textApp.CreateProduct.placeholder.quantity}
+                                                        type="numbers"
+                                                        min={1}
+                                                        {...register("quantity")}
+                                                        required
+                                                    />
 
-                                    </Form.Group>
-                                </div>
-                                <Form.Group className='mx-auto mt-3 max-w-xl mb-3'>
-                                    <ComTextArea
-                                        label={textApp.CreateProduct.label.description}
-                                        placeholder={textApp.CreateProduct.placeholder.description}
-                                        rows={4}
-                                        defaultValue={''}
-                                        required
-                                        type="text"
-                                        maxLength={1000}
-                                        {...register("description")}
-                                    />
-                                </Form.Group>
-                                <Form.Group className='mx-auto mt-3 max-w-xl mb-3'>
-                                    <p>▻ Thêm thành phần:</p> <MySelectComponentInAddProduct />
-                                </Form.Group>
-                            </Col>
-                            <Col >
-                                <TableComponent />
-                            </Col>
-                        </Row>
-                        <Col className='text-end'>
-                            <Button
-                                disabled={disabled}
-                                htmlType="submit"
-                                type="primary"
+                                                </Form.Group>
+                                            </div>
+                                            <Form.Group className='mx-auto mt-3 max-w-xl mb-3'>
+                                                <ComTextArea
+                                                    label={textApp.CreateProduct.label.description}
+                                                    placeholder={textApp.CreateProduct.placeholder.description}
+                                                    rows={4}
+                                                    defaultValue={''}
+                                                    required
+                                                    type="text"
+                                                    maxLength={1000}
+                                                    {...register("description")}
+                                                />
+                                            </Form.Group>
+                                            <Form.Group className='mx-auto mt-3 max-w-xl mb-3'>
 
-                            >
-                                {textApp.common.button.createProduct}
-                            </Button>
+                                            </Form.Group>
+                                        </Col>
+
+
+                                    </Row>
+                                    <Col className='text-end'>
+                                        {/* <Button
+                                    disabled={disabled}
+                                    htmlType="submit"
+                                    type="primary"
+
+                                >
+                                    {textApp.common.button.createProduct}
+                                </Button> */}
+                                    </Col>
+                                </Form>
+                            </FormProvider>
+                        </Col >
+                        <Col md={6} className="mx-auto mt-4 max-w-xl sm:mt-8">
+                            <p className="mx-auto mt-4 max-w-xl sm:mt-8">▻ Thêm thành phần:</p> <MySelectComponentInAddProduct />
                         </Col>
-                    </Form>
-                </FormProvider>
-            </Modal>
+                        <Col >
+                            <TableComponentInAddProduct />
+                        </Col>
+                    </Row>
+                </DialogContent>
+                <DialogActions>
+                    {/* <Button onClick={handleCancel}>Thoát</Button> */}
+                    <Button onSubmit={handleSubmit(onSubmit)} disabled={disabled}> Tạo sản phẩm</Button>
+                </DialogActions>
+            </Dialog>
 
             <Modal
                 title={

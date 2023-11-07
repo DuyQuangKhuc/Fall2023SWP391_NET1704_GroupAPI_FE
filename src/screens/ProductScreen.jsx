@@ -82,7 +82,7 @@ const ProductScreen = () => {
     const { userInfo } = useSelector((state) => state.auth);
 
     const { data: getListOrderOfUser } = useGetListOrderOfUserQuery(userInfo.accountId);
-    
+
     const [createReview, { isLoading: loadingProductReview }] = useCreateReviewMutation();
 
     const submitHandler = async (e) => {
@@ -302,18 +302,18 @@ const ProductScreen = () => {
                                             </tbody>
                                         </Table>
                                     </div>
-                                            <Row className='review'>
-                                                <Col md={6}>
-                                                    <ListGroup.Item>
-                                                        <h2>Đánh giá sản phẩm</h2>
+                                    <Row className='review'>
+                                        <Col md={6}>
+                                            <ListGroup.Item>
+                                                <h2>Đánh giá sản phẩm</h2>
 
-                                                        {loadingProductReview && <Loader />}
+                                                {loadingProductReview && <Loader />}
 
-                                                        {userInfo ? (
-                                                            <Form onSubmit={submitHandler}>
-                                                                <Form.Group className='my-2' controlId='rating'>
-                                                                    {/* <Form.Label>Xếp hạng: </Form.Label> */}
-                                                                    {/* <Form.Control
+                                                {userInfo ? (
+                                                    <Form onSubmit={submitHandler}>
+                                                        <Form.Group className='my-2' controlId='rating'>
+                                                            {/* <Form.Label>Xếp hạng: </Form.Label> */}
+                                                            {/* <Form.Control
                                                                         as='select'
                                                                         required
                                                                         value={rating}
@@ -326,58 +326,61 @@ const ProductScreen = () => {
                                                                         <option value='4'>4 - Rất tốt</option>
                                                                         <option value='5'>5 - Chất lượng cao</option>
                                                                     </Form.Control> */}
-                                                                    <Space wrap>
-                                                                        <Progress strokeColor={{
-                                                                            '0%': '#d4c528',
-                                                                            '100%': '#d4c204',
-                                                                        }} type="circle" percent={(product.ratingAverage / 5) * 100} format={(percent) => <span style={{ fontSize: 35 }}>{product.ratingAverage}<span style={{ fontSize: 20 }}>/ 5</span> <p style={{ fontSize: 15, marginTop: 10, marginBottom: 0}}>Xếp hạng</p></span> } />
-                                                                    </Space>
-                                                                    <span style={{ marginLeft: 20, position: 'relative', zIndex: 1 }}>
-                                                                        <Rate style={{ fontSize: 35 }} tooltips={desc} onChange={setRating} value={rating} />
-                                                                        {rating ? <span className="ant-rate-text">{desc[rating - 1]}</span> : ''}
-                                                                    </span>
-                                                                </Form.Group>
-                                                                <Form.Group className='my-2' controlId='comment'>
-                                                                    <Form.Label>Viết bình luận</Form.Label>
-                                                                    <Form.Control
-                                                                        as='textarea'
-                                                                        row='3'
-                                                                        required
-                                                                        value={comment}
-                                                                        onChange={(e) => setComment(e.target.value)}
-                                                                    ></Form.Control>
-                                                                </Form.Group>
-                                                                <Button
-                                                                    disabled={loadingProductReview}
-                                                                    type='submit'
-                                                                    variant='primary'
-                                                                >
-                                                                    Gửi bài
-                                                                </Button>
-                                                            </Form>
-                                                        ) : (
-                                                            <Message>
-                                                                Hãy <Link to='/login'>Đăng nhập</Link> để viết bình luận
-                                                            </Message>
-                                                        )}
-                                                    </ListGroup.Item>
-                                                </Col>
-                                                <Col md={6}>
-                                                    <h2>Xem bình luận</h2>
-                                                    {/* {getListFeedbackByProduct?.length === 0 && <Message>No Reviews</Message>} */}
-                                                    <ListGroup variant='flush'>
-                                                        {getListFeedbackByProduct?.map((review) => (
-                                                            <ListGroup.Item key={review}>
-                                                                <strong>{review.name}</strong>
-                                                                <Rating value={review.rating} />
-                                                                {/* <p>{review?.createdAt.substring(0, 10)}</p> */}
-                                                                <p>{review.comment}</p>
-                                                            </ListGroup.Item>
-                                                        ))}
-                                                    </ListGroup>
-                                                </Col>
+                                                            <Space wrap>
+                                                                <Progress strokeColor={{
+                                                                    '0%': '#d4c528',
+                                                                    '100%': '#d4c204',
+                                                                }} type="circle" percent={(product.ratingAverage / 5) * 100} format={(percent) => <span style={{ fontSize: 35 }}>{product.ratingAverage}<span style={{ fontSize: 20 }}>/ 5</span> <p style={{ fontSize: 15, marginTop: 10, marginBottom: 0 }}>Xếp hạng</p></span>} />
+                                                            </Space>
+                                                            <span style={{ marginLeft: 20, position: 'relative', zIndex: 55 }}>
+                                                                <Rate style={{ fontSize: 35 }} tooltips={desc} onChange={setRating} value={rating} />
+                                                                {rating ? <span className="ant-rate-text">{desc[rating - 1]}</span> : ''}
+                                                            </span>
+                                                        </Form.Group>
+                                                        <Form.Group className='my-2' controlId='comment'>
+                                                            <Form.Label>Viết bình luận</Form.Label>
+                                                            <Form.Control
+                                                                as='textarea'
+                                                                row='3'
+                                                                required
+                                                                value={comment}
+                                                                onChange={(e) => setComment(e.target.value)}
+                                                            ></Form.Control>
+                                                        </Form.Group>
+                                                        <Button
+                                                            disabled={loadingProductReview}
+                                                            type='submit'
+                                                            variant='primary'
+                                                        >
+                                                            Gửi bài
+                                                        </Button>
+                                                    </Form>
+                                                ) : (
+                                                    <Message>
+                                                        Hãy <Link to='/login'>Đăng nhập</Link> để viết bình luận
+                                                    </Message>
+                                                )}
+                                            </ListGroup.Item>
+                                        </Col>
+                                        <Col md={6}>
+                                            <h2>Xem bình luận</h2>
+                                            {getListFeedbackByProduct?.length > 0 ? (
+                                                <ListGroup variant='flush'>
+                                                    {getListFeedbackByProduct?.map((review) => (
+                                                        <ListGroup.Item key={review}>
+                                                            <strong>{review.name}</strong>
+                                                            <Rating value={review.rating} />
+                                                            <p>{new Date(review.uploadDate).toLocaleDateString('en-GB')}</p> 
+                                                            <p>{review.comment}</p>
+                                                        </ListGroup.Item>
+                                                    ))}
+                                                </ListGroup>
+                                            ) : (
+                                                <Message>Chưa có bình luận nào</Message>
+                                            )}
+                                        </Col>
 
-                                            </Row>
+                                    </Row>
                                 </TabPane>
                                 {/* <TabPane tab=<h5>Phản hồi</h5> key='2'>
                                     
