@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { LinkContainer } from 'react-router-bootstrap';
 import { Table, Button, Container, ListGroup, Form, Dropdown } from 'react-bootstrap';
-import { FaTrash, FaEdit, FaCheck, FaTimes, FaBan, FaExchangeAlt, FaEllipsisV } from 'react-icons/fa';
+import { FaTrash, FaEdit, FaCheck, FaTimes, FaBan, FaExchangeAlt, FaEllipsisV, FaUnlock } from 'react-icons/fa';
 import Message from '../../components/Message';
 import Loader from '../../components/Loader';
 import {
     useDeleteUserMutation,
     useGetUsersQuery,
+    useUnBanUserMutation,
     useUpdateChangeRoleMutation,
 } from '../../slices/usersApiSlice';
 import { toast } from 'react-toastify';
@@ -54,6 +55,19 @@ const UserListScreen = () => {
         }
     };
 
+    const [ unBanUser ] = useUnBanUserMutation();
+
+    const handlerUnBanUser = async (accountId) => {
+        if (window.confirm('Ngừng ban tài khoản này?')) {
+            try {
+                await unBanUser(accountId);
+                refetch();
+            } catch (err) {
+                toast.error(err?.data?.message || err.error);
+            }
+        }
+    };
+
     const [open, setOpen] = React.useState(false);
 
 
@@ -65,7 +79,7 @@ const UserListScreen = () => {
 
     return (
         <Container >
-            <h1>Users</h1>
+            <h1 className='table-sm mt-4'>Quản lí tài khoản</h1>
             {isLoading ? (
                 <Loader />
             ) : error ? (
@@ -153,9 +167,17 @@ const UserListScreen = () => {
                                                         </Dropdown.Menu>
                                                     </Dropdown>
 
+                                                    <Button
+                                                        style={{ marginInlineStart: 10 }}
+                                                        variant='dark'
+                                                        className='btn-sm'
+                                                        onClick={() => handlerUnBanUser(user.accountId)}
+                                                    >
+                                                        <FaUnlock style={{ color: 'white' }} />
+                                                    </Button>
 
                                                     <Button
-                                                        style={{ marginInlineStart: 30 }}
+                                                        style={{ marginInlineStart: 10 }}
                                                         variant='danger'
                                                         className='btn-sm'
                                                         onClick={() => deleteHandler(user.accountId)}

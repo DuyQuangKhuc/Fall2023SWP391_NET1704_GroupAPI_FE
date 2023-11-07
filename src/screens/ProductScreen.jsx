@@ -27,6 +27,7 @@ import { Image, Rate } from 'antd';
 import { Tabs } from 'antd/lib';
 import { Timeline, Progress, Space } from 'antd';
 import { useAddOrderDetailByAccountIdProductIdQuantityMutation, useGetListOrderOfUserQuery } from '../slices/ordersApiSlice';
+import { FaShoppingCart } from 'react-icons/fa';
 
 const desc = ['Tệ', 'Ổn', 'Tốt', 'Rất tốt', 'Chất lượng'];
 
@@ -137,10 +138,10 @@ const ProductScreen = () => {
                         <>
                             <Meta title={product.name} description={product.description} />
                             <Row>
-                                <Col md={6}>
-                                    <Image src={product.imagePath1} alt={product.name} style={{ height: "400px" }} className='mb-3' fluid />
+                                <Col md={5}>
+                                    <Image src={product.imagePath1} alt={product.name} style={{ height: "400px", width: '350px' }} className='mb-3' fluid />
                                 </Col>
-                                <Col md={3}>
+                                <Col md={4}>
                                     <ListGroup variant='flush'>
                                         <ListGroup.Item>
                                             <h3>{product.name}</h3>
@@ -177,7 +178,7 @@ const ProductScreen = () => {
                                                 </Row>
                                             </ListGroup.Item>
 
-                                            {/* quantity Select */}
+
                                             {product.quantity > 0 && (
                                                 <ListGroup.Item>
                                                     <Row>
@@ -202,8 +203,8 @@ const ProductScreen = () => {
                                                     </Row>
                                                 </ListGroup.Item>
                                             )}
-
-                                            {/* {product.quantity > 0 && (
+{/* 
+                                             {product.quantity > 0 && (
                                                 <ListGroup.Item>
                                                     <Row>
                                                         <Col>Số lượng mua:</Col>
@@ -225,18 +226,23 @@ const ProductScreen = () => {
                                                         </Col>
                                                     </Row>
                                                 </ListGroup.Item>
-                                            )} */}
+                                            )}  */}
 
-                                            <ListGroup.Item>
-                                                <Button
-                                                    className='btn-block'
-                                                    type='button'
-                                                    disabled={product?.quantity === 0}
-                                                    onClick={addToCartHandler}
-                                                >
-                                                    Thêm vào giỏ hàng
-                                                </Button>
-                                            </ListGroup.Item>
+
+                                            {userInfo && userInfo?.role === 4 ? (
+                                                <ListGroup.Item>
+                                                    <Button
+                                                        className='btn-block'
+                                                        type='button'
+                                                        disabled={product?.quantity === 0}
+                                                        onClick={addToCartHandler}
+                                                    >
+                                                        <FaShoppingCart /> Thêm vào giỏ hàng
+                                                    </Button>
+                                                </ListGroup.Item>
+                                            ) : (
+                                                <div></div>
+                                            )}
                                         </ListGroup>
                                     </Card>
                                 </Col>
@@ -271,7 +277,7 @@ const ProductScreen = () => {
                                         <Table striped hover responsive className='table-auto'>
                                             <thead>
                                                 <tr>
-                                                    <th>Tên thành phần</th>
+                                                    <th>Các thành phần</th>
                                                     <th>Số lượng</th>
                                                     <th>Chất liệu</th>
                                                     <th>Màu sắc</th>
@@ -370,7 +376,7 @@ const ProductScreen = () => {
                                                         <ListGroup.Item key={review}>
                                                             <strong>{review.name}</strong>
                                                             <Rating value={review.rating} />
-                                                            <p>{new Date(review.uploadDate).toLocaleDateString('en-GB')}</p> 
+                                                            <p>{new Date(review.uploadDate).toLocaleDateString('en-GB')}</p>
                                                             <p>{review.comment}</p>
                                                         </ListGroup.Item>
                                                     ))}

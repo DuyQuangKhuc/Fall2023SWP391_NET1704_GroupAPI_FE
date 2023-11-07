@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Form, Button, Row, Col, Container } from 'react-bootstrap';
+import { Table, Form, Button, Row, Col, Container, Image } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { FaCheck, FaTimes, FaPlus, FaWindowMinimize, FaRegEdit } from 'react-icons/fa';
 import { toast } from 'react-toastify';
@@ -60,7 +60,7 @@ const ProfileScreen = () => {
     const toggleRow = (productId) => {
         const isCurrentlyExpanded = isRowExpanded(productId);
         const newExpandedRows = isCurrentlyExpanded
-            ? expandedRows.filter(rowId => rowId !== productId)
+            ? expandedRows?.filter(rowId => rowId !== productId)
             : [...expandedRows, productId];
         setExpandedRows(newExpandedRows);
     };
@@ -407,8 +407,7 @@ const ProfileScreen = () => {
                                                                                 </tr>
                                                                             </thead>
                                                                             <tbody>
-                                                                                {getListAllComponent
-                                                                                    .filter((component) => component.productId === order?.productId)
+                                                                                {getListAllComponent?.filter((component) => component.productId === order?.productId)
                                                                                     .map((component, index) => (
                                                                                         <tr key={index}>
                                                                                             <td>{component.name}</td>
@@ -576,8 +575,7 @@ const ProfileScreen = () => {
                                                                                 </tr>
                                                                             </thead>
                                                                             <tbody>
-                                                                                {getListAllComponent
-                                                                                    .filter((component) => component.productId === order?.productId)
+                                                                                {getListAllComponent?.filter((component) => component.productId === order?.productId)
                                                                                     .map((component, index) => (
                                                                                         <tr key={index}>
                                                                                             <td>{component.name}</td>
@@ -664,8 +662,7 @@ const ProfileScreen = () => {
                                                                                 </tr>
                                                                             </thead>
                                                                             <tbody>
-                                                                                {getListAllComponent
-                                                                                    .filter((component) => component.productId === order?.productId)
+                                                                                {getListAllComponent?.filter((component) => component.productId === order?.productId)
                                                                                     .map((component, index) => (
                                                                                         <tr key={index}>
                                                                                             <td>{component.name}</td>
@@ -806,8 +803,7 @@ const ProfileScreen = () => {
                                                                                 </tr>
                                                                             </thead>
                                                                             <tbody>
-                                                                                {getListAllComponent
-                                                                                    .filter((component) => component.productId === order?.productId)
+                                                                                {getListAllComponent?.filter((component) => component.productId === order?.productId)
                                                                                     .map((component, index) => (
                                                                                         <tr key={index}>
                                                                                             <td>{component.name}</td>
@@ -892,8 +888,7 @@ const ProfileScreen = () => {
                                                                                 </tr>
                                                                             </thead>
                                                                             <tbody>
-                                                                                {getListAllComponent
-                                                                                    .filter((component) => component.productId === order?.productId)
+                                                                                {getListAllComponent?.filter((component) => component.productId === order?.productId)
                                                                                     .map((component, index) => (
                                                                                         <tr key={index}>
                                                                                             <td>{component.name}</td>
@@ -978,8 +973,7 @@ const ProfileScreen = () => {
                                                                                 </tr>
                                                                             </thead>
                                                                             <tbody>
-                                                                                {getListAllComponent
-                                                                                    .filter((component) => component.productId === order?.productId)
+                                                                                {getListAllComponent?.filter((component) => component.productId === order?.productId)
                                                                                     .map((component, index) => (
                                                                                         <tr key={index}>
                                                                                             <td>{component.name}</td>
@@ -1057,12 +1051,11 @@ const ProfileScreen = () => {
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
-                                                                    {getListOrderDetailClone
-                                                                        .filter((component) => component.orderId === order?.orderId)
+                                                                    {getListOrderDetailClone?.filter((component) => component.orderId === order?.orderId)
                                                                         .map((component, index) => (
                                                                             <tr key={index}>
                                                                                 <td>{component.name}</td>
-                                                                                <td className='align-middle'><img src={order?.image} alt={order?.image} style={{ width: '50px', height: '60px' }} /></td>
+                                                                                <td className='align-middle'><img src={component?.image} alt={component?.image} style={{ width: '50px', height: '60px' }} /></td>
                                                                                 <td>{component.quantity}</td>
                                                                             </tr>
                                                                         ))

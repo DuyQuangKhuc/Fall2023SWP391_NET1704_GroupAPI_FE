@@ -276,6 +276,13 @@ export const productsApiSlice = apiSlice.injectEndpoints({
             refetchInterval: 1000,
         }),
 
+        deleteAllComponentOfProductOfAdmin : builder.mutation({
+            query: () => ({
+                url: `/api/Product/Delete-All-Component-Of-Product-Of-Admin`,
+                method: 'DELETE',
+            }),
+            refetchInterval: 1000,
+        }),
     }),
 });
 
@@ -312,5 +319,6 @@ export const {
     useDeleteAllComponentOfProductMutation,
     useAddProductAutomaticMutation,
     useAddComponentIntoProductCreatingMutation,
-    useGetListComponentOfProductCreatingQuery
+    useGetListComponentOfProductCreatingQuery,
+    useDeleteAllComponentOfProductOfAdminMutation
 } = productsApiSlice;

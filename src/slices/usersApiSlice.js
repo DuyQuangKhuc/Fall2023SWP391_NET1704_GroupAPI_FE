@@ -37,8 +37,8 @@ export const userApiSlice = apiSlice.injectEndpoints({
             keepUnusedDataFor: 5,
         }),
         deleteUser: builder.mutation({
-            query: (data) => ({
-                url: `/api/Account/Delete-Account?id=${data.accountId}`,
+            query: (accountId) => ({
+                url: `/api/Account/Delete-Account?id=${accountId}`,
                 method: 'DELETE',
             }),
         }),
@@ -72,6 +72,14 @@ export const userApiSlice = apiSlice.injectEndpoints({
             invalidatesTags: ['User'],
         }),
 
+        unBanUser: builder.mutation({
+            query: (accountId) => ({
+                url: `/api/Account/Undelete-Account?id=${accountId}`,
+                method: 'PUT',
+            }),
+            invalidatesTags: ['User'],
+        })
+
     }),
 });
 
@@ -86,4 +94,5 @@ export const {
     useGetUserDetailsQuery,
     useGetAccountByIdQuery,
     useUpdateChangeRoleMutation,
+    useUnBanUserMutation
 } = userApiSlice;

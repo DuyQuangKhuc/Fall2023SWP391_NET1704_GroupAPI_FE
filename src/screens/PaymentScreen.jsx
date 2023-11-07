@@ -15,7 +15,8 @@ const PaymentScreen = () => {
     const navigate = useNavigate();
     const { userInfo } = useSelector((state) => state.auth);
     const [voucherId, setVoucherId] = useState(1);
-    const [paymentMethodId, setPaymentMethod] = useState('');
+    const [paymentMethodId, setPaymentMethod] = useState(1)
+
     const [address, setAddress] = useState('');
 
     const [order] = useState(JSON.parse(localStorage.getItem('getOrder')));
@@ -158,11 +159,12 @@ const PaymentScreen = () => {
                                         </Row>
                                     </ListGroup.Item>
                                     <ListGroup.Item>
-                                        <Row>
-                                            {/* Số-tiền-sau-khi-giảm-giá = Giá-tiền x [(100 –  %giảm-giá)/100] */}
+                                        {/* <Row>
+                                           
                                             <Col>Giảm còn</Col>
-                                            <Col>{formatCurrency((getListOrderDetailCloneByOrderIdorderId?.reduce((acc, item) => acc + item.quantity * item.price, 0)) * (1 - (getVoucherOfUser?.filter((voucher) => voucher.voucherId === voucherId)) / 100))}</Col> 
-                                        </Row>
+                                            <Col>{formatCurrency((getListOrderDetailCloneByOrderIdorderId?.reduce((acc, item) => acc + item.quantity * item.price, 0)) * (1 - voucher.voucherId / 100))}</Col> 
+                                        </Row> 
+                                        */}
                                     </ListGroup.Item>
 
                                     <Button type='submit' variant='primary'>
