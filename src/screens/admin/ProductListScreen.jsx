@@ -251,12 +251,8 @@ function ProductListScreen(props) {
             });
             return
         }
-        if (imagePath1.length === 0) {
-            api["error"]({
-                message: textApp.CreateProduct.Notification.m5.message,
-                description:
-                    textApp.CreateProduct.Notification.m5.description
-            });
+        if (imagePath1.length === 0 ) {
+            toast.error('Hãy thêm ảnh');
             return
         }
         if (data.price <= data.reducedPrice) {
@@ -583,14 +579,14 @@ function ProductListScreen(props) {
                                         .filter((data) => data.componentId === componentId) // Filter the data based on the selected option
                                         .map((data, index) => (
                                             <tr key={index}>
-                                                <td>Tên: {data.name}</td>
+                                                {/* <td>Tên: {data.name}</td>
                                                 <td style={{ display: 'flex' }}>Màu: <div style={{
                                                     marginLeft: '5px',
                                                     backgroundColor: `${data.color}`,
                                                     width: 50,
                                                     height: 30,
                                                 }}></div></td>
-                                                <td>Chất liệu: <>{data.material}</></td>
+                                                <td>Chất liệu: <>{data.material}</></td> */}
                                                 <td>Mô tả: <>{data.description}</></td>
                                                 <td>Trạng thái: <>{data?.isReplacable && data?.isReplacable === 1 ? "Thay đổi" : data?.isReplacable === 0 ? "Cố định" : ""}</></td>
                                                 <td></td>
@@ -735,7 +731,10 @@ function ProductListScreen(props) {
                                                         {...register("durability")}
                                                     />
                                                     <div className='mx-auto mt-4 max-w-xl mb-3'>
-                                                        <ComUpImg onChange={onChange} />
+                                                        {textApp.CreateProduct.label.imagePath}
+                                                        <ComUpImg
+                                                         onChange={onChange} 
+                                                         />
                                                     </div>
                                                 </div>
                                             </div>
