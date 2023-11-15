@@ -4,7 +4,7 @@ import Dasboard from '../dasboard/Dasboard';
 
 const AdminRoute = () => {
     const { userInfo } = useSelector((state) => state.auth);
-    return userInfo && userInfo.role === 1 ? (
+    return userInfo.role === 1 || userInfo.role === 2 || userInfo.role === 3 ? (
         <Outlet />
     ) : (
         <Navigate to='/login' replace />

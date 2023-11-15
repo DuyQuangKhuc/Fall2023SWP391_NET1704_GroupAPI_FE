@@ -1,3 +1,4 @@
+/* eslint-disable no-lone-blocks */
 /* eslint-disable no-unused-vars */
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -18,7 +19,7 @@ import { Card, Select } from 'antd';
 import { ColorPicker, theme } from 'antd';
 import { Option } from 'antd/es/mentions';
 import { BlockPicker } from 'react-color';
-import { ButtonBase, ButtonGroup, TextField } from '@material-ui/core';
+import { Box, ButtonBase, ButtonGroup, TableBody, TableCell, TableHead, TableRow, TextField } from '@material-ui/core';
 import { Autocomplete } from '@mui/lab';
 import { createFilterOptions } from '@mui/base';
 import ComUpImg from '../components/Input/ComUpImg';
@@ -91,7 +92,7 @@ const UserOrderScreen = () => {
     const Handler = async (e) => {
         const requiredComponents = ['Cửa', 'Đáy', 'Khung', 'Móc treo'];
         const hasAllComponents = requiredComponents.every(component => listComponentData.map(item => item.name).includes(component));
-        
+
         if (hasAllComponents) {
             try {
                 const dataImg = await firebaseImgs(imagePath);
@@ -395,25 +396,74 @@ const UserOrderScreen = () => {
                                         Danh sách trống
                                     </Message>
                                 ) : (
-                                    <Button
-                                        style={{ justifyContent: 'end' }}
-                                        className='mb-2 mt-2'
-                                        type='button'
-                                        variant='light'
-                                        onClick={() => deleteAllHandler(userInfo?.accountId)}
-                                    >
-                                        <FaTrash /> Xóa tất cả danh sách đã tạo
-                                    </Button>
+                                    <>
+                                        <Button
+                                            style={{ justifyContent: 'end' }}
+                                            className='mb-2 mt-2'
+                                            type='button'
+                                            variant='light'
+                                            onClick={() => deleteAllHandler(userInfo?.accountId)}
+                                        >
+                                            <FaTrash /> Xóa tất cả danh sách đã tạo
+                                        </Button>
+                                        <Box sx={{ margin: 1 }}>
+                                            <table class="table table-bordered ">
+                                                <TableHead>
+                                                    <TableRow>
+                                                        <TableCell>Tên</TableCell>
+                                                        <TableCell>Chất liệu</TableCell>
+                                                        <TableCell>Số lượng</TableCell>
+                                                        <TableCell>Màu sắc</TableCell>
+                                                        <TableCell>Mô tả</TableCell>
+                                                        <TableCell>Trạng thái</TableCell>
+                                                        <TableCell></TableCell>
+                                                    </TableRow>
+                                                </TableHead>
+                                                <TableBody>
+                                                    {listComponent?.map((component, index) => (
+                                                        <TableRow key={index}>
+                                                            <TableCell>{component.name}</TableCell>
+                                                            <TableCell>{component.material}</TableCell>
+                                                            <TableCell>{component.quantity}</TableCell>
+                                                            <TableCell>
+                                                                <div style={{
+                                                                    backgroundColor: `${component.color}`,
+                                                                    
+                                                                    height: 28,
+                                                                    borderRadius: '5px',
+                                                                    padding: '5px',
+                                                                }}></div>
+                                                            </TableCell>
+                                                            <TableCell>{component.description}</TableCell>
+                                                            <TableCell>{component?.isReplacable && component?.isReplacable === 1 ? "Tháo rời" : component?.isReplacable === 0 ? "Cố định" : ""}</TableCell>
+                                                            <TableCell>
+                                                                <Button
+                                                                    style={{ color: '' }}
+                                                                    type='button'
+                                                                    variant='light'
+                                                                    onClick={() => deleteHandler(component.productDetailId)}
+                                                                >
+                                                                    <FaTrash />
+                                                                </Button>
+                                                            
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    ))
+                                                    }
+                                                </TableBody>
+                                            </table>
+                                        </Box>
+                                    </>
                                 )}
 
                             </div>
-                            {listComponent?.map((component) => (
+                            {/* {listComponent?.map((component) => (
                                 <Card
                                     style={{
                                         marginTop: 16,
                                     }}
                                     type="inner"
-                                    title={<span style={{ color: 'Green' }}>{component.name}</span>}
+                                    title={<span style={{ color: 'Green' }}>▻ {component.name}</span>}
                                     extra={
                                         <Col md={2}>
                                             <Button
@@ -428,9 +478,9 @@ const UserOrderScreen = () => {
                                     }
                                 >
                                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                        <p>▣ Chất liệu: {component.material}</p>
-                                        <p>▣ Số lượng: {component.quantity}</p>
-                                        <p style={{ display: 'flex' }}>▣ Màu sắc: <div
+                                        <p>• Chất liệu: {component.material}</p>
+                                        <p>• Số lượng: {component.quantity}</p>
+                                        <p style={{ display: 'flex' }}>• Màu sắc: <div
                                             style={{
                                                 marginLeft: '10px',
                                                 backgroundColor: `${component.color}`,
@@ -438,13 +488,13 @@ const UserOrderScreen = () => {
                                                 height: 28,
                                             }}
                                         ></div></p>
-                                        <p>▣ Bộ phận: {component?.isReplacable && component?.isReplacable === 1 ? "Tháo rời" : component?.isReplacable === 0 ? "Cố định" : ""}</p>
+                                        <p>• Bộ phận: {component?.isReplacable && component?.isReplacable === 1 ? "Tháo rời" : component?.isReplacable === 0 ? "Cố định" : ""}</p>
 
                                     </div>
-                                    <p>▣ Mô tả: {component.description}</p>
+                                    <p>• Mô tả: {component.description}</p>
 
                                 </Card>
-                            ))}
+                            ))} */}
 
                         </Card>
 

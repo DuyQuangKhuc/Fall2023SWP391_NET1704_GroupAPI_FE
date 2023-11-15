@@ -10,8 +10,7 @@ import { resetCart } from '../slices/cartSlice';
 import { MdAddShoppingCart } from "react-icons/md";
 import { useState } from 'react';
 import { useGetAddProductUserAutomaticMutation, useGetListOrderDetailCloneByOrderIdorderIdQuery } from '../slices/ordersApiSlice';
-import { useEffect } from 'react';
-import { AirplaneTicketTwoTone, CountertopsTwoTone } from '@mui/icons-material';
+import logo1 from '../../src/assets/styles/logo1.svg'
 
 const Header = () => {
     const { cartItems } = useSelector((state) => state.cart);
@@ -66,8 +65,8 @@ const Header = () => {
                 <Container>
                     <LinkContainer to='/'>
                         <Navbar.Brand>
-                            {/* <img src={logo} alt='ProShop' /> */}
-                            BirdCageShop
+                            <img src={logo1} alt='ProShop' style={{ width: 50, height: 50 }} />
+                            Lồng Chim
                         </Navbar.Brand>
                     </LinkContainer>
                     <Navbar.Toggle aria-controls='basic-navbar-nav' />
@@ -86,19 +85,19 @@ const Header = () => {
                                 </LinkContainer>
                             )}
 
-                            {userInfo && userInfo.role === 1 ? (  
+                            {userInfo && userInfo.role === 1 ? (
                                 <></>
                             ) : (
-                                    <LinkContainer to='/cart'>
-                                        <Nav.Link>
-                                            <FaShoppingCart /> Đơn hàng
-                                            {getListOrderDetailCloneByOrderIdorderId?.length > 0 && (
-                                                <Badge pill bg='success' style={{ marginLeft: '5px' }}>
-                                                    {getListOrderDetailCloneByOrderIdorderId?.reduce((a, c) => a + c.quantity, 0)}
-                                                </Badge>
-                                            )}
-                                        </Nav.Link>
-                                    </LinkContainer>
+                                <LinkContainer to='/cart'>
+                                    <Nav.Link>
+                                        <FaShoppingCart /> Đơn hàng
+                                        {getListOrderDetailCloneByOrderIdorderId?.length > 0 && (
+                                            <Badge pill bg='success' style={{ marginLeft: '5px' }}>
+                                                {getListOrderDetailCloneByOrderIdorderId?.reduce((a, c) => a + c.quantity, 0)}
+                                            </Badge>
+                                        )}
+                                    </Nav.Link>
+                                </LinkContainer>
                             )}
 
                             {userInfo && userInfo.role === 4 && (
@@ -119,30 +118,70 @@ const Header = () => {
                                     </NavDropdown.Item>
                                 </NavDropdown>
                             ) : (
-                                userInfo && userInfo?.role === 1 ? (
+                                userInfo?.role === 1 ? (
                                     <NavDropdown title='Admin' id='adminmenu'>
                                         {/* <LinkContainer to='/admin'>
                                             <NavDropdown.Item>Dasboard</NavDropdown.Item>
                                         </LinkContainer> */}
                                         <LinkContainer to='/admin/productlist'>
-                                                <NavDropdown.Item>Quản lí sản phẩm</NavDropdown.Item>
+                                            <NavDropdown.Item>Quản lí sản phẩm</NavDropdown.Item>
                                         </LinkContainer>
                                         <LinkContainer to='/admin/orderlist'>
-                                                <NavDropdown.Item>Quản lí đơn hàng</NavDropdown.Item>
+                                            <NavDropdown.Item>Quản lí đơn hàng</NavDropdown.Item>
                                         </LinkContainer>
                                         <LinkContainer to='/admin/userlist'>
-                                                <NavDropdown.Item>Quản lí tài khoản</NavDropdown.Item>
+                                            <NavDropdown.Item>Quản lí tài khoản</NavDropdown.Item>
                                         </LinkContainer>
                                         <NavDropdown.Item onClick={logoutHandler}>
                                             Đăng xuất
                                         </NavDropdown.Item>
                                     </NavDropdown>
                                 ) : (
-                                    <LinkContainer to='/login'>
-                                        <Nav.Link>
-                                            <FaUser /> Đăng nhập
-                                        </Nav.Link>
-                                    </LinkContainer>
+                                    userInfo?.role === 2 ? (
+                                        <NavDropdown title='Manager' id='adminmenu'>
+                                            {/* <LinkContainer to='/admin'>
+                                            <NavDropdown.Item>Dasboard</NavDropdown.Item>
+                                        </LinkContainer> */}
+                                            <LinkContainer to='/admin/productlist'>
+                                                <NavDropdown.Item>Quản lí sản phẩm</NavDropdown.Item>
+                                            </LinkContainer>
+                                            <LinkContainer to='/admin/orderlist'>
+                                                <NavDropdown.Item>Quản lí đơn hàng</NavDropdown.Item>
+                                            </LinkContainer>
+                                            <LinkContainer to='/admin/userlist'>
+                                                <NavDropdown.Item>Quản lí tài khoản</NavDropdown.Item>
+                                            </LinkContainer>
+                                            <NavDropdown.Item onClick={logoutHandler}>
+                                                Đăng xuất
+                                            </NavDropdown.Item>
+                                        </NavDropdown>
+                                    ) : (
+                                        userInfo?.role === 3 ? (
+                                            <NavDropdown title='Staff' id='adminmenu'>
+                                                {/* <LinkContainer to='/admin'>
+                                            <NavDropdown.Item>Dasboard</NavDropdown.Item>
+                                        </LinkContainer> */}
+                                                {/* <LinkContainer to='/admin/productlist'>
+                                                    <NavDropdown.Item>Quản lí sản phẩm</NavDropdown.Item>
+                                                </LinkContainer> */}
+                                                <LinkContainer to='/admin/orderlist'>
+                                                    <NavDropdown.Item>Quản lí đơn hàng</NavDropdown.Item>
+                                                </LinkContainer>
+                                                <LinkContainer to='/admin/userlist'>
+                                                    <NavDropdown.Item>Quản lí tài khoản</NavDropdown.Item>
+                                                </LinkContainer>
+                                                <NavDropdown.Item onClick={logoutHandler}>
+                                                    Đăng xuất
+                                                </NavDropdown.Item>
+                                            </NavDropdown>
+                                        ) : (
+                                            <LinkContainer to='/login'>
+                                                <Nav.Link>
+                                                    <FaUser /> Đăng nhập
+                                                </Nav.Link>
+                                            </LinkContainer>
+                                        )
+                                    )
                                 )
                             )}
 

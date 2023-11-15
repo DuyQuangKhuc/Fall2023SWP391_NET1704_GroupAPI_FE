@@ -10,5 +10,16 @@ const firebaseConfig = {
   measurementId: "G-TD38EC0PJ0"
 };
 
+// const firebaseConfig = {
+//   apiKey: "AIzaSyAp7q2T07VOPchctK0RVVFfdNU9KAjo1Uc",
+//   authDomain: "lachagarden.firebaseapp.com",
+//   databaseURL: "https://lachagarden-default-rtdb.firebaseio.com",
+//   projectId: "lachagarden",
+//   storageBucket: "lachagarden.appspot.com",
+//   messagingSenderId: "904516436073",
+//   appId: "1:904516436073:web:a348ba6fac45f5076c62f8",
+//   measurementId: "G-HMF1YHRT6P" 
+// };
+
 const app = initializeApp(firebaseConfig);
 export const storage = getStorage(app);

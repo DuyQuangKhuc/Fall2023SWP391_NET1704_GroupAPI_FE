@@ -283,6 +283,15 @@ export const productsApiSlice = apiSlice.injectEndpoints({
             }),
             refetchInterval: 1000,
         }),
+
+        addProductQuantity : builder.mutation({
+            query: (data) => ({
+                url: `/api/Product/Add-Product-Quantity?productId=${data.productId}&quantity=${data.quantity}`,
+                method: 'PUT',
+                body: data,
+            }),
+            refetchInterval: 1000,
+        }),
     }),
 });
 
@@ -320,5 +329,6 @@ export const {
     useAddProductAutomaticMutation,
     useAddComponentIntoProductCreatingMutation,
     useGetListComponentOfProductCreatingQuery,
-    useDeleteAllComponentOfProductOfAdminMutation
+    useDeleteAllComponentOfProductOfAdminMutation,
+    useAddProductQuantityMutation
 } = productsApiSlice;

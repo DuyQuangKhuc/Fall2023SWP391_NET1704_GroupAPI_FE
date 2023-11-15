@@ -41,12 +41,14 @@ const RegisterScreen = () => {
         } else {
             try {
                 const res = await register({ phone, email, name, password }).unwrap();
-                dispatch(setCredentials({ ...res }));
+                //dispatch(setCredentials({ ...res }));
+                toast.success("Đăng ký tài khoản thành công");
                 navigate('/login');
                 setSuccessAlert(true);
                 setTimeout(() => {
                     setSuccessAlert("true");
                 }, 3000);
+                
             } catch (err) {
                 toast.error("Tài khoản đã tồn tại");
             }
@@ -106,7 +108,7 @@ const RegisterScreen = () => {
                     </Form.Group>
 
                     <Button disabled={isLoading} type='submit' variant='primary'>
-                        Register
+                        Đăng ký
                     </Button>
                     {successAlert && (
                         <Paper>

@@ -7,7 +7,7 @@ import Loader from '../components/Loader';
 import { useUpdateUserMutation } from '../slices/usersApiSlice';
 import { useAcceptPriceFromProductOfUserMutation, useGetListOrderDetailCloneQuery, useGetListOrderOfUserQuery, useGetListPaymentMethodQuery, useGetMyOrdersQuery } from '../slices/ordersApiSlice';
 import { setCredentials } from '../slices/authSlice';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { Tabs } from 'antd';
 import TabPane from 'antd/es/tabs/TabPane';
 import { useAcceptProductOfUserFromUserMutation, useCancelProductOfUserMutation, useGetListAllComponentQuery, useGetListProductCreatedByUserQuery, useGetVoucherOfUserQuery } from '../slices/productsApiSlice';
@@ -1054,7 +1054,7 @@ const ProfileScreen = () => {
                                                                     {getListOrderDetailClone?.filter((component) => component.orderId === order?.orderId)
                                                                         .map((component, index) => (
                                                                             <tr key={index}>
-                                                                                <td>{component.name}</td>
+                                                                                <td><Link to={`/product/${component.productId}`}>{component.name}</Link></td>
                                                                                 <td className='align-middle'><img src={component?.image} alt={component?.image} style={{ width: '50px', height: '60px' }} /></td>
                                                                                 <td>{component.quantity}</td>
                                                                             </tr>

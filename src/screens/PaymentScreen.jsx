@@ -25,7 +25,7 @@ const PaymentScreen = () => {
 
     const [addPaymentPromax] = useAddPaymentPromaxMutation();
     const submitHandler = async (e) => {
-        e.preventDefault();    
+        e.preventDefault();
         try {
             const res = await addPaymentPromax({
                 orderId: order.orderId,
@@ -34,7 +34,7 @@ const PaymentScreen = () => {
                 voucherId,
             }).unwrap()
             navigate('/');
-            
+
             toast.success("Thanh toán thành công");
             window.location.reload();
         } catch (err) {
@@ -68,9 +68,6 @@ const PaymentScreen = () => {
         }
     }, [getVoucherOfUser, getVoucherOfUserRefetch]);
 
-
-
-
     return (
         <Container>
             <Row>
@@ -82,9 +79,9 @@ const PaymentScreen = () => {
                             <Form.Label as='legend' className='mt-5' >Thông tin địa chỉ nhận hàng</Form.Label>
                             <Form.Group className='my-2' controlId='address'>
                                 <Form.Label>Địa chỉ</Form.Label>
-                                <Form.Control    
+                                <Form.Control
                                     type='text'
-                                    placeholder='Enter address'
+                                    placeholder='Nhập địa chỉ nhận hàng'
                                     value={address}
                                     onChange={(e) => setAddress(e.target.value)}
                                     required
@@ -92,7 +89,7 @@ const PaymentScreen = () => {
                                 <Form.Control.Feedback type='invalid'>
                                     Please enter a valid address.
                                 </Form.Control.Feedback>
-                            </Form.Group>                          
+                            </Form.Group>
                         </Col>
                         <Col md={3}>
                             <Form.Label as='legend' className='mt-5'>Lựa chọn thanh toán</Form.Label>
@@ -113,14 +110,22 @@ const PaymentScreen = () => {
                             <Card>
                                 <ListGroup variant='flush'>
                                     <ListGroup.Item>
-                                        <h2>Đơn hàng</h2>
+                                        <h2>Thanh toán đơn hàng</h2>
                                     </ListGroup.Item>
 
                                     <ListGroup.Item>
-                                        <Row>
-                                            <Col>Tổng</Col>
-                                            <Col>{formatCurrency(getListOrderDetailCloneByOrderIdorderId?.reduce((acc, item) => acc + item.quantity * item.price, 0))}</Col>
-                                        </Row>
+                                        {voucherId !== 1 ? (
+                                            <Row>
+                                                <Col>Tổng</Col>
+                                                <Col><del style={{color : 'red'}}>{formatCurrency(getListOrderDetailCloneByOrderIdorderId?.reduce((acc, item) => acc + item.quantity * item.price, 0))}</del></Col>
+                                                <Col>{formatCurrency((getListOrderDetailCloneByOrderIdorderId?.reduce((acc, item) => acc + item.quantity * item.price, 0)) * ((100 - getVoucherOfUser?.find(voucher => voucher.voucherId === voucherId)?.value) / 100))}</Col>
+                                            </Row>
+                                        ) : (
+                                            <Row>
+                                                <Col>Tổng</Col>
+                                                <Col>{formatCurrency(getListOrderDetailCloneByOrderIdorderId?.reduce((acc, item) => acc + item.quantity * item.price, 0))}</Col>
+                                            </Row>
+                                        )}
                                     </ListGroup.Item>
                                     <ListGroup.Item>
                                         <Row>
@@ -141,31 +146,26 @@ const PaymentScreen = () => {
                                             <Col>
                                                 <label htmlFor="voucherId" className='ms-2 me-3 mt-1'>▻ Lựa chọn phiếu giảm giá: </label>
                                                 {getVoucherOfUser?.length > 0 ? (
-                                                    <Select value={voucherId} onChange={(e) => setVoucherId(e.target.value)}>
-                                                        {/* <MenuItem value="1" ><Col><h5 className='mt-2'>▻ Không sử dụng phiếu giảm giá</h5></Col></MenuItem>  */}
-                                                        {getVoucherOfUser?.map((voucher) => (
-                                                            <MenuItem md={4} key={voucher.voucherId} value={voucher.voucherId}>
-                                                                <Grid className='my-1'>
-                                                                    <VoucherUser voucher={voucher} />
-                                                                </Grid>
-                                                            </MenuItem>
-                                                        ))}
-                                                    </Select>
+                                                    <>
+                                                        <Select value={voucherId} onChange={(e) => setVoucherId(e.target.value)}>
+                                                            {/* <MenuItem value="1" ><Col><h5 className='mt-2'>▻ Không sử dụng phiếu giảm giá</h5></Col></MenuItem>  */}
+                                                            {getVoucherOfUser?.map((voucher) => (
+                                                                <MenuItem md={4} key={voucher.voucherId} value={voucher.voucherId}>
+                                                                    <Grid className='my-1'>
+                                                                        <VoucherUser voucher={voucher} />
+                                                                    </Grid>
+                                                                </MenuItem>
+                                                            ))}
+                                                        </Select>
 
+                                                    </>
                                                 ) : (
                                                     <p className='ms-2 me-3 mt-1'>Bạn không có phiếu giảm giá nào</p>
                                                 )}
                                             </Col>
                                         </Row>
                                     </ListGroup.Item>
-                                    <ListGroup.Item>
-                                        {/* <Row>
-                                           
-                                            <Col>Giảm còn</Col>
-                                            <Col>{formatCurrency((getListOrderDetailCloneByOrderIdorderId?.reduce((acc, item) => acc + item.quantity * item.price, 0)) * (1 - voucher.voucherId / 100))}</Col> 
-                                        </Row> 
-                                        */}
-                                    </ListGroup.Item>
+
 
                                     <Button type='submit' variant='primary'>
                                         Thanh toán

@@ -77,7 +77,7 @@ const CartScreen = () => {
         <Container>
             <Row className='py-3'>
                 <Col md={8}>
-                    <h1 style={{ marginBottom: '20px' }}>Shopping Cart</h1>
+                    <h1 style={{ marginBottom: '20px' }}>Giỏ hàng</h1>
                     {(getListOrderDetailCloneByOrderIdorderId?.length === 0 || getListOrderDetailCloneByOrderIdorderId === undefined) ? (
                         <Message>
                             Giỏ hàng đang trống <Link to='/'>Quay lại</Link>
@@ -92,7 +92,7 @@ const CartScreen = () => {
                                     variant='light'
                                     onClick={() => deleteAllHandler(order?.orderId)}
                                 >
-                                    <FaTrash /> Clear all items
+                                    <FaTrash /> Xóa tất cả sản phẩm đã thêm
                                 </Button>
                             </Col>
                             <div>

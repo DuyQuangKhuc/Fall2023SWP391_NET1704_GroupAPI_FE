@@ -19,6 +19,8 @@ import {
     useGetListComponentOfProductCreatingQuery,
     useDeleteComponentOfProductMutation,
     useDeleteAllComponentOfProductOfAdminMutation,
+    useAddProductQuantityMutation,
+    useGetProductDetailsQuery,
 } from '../../slices/productsApiSlice';
 import { toast } from 'react-toastify';
 import { Modal, notification } from 'antd';
@@ -42,6 +44,7 @@ import ComUpImg from '../../components/Input/ComUpImg';
 import FormContainer from '../../components/FormContainer';
 import { BlockPicker } from 'react-color';
 import { AddBox, ExitToAppTwoTone } from '@mui/icons-material';
+
 
 
 const VISIBLE_FIELDS = ['productId', 'name', 'imagePath1', 'price', 'uploadDate', 'quantity'];
@@ -122,14 +125,11 @@ function ProductListScreen(props) {
                     return {
                         field,
                         headerName,
-                        width: 170,
+                        width: 230,
                         sortable: true,
                         filterable: true,
-                        valueGetter: (params) =>
-                            [
-                                field === 'status' ? (params.row.status === 1 ? "Cố định" : "Không cố định") : params.value,
-                                field === 'uploadDate' && params.value === new Date(params.row.uploadDate).toLocaleDateString()
-                            ],
+                        // valueGetter: (params) =>
+                        //     field === 'status' ? (params.row.status === 1 ? "Cố định" : "Không cố định") : params.value,
                         renderCell: (params) => (
                             <div onClick={() => handleCellClick(params)}>
                                 {params.value}
@@ -151,6 +151,7 @@ function ProductListScreen(props) {
     function handleCloseDialog() {
         // Clear the selected row when the dialog is closed
         setSelectedRow(null);
+        window.location.reload();
     }
 
 
@@ -158,7 +159,7 @@ function ProductListScreen(props) {
         useDeleteProductMutation();
 
     const deleteHandler = async (productId) => {
-        if (window.confirm('Are you sure')) {
+        if (window.confirm('Bạn muốn xóa ?')) {
             try {
                 await deleteProduct(productId);
                 handleCloseDialog()
@@ -350,7 +351,7 @@ function ProductListScreen(props) {
                     await deleteComponentOfProduct(productDetailId);
                     toast.success('Xóa thành công');
                 } catch (err) {
-                    toast.error(err?.data?.message || err.error);
+                    toast.error("Sản phẩm này đã có khách hàng mua nên không thể thay đổi");
                 }
             }
         };
@@ -408,6 +409,62 @@ function ProductListScreen(props) {
         );
     };
 
+    const AddQuantity = ({ selectedRowID }) => {
+        const [quantity, setQuantity] = useState(0);
+        const [addProductQuantity] = useAddProductQuantityMutation();
+        const {
+            data: product,
+        } = useGetProductDetailsQuery(selectedRowID);
+        const submitHandler = async (e) => {
+            e.preventDefault();
+            try {
+                await addProductQuantity({
+                    productId: selectedRowID,
+                    quantity,
+                }).unwrap(); // NOTE: here we need to unwrap the Promise to catch any rejection in our catch block
+                toast.success('Sản phẩm đã cập nhập thành công');
+            } catch (err) {
+                toast.error("Sản phẩm này đã có khách hàng mua nên không thể thay đổi");
+            }
+        };
+
+        useEffect(() => {
+            if (product) {
+                setQuantity(product.quantity);
+            }
+        }, [product]);
+
+
+
+        return (
+            <Container>
+                <Form onSubmit={submitHandler}>
+                    <Row >
+                        <Col >
+                            <Form.Group controlId='quantity'>
+                                <Form.Label>Số lượng sản phẩm</Form.Label>
+                                <Form.Control
+                                    type='number'
+                                    placeholder='Enter quantity'
+                                    min={1}
+                                    value={quantity}
+                                    onChange={(e) => setQuantity(e.target.value)}
+                                ></Form.Control>
+                            </Form.Group>
+                        </Col>
+                        <Col className='mt-4'>
+                            <Button
+                                type='submit'
+                                variant='light'                               
+                            >
+                                <AddBox /> Thêm
+                            </Button>
+                        </Col>
+                    </Row>
+                </Form>
+            </Container>
+        );
+    };
 
     const MySelectComponent = ({ selectedRowID }) => {
         const [quantity, setQuantity] = useState(0);
@@ -425,9 +482,9 @@ function ProductListScreen(props) {
                     productId: selectedRowID,
                     quantity,
                 }).unwrap();
-                toast.success('thành công');
+                toast.success('Thành công');
             } catch (err) {
-                toast.error("ERRORR");
+                toast.error("Sản phẩm này đã có khách hàng mua nên không thể thay đổi");
             }
         };
 
@@ -442,6 +499,7 @@ function ProductListScreen(props) {
                             type='number'
                             placeholder='Nhập số lượng'
                             value={quantity}
+                            min={1}
                             onChange={(e) => setQuantity(e.target.value)}
                         ></Form.Control>
                     </Form.Group>
@@ -459,7 +517,7 @@ function ProductListScreen(props) {
                                             display: 'flex'
                                         }}></div>    */}
                                         <div style={{ display: 'flex' }}>
-                                            <div style={{ marginLeft: '5px' }}>  Tên: {components.name} </div>
+                                            <div style={{ marginLeft: '5px' }}> {components.name} </div>
                                             <div style={{ marginLeft: '20px' }}>- Chất liệu: {components.material}</div>
                                             <div style={{ display: 'flex', marginLeft: '20px' }}>- Màu: <div style={{
                                                 marginLeft: '10px',
@@ -647,7 +705,7 @@ function ProductListScreen(props) {
                                 {getListComponentCreatedBySystem.map((components) => (
                                     <MenuItem key={components.componentId} value={components.componentId} >
                                         <div style={{ display: 'flex' }}>
-                                            <div style={{ marginLeft: '5px' }}>  Tên: {components.name} </div>
+                                            <div style={{ marginLeft: '5px' }}> {components.name} </div>
                                             <div style={{ marginLeft: '20px' }}>- Chất liệu: {components.material}</div>
                                             <div style={{ display: 'flex', marginLeft: '20px' }}>- Màu: <div style={{
                                                 marginLeft: '10px',
@@ -705,6 +763,8 @@ function ProductListScreen(props) {
             </Container>
         );
     };
+
+
 
     const [material, setMaterial] = useState('');
     const [name, setName] = useState('');
@@ -897,7 +957,7 @@ function ProductListScreen(props) {
                                     </Col>
                                 </Form>
                             </FormProvider>
-                        </Col >
+                        </Col>
                         <Col md={6} >
                             <p className="mx-auto mt-4 max-w-xl sm:mt-8">▻ Thêm thành phần:</p> <MySelectComponentInAddProduct />
                         </Col>
@@ -1046,9 +1106,7 @@ function ProductListScreen(props) {
                         <DataGrid
                             rows={data}
                             getRowId={getRowId}
-                            disableColumnFilter
-                            disableColumnSelector
-                            disableDensitySelector
+
                             columns={columns}
                             slots={{ toolbar: GridToolbar }}
                             slotProps={{
@@ -1067,6 +1125,11 @@ function ProductListScreen(props) {
                                     <Row>
                                         <Col md={6}>
                                             <Image src={selectedRow.imagePath1} alt={selectedRow.name} fluid />
+                                            <ListGroup variant='flush'>
+                                                <ListGroup.Item>
+                                                    <AddQuantity selectedRowID={selectedRow.productId} />
+                                                </ListGroup.Item>
+                                            </ListGroup>
                                         </Col>
                                         <Col md={6}>
                                             <DialogTitle>{selectedRow.name}</DialogTitle>

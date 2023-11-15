@@ -27,7 +27,7 @@ import { Image, Rate } from 'antd';
 import { Tabs } from 'antd/lib';
 import { Timeline, Progress, Space } from 'antd';
 import { useAddOrderDetailByAccountIdProductIdQuantityMutation, useGetListOrderOfUserQuery } from '../slices/ordersApiSlice';
-import { FaShoppingCart } from 'react-icons/fa';
+import { FaMinus, FaPlus, FaShoppingCart } from 'react-icons/fa';
 
 const desc = ['Tệ', 'Ổn', 'Tốt', 'Rất tốt', 'Chất lượng'];
 
@@ -42,12 +42,14 @@ const ProductScreen = () => {
     const [rating, setRating] = useState(3);
     const [comment, setComment] = useState('');
     const [order] = useState(JSON.parse(localStorage.getItem('getOrder')));
+    const { userInfo } = useSelector((state) => state.auth);
+
     const [addOrderDetailByAccountIdProductIdQuantity] = useAddOrderDetailByAccountIdProductIdQuantityMutation();
 
     const addToCartHandler = async () => {
         try {
             const res = await addOrderDetailByAccountIdProductIdQuantity({
-                accountId: order.accountId,
+                accountId: userInfo?.accountId,
                 productId: product?.productId,
                 quantity: quantity,
             }).unwrap();
@@ -80,9 +82,7 @@ const ProductScreen = () => {
         }
     }, [product, productRefetch]);
 
-    const { userInfo } = useSelector((state) => state.auth);
-
-    const { data: getListOrderOfUser } = useGetListOrderOfUserQuery(userInfo.accountId);
+    const { data: getListOrderOfUser } = useGetListOrderOfUserQuery(userInfo?.accountId);
 
     const [createReview, { isLoading: loadingProductReview }] = useCreateReviewMutation();
 
@@ -91,7 +91,7 @@ const ProductScreen = () => {
 
         try {
             await createReview({
-                accountId: order.accountId,
+                accountId: order?.accountId,
                 productId: product?.productId,
                 rating,
                 comment,
@@ -182,28 +182,42 @@ const ProductScreen = () => {
                                             {product.quantity > 0 && (
                                                 <ListGroup.Item>
                                                     <Row>
-                                                        <Col>Số lượng mua:</Col>
-                                                        <Col>
-
-                                                            <Form.Control
-                                                                as='select'
-                                                                value={quantity}
-                                                                onChange={(e) => setquantity(Number(e.target.value))}
-                                                            >
-                                                                {[...Array(product.quantity).keys()].map(
-                                                                    (x) => (
-                                                                        <option key={x + 1} value={x + 1}>
-                                                                            {x + 1}
-                                                                        </option>
-                                                                    )
-                                                                )}
-                                                            </Form.Control>
-
+                                                        <Col md={4} >Số lượng:</Col>
+                                                        <Col md={7}>
+                                                            <div className="d-flex align-items-center" >
+                                                                <Button
+                                                                    style={{ width: '40px', height: '40px', marginRight: '2px', padding: '10px' }}
+                                                                    variant="success "
+                                                                    onClick={() => setquantity(quantity - 1)}
+                                                                    disabled={quantity <= 1}
+                                                                >
+                                                                    <FaMinus className='mb-2' style={{ color: 'white' }} />
+                                                                </Button>
+                                                                <Form.Control
+                                                                    style={{ width: '80px', height: '40px' }}
+                                                                    type="number"
+                                                                    value={quantity}
+                                                                    onChange={(e) => {
+                                                                        const newValue = Number(e.target.value);
+                                                                        if (newValue <= product.quantity) {
+                                                                            setquantity(newValue);
+                                                                        }
+                                                                    }}
+                                                                />
+                                                                <Button
+                                                                    style={{ width: '40px', height: '40px', marginLeft: '2px', padding: '10px' }}
+                                                                    variant="success"
+                                                                    onClick={() => setquantity(quantity + 1)}
+                                                                    disabled={quantity >= product.quantity}
+                                                                >
+                                                                    <FaPlus className='mb-2' style={{ color: 'white' }} />
+                                                                </Button>
+                                                            </div>
                                                         </Col>
                                                     </Row>
                                                 </ListGroup.Item>
                                             )}
-{/* 
+                                            {/* 
                                              {product.quantity > 0 && (
                                                 <ListGroup.Item>
                                                     <Row>

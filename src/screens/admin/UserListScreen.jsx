@@ -16,7 +16,7 @@ import { useSelector } from 'react-redux';
 const VISIBLE_FIELDS = ['email', 'phone', 'address', 'point', 'role', 'isDeleted'];
 
 const UserListScreen = () => {
-    const { data: users, refetch, isLoading, error } = useGetUsersQuery();
+
     const { userInfo } = useSelector((state) => state.auth);
     const roleMapping = {
         1: "Admin",
@@ -24,6 +24,8 @@ const UserListScreen = () => {
         3: "Staff",
         4: "User",
     };
+
+    const { data: users, refetch, isLoading, error } = useGetUsersQuery(userInfo?.accountId);
     const [role, setRole] = useState('');
     const [updateChangeRole] = useUpdateChangeRoleMutation();
 
@@ -55,7 +57,7 @@ const UserListScreen = () => {
         }
     };
 
-    const [ unBanUser ] = useUnBanUserMutation();
+    const [unBanUser] = useUnBanUserMutation();
 
     const handlerUnBanUser = async (accountId) => {
         if (window.confirm('Ngừng ban tài khoản này?')) {
@@ -94,7 +96,7 @@ const UserListScreen = () => {
                         </Dropdown.Toggle>
                         <Dropdown.Menu>
                             <Dropdown.Item onClick={() => setFilter('All')}>All</Dropdown.Item>
-                            <Dropdown.Item onClick={() => setFilter('admin')}>Admin</Dropdown.Item>
+                            {/* <Dropdown.Item onClick={() => setFilter('admin')}>Admin</Dropdown.Item> */}
                             <Dropdown.Item onClick={() => setFilter('Manager')}>Manager</Dropdown.Item>
                             <Dropdown.Item onClick={() => setFilter('Staff')}>Staff</Dropdown.Item>
                             <Dropdown.Item onClick={() => setFilter('user')}>User</Dropdown.Item>
@@ -117,9 +119,7 @@ const UserListScreen = () => {
                         <tbody>
                             {users
                                 .filter((user) => {
-                                    if (filter === 'admin') {
-                                        return user.role === 1;
-                                    } else if (filter === 'Manager') {
+                                    if (filter === 'Manager') {
                                         return user.role === 2;
                                     } else if (filter === 'Staff') {
                                         return user.role === 3;
@@ -134,8 +134,8 @@ const UserListScreen = () => {
                                         <td>{user.accountId}</td>
                                         <td>{user.name}</td>
                                         <td>{user.address}</td>
-                                        <td>
-                                            <a href={`mailto:${user.email}`}>{user.email}</a>
+                                        <td >
+                                            <a href={`mailto:${user.email}`} style={{ display: 'flex', justifyItems: 'start' }}>{user.email}</a>
                                         </td>
                                         <td>{user.role && user.role === 1 ? 'Admin' : user.role === 2 ? 'Manager' : user.role === 3 ? 'Staff' : user.role === 4 ? 'User' : ''}</td>
                                         <td>
@@ -146,7 +146,7 @@ const UserListScreen = () => {
                                             )}
                                         </td>
                                         <td>
-                                            {user.accountId !== userInfo.accountId && (
+                                            {userInfo.role === 1 ? (
                                                 <div style={{ display: 'flex', justifyContent: 'center' }}>
 
                                                     <Dropdown >
@@ -157,7 +157,7 @@ const UserListScreen = () => {
                                                             <form style={{ display: 'flex' }} onSubmit={(e) => submitHandler(e, user.accountId)}>
                                                                 <select value={role} onChange={(e) => setRole(e.target.value)} style={{ marginInlineStart: 10 }}>
                                                                     <option value="">Đổi vai trò</option>
-                                                                    <option value="1">Admin</option>
+                                                                    {/* <option value="1">Admin</option> */}
                                                                     <option value="2">Manager</option>
                                                                     <option value="3">Staff</option>
                                                                     <option value="4">User</option>
@@ -166,25 +166,92 @@ const UserListScreen = () => {
                                                             </form>
                                                         </Dropdown.Menu>
                                                     </Dropdown>
-
-                                                    <Button
-                                                        style={{ marginInlineStart: 10 }}
-                                                        variant='dark'
-                                                        className='btn-sm'
-                                                        onClick={() => handlerUnBanUser(user.accountId)}
-                                                    >
-                                                        <FaUnlock style={{ color: 'white' }} />
-                                                    </Button>
-
-                                                    <Button
-                                                        style={{ marginInlineStart: 10 }}
-                                                        variant='danger'
-                                                        className='btn-sm'
-                                                        onClick={() => deleteHandler(user.accountId)}
-                                                    >
-                                                        <FaBan style={{ color: 'white' }} />
-                                                    </Button>
+                                                    {user.isDeleted === 0 ? (
+                                                        <Button
+                                                            style={{ marginInlineStart: 10 }}
+                                                            variant='danger'
+                                                            className='btn-sm'
+                                                            onClick={() => deleteHandler(user.accountId)}
+                                                        >
+                                                            <FaBan style={{ color: 'white' }} />
+                                                        </Button>
+                                                    ) : (
+                                                        <Button
+                                                            style={{ marginInlineStart: 10 }}
+                                                            variant='dark'
+                                                            className='btn-sm'
+                                                            onClick={() => handlerUnBanUser(user.accountId)}
+                                                        >
+                                                            <FaUnlock style={{ color: 'white' }} />
+                                                        </Button>
+                                                    )}
                                                 </div>
+                                            ) : (
+                                                userInfo?.role === 2 ? (
+                                                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+
+                                                        <Dropdown >
+                                                            <Dropdown.Toggle variant='dark' className='btn-sm'>
+                                                                <FaExchangeAlt />
+                                                            </Dropdown.Toggle>
+                                                            <Dropdown.Menu size="sm">
+                                                                <form style={{ display: 'flex' }} onSubmit={(e) => submitHandler(e, user.accountId)}>
+                                                                    <select value={role} onChange={(e) => setRole(e.target.value)} style={{ marginInlineStart: 10 }}>
+                                                                        <option value="">Đổi vai trò</option>
+                                                                        {/* <option value="1">Admin</option> */}
+                                                                        {/* <option value="2">Manager</option> */}
+                                                                        <option value="3">Staff</option>
+                                                                        <option value="4">User</option>
+                                                                    </select>
+                                                                    <Button className='btn-sm' type="submit" style={{ marginInlineStart: 10 }}>Lưu</Button>
+                                                                </form>
+                                                            </Dropdown.Menu>
+                                                        </Dropdown>
+
+                                                        {user.isDeleted === 0 ? (
+                                                            <Button
+                                                                style={{ marginInlineStart: 10 }}
+                                                                variant='danger'
+                                                                className='btn-sm'
+                                                                onClick={() => deleteHandler(user.accountId)}
+                                                            >
+                                                                <FaBan style={{ color: 'white' }} />
+                                                            </Button>
+                                                        ) : (
+                                                            <Button
+                                                                style={{ marginInlineStart: 10 }}
+                                                                variant='dark'
+                                                                className='btn-sm'
+                                                                onClick={() => handlerUnBanUser(user.accountId)}
+                                                            >
+                                                                <FaUnlock style={{ color: 'white' }} />
+                                                            </Button>
+                                                        )}
+                                                    </div>
+                                                ) : (
+                                                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+
+                                                        {user.isDeleted === 0 ? (
+                                                            <Button
+                                                                style={{ marginInlineStart: 10 }}
+                                                                variant='danger'
+                                                                className='btn-sm'
+                                                                onClick={() => deleteHandler(user.accountId)}
+                                                            >
+                                                                <FaBan style={{ color: 'white' }} />
+                                                            </Button>
+                                                        ) : (
+                                                            <Button
+                                                                style={{ marginInlineStart: 10 }}
+                                                                variant='dark'
+                                                                className='btn-sm'
+                                                                onClick={() => handlerUnBanUser(user.accountId)}
+                                                            >
+                                                                <FaUnlock style={{ color: 'white' }} />
+                                                            </Button>
+                                                        )}
+                                                    </div>
+                                                )
                                             )}
                                         </td>
                                     </tr>

@@ -30,8 +30,8 @@ export const userApiSlice = apiSlice.injectEndpoints({
             }),
         }),
         getUsers: builder.query({
-            query: () => ({
-                url: `/api/Account/Get-All-Account`,
+            query: (accountId) => ({
+                url: `/api/Account/Get-All-Account-Have-Lower-Role?accountId=${accountId}`,
             }),
             providesTags: ['User'],
             keepUnusedDataFor: 5,

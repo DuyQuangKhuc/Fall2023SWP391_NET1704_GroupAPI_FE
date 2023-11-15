@@ -51,11 +51,11 @@ const ProductEditScreen = () => {
                 description,
                 quantity,
             }).unwrap(); // NOTE: here we need to unwrap the Promise to catch any rejection in our catch block
-            toast.success('Product updated');
+            toast.success('Sản phẩm đã cập nhập thành công');
             refetch();
             navigate('/admin/productlist');
         } catch (err) {
-            toast.error(err?.data?.message || err.error);
+            toast.error("Sản phẩm này đã có khách hàng mua nên không thể thay đổi");
         }
     };
 
@@ -97,7 +97,7 @@ const ProductEditScreen = () => {
                     <Message variant='danger'>{error.data.message}</Message>
                 ) : (
                     <Form onSubmit={submitHandler}>
-                        <Form.Group controlId='name'>
+                        <Form.Group controlId='name' className='my-3'>
                             <Form.Label>Tên</Form.Label>
                             <Form.Control
                                 type='name'
@@ -107,7 +107,7 @@ const ProductEditScreen = () => {
                             ></Form.Control>
                         </Form.Group>
 
-                        <Form.Group controlId='price'>
+                        <Form.Group controlId='price' className='my-3'>
                             <Form.Label>Giá</Form.Label>
                             <Form.Control
                                 type='number'
@@ -117,7 +117,7 @@ const ProductEditScreen = () => {
                             ></Form.Control>
                         </Form.Group>
 
-                        <Form.Group controlId='image'>
+                        <Form.Group controlId='image' className='my-3'>
                             <Form.Label>Ảnh</Form.Label>
                             {/* <Image src={product.imagePath1 || imagePath1} /> */}
                             <ComUpImg
@@ -134,17 +134,18 @@ const ProductEditScreen = () => {
 
 
 
-                        <Form.Group controlId='quantity'>
+                        <Form.Group controlId='quantity' className='my-3'>
                             <Form.Label>Số lượng</Form.Label>
                             <Form.Control
                                 type='number'
                                 placeholder='Enter quantity'
+                                min={1}
                                 value={quantity}
                                 onChange={(e) => setQuantity(e.target.value)}
                             ></Form.Control>
                         </Form.Group>
 
-                        <Form.Group controlId='material'>
+                        <Form.Group controlId='material' className='my-3'>
                             <Form.Label>Độ bền</Form.Label>
                             <Form.Control
                                 type='text'
@@ -154,7 +155,7 @@ const ProductEditScreen = () => {
                             ></Form.Control>
                         </Form.Group>
 
-                        <Form.Group controlId='description'>
+                        <Form.Group controlId='description' >
                             <Form.Label>Mô tả</Form.Label>
                             <Form.Control
                                 type='text'
@@ -169,7 +170,7 @@ const ProductEditScreen = () => {
                             variant='primary'
                             style={{ marginTop: '1rem' }}
                         >
-                            Update
+                            Cập nhập
                         </Button>
                     </Form>
                 )}
