@@ -12,12 +12,13 @@ import VoucherUser from '../components/VoucherUser';
 import { useFormContext } from 'react-hook-form';
 
 const PaymentScreen = () => {
+    
     const navigate = useNavigate();
     const { userInfo } = useSelector((state) => state.auth);
     const [voucherId, setVoucherId] = useState(1);
     const [paymentMethodId, setPaymentMethod] = useState(1)
 
-    const [address, setAddress] = useState('');
+    const [address, setAddress] = useState(userInfo?.address);
 
     const [order] = useState(JSON.parse(localStorage.getItem('getOrder')));
 
@@ -38,7 +39,7 @@ const PaymentScreen = () => {
             toast.success("Thanh toán thành công");
             window.location.reload();
         } catch (err) {
-            toast.error("Thất bại, hãy nhập đủ thông tin");
+            toast.error("Thất bại, Sản phẩm đã vượt số lượng tồn kho. Quay lại giỏ hàng để kiểm tra");
             console.log(err);
         }
     };

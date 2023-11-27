@@ -141,6 +141,20 @@ export const orderApiSlice = apiSlice.injectEndpoints({
             refetchInterval: 1000,
         }),
 
+        getListOrder: builder.query({
+            query: () => ({
+                url: `/api/Order/List-Orders`,
+            }),
+            refetchInterval: 1000,
+        }),
+
+        checkOrder : builder.mutation({
+            query: (accountId) => ({
+                url: `/api/Order/Check-Order?AccountId=${accountId}`,
+                method: 'POST',
+            }),
+            refetchInterval: 1000,
+        }),
     }),
 });
 
@@ -162,5 +176,7 @@ export const {
     useAddPaymentPromaxMutation,
     useGetListOrderOfUserQuery,
     useAcceptPriceFromProductOfUserMutation,
-    useGetListOrderDetailCloneQuery
+    useGetListOrderDetailCloneQuery,
+    useGetListOrderQuery,
+    useCheckOrderMutation
 } = orderApiSlice;

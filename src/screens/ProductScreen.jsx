@@ -35,7 +35,7 @@ const ProductScreen = () => {
     const { productId } = useParams();
     const { TabPane } = Tabs;
 
-    const dispatch = useDispatch();
+    //const dispatch = useDispatch();
     const navigate = useNavigate();
 
     const [quantity, setquantity] = useState(1);

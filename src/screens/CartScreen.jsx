@@ -15,15 +15,15 @@ import Message from '../components/Message';
 import { addToCart, removeFromCart } from '../slices/cartSlice';
 
 import { useEffect, useState } from 'react';
-import { useDeleteAllOrderDetailInOrderMutation, useDeleteOrderDetailMutation, useGetListOrderDetailCloneByOrderIdorderIdQuery } from '../slices/ordersApiSlice';
+import { useCheckOrderMutation, useDeleteAllOrderDetailInOrderMutation, useDeleteOrderDetailMutation, useGetListOrderDetailCloneByOrderIdorderIdQuery } from '../slices/ordersApiSlice';
 import { toast } from 'react-toastify';
 
 const CartScreen = () => {
     const navigate = useNavigate();
-    const dispatch = useDispatch();
+    //const dispatch = useDispatch();
 
-    const cart = useSelector((state) => state.cart);
-    const { cartItems } = cart;
+    //const cart = useSelector((state) => state.cart);
+    //const { cartItems } = cart;
     const [order] = useState(JSON.parse(localStorage.getItem('getOrder')));
 
     const { data: getListOrderDetailCloneByOrderIdorderId, refetch } = useGetListOrderDetailCloneByOrderIdorderIdQuery(order?.orderId);
@@ -69,10 +69,27 @@ const CartScreen = () => {
         }
     };
 
-    const checkoutHandler = () => {
-        navigate('/login?redirect=/payment');
-    };
+    const [checkOrder] = useCheckOrderMutation();
 
+    const { userInfo } = useSelector((state) => state.auth);
+    const [errorData, setErrorData] = useState(null);
+
+    const checkOrderHandler = async (accountId) => {   
+        try {
+            const response = await checkOrder(accountId);
+            if (response?.error?.data[0] === undefined) {
+                navigate('/payment');
+            } else if (response?.error?.data[0]) {
+                navigate('/cart');
+                setErrorData(response?.error?.data[0]);
+            }    
+            console.log(response?.error?.data[0]);
+        } catch (error) {
+            navigate('/cart');
+            console.log(error);
+        }
+    };
+    
     return (
         <Container>
             <Row className='py-3'>
@@ -117,7 +134,11 @@ const CartScreen = () => {
                                                 </Button>
                                             </Col>
                                         </Row>
-
+                                        {errorData === item.orderDetailId && (
+                                            <div>
+                                                <div md={2} style={{ color: 'red' }}>Sản phẩm này có số lượng vượt quá tồn kho mà cửa hàng có thể cung cấp</div>
+                                            </div>
+                                        )}
                                     </ListGroup.Item>
                                 ))}
                             </div>
@@ -129,7 +150,7 @@ const CartScreen = () => {
                         <ListGroup variant='flush'>
                             <ListGroup.Item>
                                 <h2>
-                                    Tổng {getListOrderDetailCloneByOrderIdorderId?.reduce((acc, item) => acc + item.quantity, 0)} đơn hàng
+                                    Tổng hóa đơn
                                 </h2>
                                 Số tiền : {formatCurrency(getListOrderDetailCloneByOrderIdorderId?.reduce((acc, item) => acc + item.quantity * item.price, 0))}
                             </ListGroup.Item>
@@ -138,7 +159,7 @@ const CartScreen = () => {
                                     type='button'
                                     className='btn-block'
                                     disabled={getListOrderDetailCloneByOrderIdorderId?.length === 0}
-                                    onClick={checkoutHandler}
+                                    onClick={() => checkOrderHandler(userInfo?.accountId)}
                                 >
                                     Đặt hàng
                                 </Button>

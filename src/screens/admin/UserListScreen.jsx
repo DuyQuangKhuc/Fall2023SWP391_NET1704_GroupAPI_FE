@@ -108,10 +108,8 @@ const UserListScreen = () => {
                                 <th>ID</th>
                                 <th>Tên</th>
                                 <th>Địa chỉ</th>
-                                <th>EMAIL</th>
-                                <th >Vai trò
-
-                                </th>
+                                <th>Email</th>
+                                <th>Vai trò</th>
                                 <th>Trạng thái</th>
                                 <th></th>
                             </tr>

@@ -10,14 +10,14 @@ import { setCredentials } from '../slices/authSlice';
 import { Link, useParams } from 'react-router-dom';
 import { Tabs } from 'antd';
 import TabPane from 'antd/es/tabs/TabPane';
-import { useAcceptProductOfUserFromUserMutation, useCancelProductOfUserMutation, useGetListAllComponentQuery, useGetListProductCreatedByUserQuery, useGetVoucherOfUserQuery } from '../slices/productsApiSlice';
+import { useAcceptProductOfUserFromUserMutation, useCancelProductOfUserMutation, useGetListAllComponentQuery, useGetListProductCreatedByUserQuery, useGetVoucherOfUserQuery, useListProductCreatedByUserHaveReasonQuery } from '../slices/productsApiSlice';
 import ButtonGroup from 'antd/es/button/button-group';
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
-import { Avatar, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from '@material-ui/core';
+import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from '@material-ui/core';
 import VoucherUser from '../components/VoucherUser';
 import { Grid } from '@material-ui/core';
 
@@ -97,7 +97,15 @@ const ProfileScreen = () => {
 
     const filteredListProductOnlyUser4 = getListProductCreatedByUser?.filter(component => component.isDeleted === 4);
 
-    const filteredListProductOnlyUser5 = getListProductCreatedByUser?.filter(component => component.isDeleted === 5);
+    //const filteredListProductOnlyUser5 = getListProductCreatedByUser?.filter(component => component.isDeleted === 5);
+
+    const { data: listProductCreatedByUserHaveReason, refetch: listProductCreatedByUserHaveReasonRefetch } = useListProductCreatedByUserHaveReasonQuery(accountId);
+    useEffect(() => {
+        if (listProductCreatedByUserHaveReason) {
+            const intervalId = setInterval(listProductCreatedByUserHaveReasonRefetch, 1000); // Refresh every 1 seconds
+            return () => clearInterval(intervalId); // Cleanup the interval on component unmount or 'order' change
+        }
+    }, [listProductCreatedByUserHaveReason, listProductCreatedByUserHaveReasonRefetch]);
 
     const isDeletedMapping = {
         0: "Đang chờ duyệt",
@@ -129,8 +137,11 @@ const ProfileScreen = () => {
 
     const [open, setOpen] = React.useState(false);
     const [open1, setOpen1] = React.useState(false);
+    const [open2, setOpen2] = React.useState(false);
 
-    const handleClickOpen = () => {
+
+    const handleClickOpen = (productId) => {
+        setProductId(productId)
         setOpen(true);
     };
 
@@ -138,7 +149,8 @@ const ProfileScreen = () => {
         setOpen(false);
     };
 
-    const handleClickOpen1 = () => {
+    const handleClickOpen1 = (productId) => {
+        setProductId(productId)
         setOpen1(true);
     };
 
@@ -146,13 +158,22 @@ const ProfileScreen = () => {
         setOpen1(false);
     };
 
+    const handleClickOpen2 = (productId) => {
+        setProductId(productId)
+        setOpen2(true);
+    };
+
+    const handleClose2 = () => {
+        setOpen2(false);
+    };
+    const [productId, setProductId] = useState('');
 
     //-----------------------------đang chờ duyệt
     const [price, setPrice] = useState('');
 
     const [acceptProductOfUserFromUser] = useAcceptProductOfUserFromUserMutation();
 
-    const submitHandler1 = async (e, productId) => {
+    const submitHandler1 = async (e) => {
         e.preventDefault();
         try {
             const res = await acceptProductOfUserFromUser({
@@ -160,25 +181,26 @@ const ProfileScreen = () => {
                 price,
             }).unwrap();
             console.log(productId);
-            toast.success('thành công');
+            toast.success('Thành công');
             handleClose()
         } catch (err) {
-            toast.error("lỗi");
+            toast.error("Nhập giá");
         }
 
     };
 
     const [cancelProductOfUser] = useCancelProductOfUserMutation();
-
-    const submitHandler2 = async (productId) => {
-        if (window.confirm('Bạn có chắc muốn xóa đơn hàng?')) {
+    const [reason, setReason] = useState('');
+    const submitHandler2 = async (e) => {
+        if (window.confirm('Bạn có chắc muốn hủy đơn hàng?')) {
             try {
                 const res = await cancelProductOfUser({
-                    productId: productId,
+                    productId,
+                    reason,
                 }).unwrap();
                 console.log(productId);
-                toast.success('Xóa thành công');
-                handleClose()
+                toast.success('Hủy thành công');
+                handleClose2()
             } catch (err) {
                 toast.error("lỗi");
             }
@@ -218,14 +240,14 @@ const ProfileScreen = () => {
         }
     };
 
-    const [paymentMethodId, setPaymentMethod] = useState('');
-    const [address, setAddress] = useState('');
+    const [paymentMethodId, setPaymentMethod] = useState(1);
+    const [address, setAddress] = useState(userInfo?.address);
 
     const { data: getListPaymentMethod } = useGetListPaymentMethodQuery();
 
     const [acceptPriceFromProductOfUser] = useAcceptPriceFromProductOfUserMutation();
 
-    const submitHandlerPriceFromProduct = async (e, productId) => {
+    const submitHandlerPriceFromProduct = async (e) => {
         e.preventDefault();
         try {
             const res = await acceptPriceFromProductOfUser({
@@ -542,7 +564,7 @@ const ProfileScreen = () => {
                                                                             />
                                                                         </DialogContent>
                                                                         <DialogActions>
-                                                                            <Button onClick={handleClose}>Thoát</Button>
+                                                                            <Button onClick={handleClose} variant='light'>Thoát</Button>
                                                                             <Button onClick={(e) => submitHandler1(e, order.productId)}>Gửi hóa đơn</Button>
                                                                         </DialogActions>
                                                                     </Dialog>
@@ -554,10 +576,31 @@ const ProfileScreen = () => {
                                                                     <Button
                                                                         variant="outline-danger"
                                                                         className='mx-1'
-                                                                        onClick={() => submitHandler2(order.productId)}
+                                                                        //onClick={() => submitHandler2(order.productId)}
+                                                                        onClick={() => handleClickOpen2(order.productId)}
                                                                     >
                                                                         <FaTimes style={{ color: '' }} />
                                                                     </Button>
+
+                                                                    <Dialog open={open2} onClose={handleClose2}>
+                                                                        <DialogTitle>Lí do hủy đơn</DialogTitle>
+                                                                        <DialogContent>
+                                                                            <DialogContentText>
+                                                                                Hãy đưa ra lí do vì sao hủy đơn
+                                                                            </DialogContentText>
+                                                                            <TextField            
+                                                                                label="Nhập lí do"
+                                                                                id="Nhập lí do"
+                                                                                fullWidth
+                                                                                value={reason}
+                                                                                onChange={(e) => setReason(e.target.value)}
+                                                                            />
+                                                                        </DialogContent>
+                                                                        <DialogActions>
+                                                                            <Button onClick={handleClose2} variant='light'>Thoát</Button>
+                                                                            <Button onClick={(e) => submitHandler2(e, order.productId)}>Gửi</Button>
+                                                                        </DialogActions>
+                                                                    </Dialog>
                                                                 </td>
                                                             </tr>
                                                             {isRowExpanded(order?.productId) && (
@@ -782,10 +825,34 @@ const ProfileScreen = () => {
                                                                     <Button
                                                                         variant="outline-danger"
                                                                         className='mx-1'
-                                                                        onClick={() => submitHandler2(order.productId)}
+                                                                        //onClick={() => submitHandler2(order.productId)}
+                                                                        onClick={() => handleClickOpen2(order.productId)}
                                                                     >
                                                                         <FaTimes style={{ color: '' }} />
                                                                     </Button>
+
+                                                                    <Dialog open={open2} onClose={handleClose2}>
+                                                                        <DialogTitle>Lí do hủy đơn</DialogTitle>
+                                                                        <DialogContent>
+                                                                            <DialogContentText>
+                                                                                Hãy đưa ra lí do vì sao hủy đơn
+                                                                            </DialogContentText>
+                                                                            <TextField
+                                                                                autoFocus
+                                                                                margin="dense"
+                                                                                id="textarea"
+                                                                                label="Nhập lí do"
+                                                                                type="textarea"
+                                                                                fullWidth
+                                                                                value={reason}
+                                                                                onChange={(e) => setReason(e.target.value)}
+                                                                            />
+                                                                        </DialogContent>
+                                                                        <DialogActions>
+                                                                            <Button onClick={handleClose2} variant='light'>Thoát</Button>
+                                                                            <Button onClick={(e) => submitHandler2(e, order.productId)}>Gửi</Button>
+                                                                        </DialogActions>
+                                                                    </Dialog>
                                                                 </td>
                                                             </tr>
                                                             {isRowExpanded(order?.productId) && (
@@ -927,12 +994,13 @@ const ProfileScreen = () => {
                                                         <th>Ảnh</th>
                                                         <th>Giá</th>
                                                         <th>Mô tả</th>
+                                                        <th>Lí do hủy</th>
                                                         <th>Ngày tạo đơn</th>
                                                         <th>Trạng thái</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {filteredListProductOnlyUser5?.map((order) => (
+                                                    {listProductCreatedByUserHaveReason?.map((order) => (
                                                         <React.Fragment key={order?.productId}>
                                                             <tr>
                                                                 <td className='align-middle'>
@@ -944,6 +1012,7 @@ const ProfileScreen = () => {
                                                                 <td className='align-middle'><img src={order?.imagePath1} alt={order?.imagePath1} style={{ width: '50px', height: '50px' }} /></td>
                                                                 <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{formatCurrency(order.price)}</div></td>
                                                                 <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order?.description}</div></td>
+                                                                <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{order?.reason}</div></td>
                                                                 <td className='align-middle'><div style={{ padding: '5px', borderRadius: '5px' }}>{new Date(order.uploadDate).toLocaleDateString('en-GB')}</div></td>
                                                                 <td className='align-middle'>
                                                                     <div style={{

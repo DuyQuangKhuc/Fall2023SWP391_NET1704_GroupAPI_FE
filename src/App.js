@@ -12,7 +12,7 @@ import 'react-toastify/dist/ReactToastify.css';
 const App = () => {
   const dispatch = useDispatch();
 
-  
+
   useEffect(() => {
     const expirationTime = localStorage.getItem('expirationTime');
     if (expirationTime) {

@@ -1,8 +1,5 @@
-
 import * as React from 'react';
 import Pagination from '@mui/material/Pagination';
-import { useEffect } from 'react';
-import { useState } from 'react';
 
 const Paginate = ({ page, setPage, totalPage }) => {
     const handleChange = (event, value) => {

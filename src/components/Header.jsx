@@ -13,7 +13,7 @@ import { useGetAddProductUserAutomaticMutation, useGetListOrderDetailCloneByOrde
 import logo1 from '../../src/assets/styles/logo1.svg'
 
 const Header = () => {
-    const { cartItems } = useSelector((state) => state.cart);
+    //const { cartItems } = useSelector((state) => state.cart);
     const { userInfo } = useSelector((state) => state.auth);
 
     const dispatch = useDispatch();
@@ -24,16 +24,15 @@ const Header = () => {
 
     const { data: getListOrderDetailCloneByOrderIdorderId } = useGetListOrderDetailCloneByOrderIdorderIdQuery(order?.orderId);
 
+    const [logoutAPI] = useLogoutMutation();
 
 
     const logoutHandler = async () => {
         try {
-            //await logoutApiCall().unwrap();
+            await logoutAPI().unwrap();
             localStorage.clear();
             dispatch(logout());
-            // NOTE: here we need to reset cart state for when a user logs out so the next
-            // user doesn't inherit the previous users cart and shipping
-            dispatch(resetCart());
+            //dispatch(resetCart());
             navigate('/login');
         } catch (err) {
             console.error(err);
@@ -55,12 +54,11 @@ const Header = () => {
     };
 
 
-    const checkoutHandler = () => {
-        navigate('/login?redirect=/order');
-    };
+    // const checkoutHandler = () => {
+    //     navigate('/login?redirect=/order');
+    // };
     return (
-        <header >
-
+        <header>
             <Navbar bg='primary' variant='dark' expand='lg' collapseOnSelect>
                 <Container>
                     <LinkContainer to='/'>
@@ -85,9 +83,7 @@ const Header = () => {
                                 </LinkContainer>
                             )}
 
-                            {userInfo && userInfo.role === 1 ? (
-                                <></>
-                            ) : (
+                            {userInfo && userInfo.role === 4 && (
                                 <LinkContainer to='/cart'>
                                     <Nav.Link>
                                         <FaShoppingCart /> Đơn hàng
@@ -120,18 +116,19 @@ const Header = () => {
                             ) : (
                                 userInfo?.role === 1 ? (
                                     <NavDropdown title='Admin' id='adminmenu'>
-                                        {/* <LinkContainer to='/admin'>
-                                            <NavDropdown.Item>Dasboard</NavDropdown.Item>
-                                        </LinkContainer> */}
+                                        <LinkContainer to='/dasboard'>
+                                            <NavDropdown.Item>Bảng thống kê</NavDropdown.Item>
+                                        </LinkContainer>
+                                        <LinkContainer to='/admin/userlist'>
+                                            <NavDropdown.Item>Quản lí tài khoản</NavDropdown.Item>
+                                        </LinkContainer>
                                         <LinkContainer to='/admin/productlist'>
                                             <NavDropdown.Item>Quản lí sản phẩm</NavDropdown.Item>
                                         </LinkContainer>
                                         <LinkContainer to='/admin/orderlist'>
                                             <NavDropdown.Item>Quản lí đơn hàng</NavDropdown.Item>
                                         </LinkContainer>
-                                        <LinkContainer to='/admin/userlist'>
-                                            <NavDropdown.Item>Quản lí tài khoản</NavDropdown.Item>
-                                        </LinkContainer>
+
                                         <NavDropdown.Item onClick={logoutHandler}>
                                             Đăng xuất
                                         </NavDropdown.Item>
@@ -139,18 +136,19 @@ const Header = () => {
                                 ) : (
                                     userInfo?.role === 2 ? (
                                         <NavDropdown title='Manager' id='adminmenu'>
-                                            {/* <LinkContainer to='/admin'>
-                                            <NavDropdown.Item>Dasboard</NavDropdown.Item>
-                                        </LinkContainer> */}
+                                            <LinkContainer to='/dasboard'>
+                                                <NavDropdown.Item>Bảng thống kê</NavDropdown.Item>
+                                            </LinkContainer>
+                                            <LinkContainer to='/admin/userlist'>
+                                                <NavDropdown.Item>Quản lí tài khoản</NavDropdown.Item>
+                                            </LinkContainer>
                                             <LinkContainer to='/admin/productlist'>
                                                 <NavDropdown.Item>Quản lí sản phẩm</NavDropdown.Item>
                                             </LinkContainer>
                                             <LinkContainer to='/admin/orderlist'>
                                                 <NavDropdown.Item>Quản lí đơn hàng</NavDropdown.Item>
                                             </LinkContainer>
-                                            <LinkContainer to='/admin/userlist'>
-                                                <NavDropdown.Item>Quản lí tài khoản</NavDropdown.Item>
-                                            </LinkContainer>
+
                                             <NavDropdown.Item onClick={logoutHandler}>
                                                 Đăng xuất
                                             </NavDropdown.Item>
@@ -166,9 +164,6 @@ const Header = () => {
                                                 </LinkContainer> */}
                                                 <LinkContainer to='/admin/orderlist'>
                                                     <NavDropdown.Item>Quản lí đơn hàng</NavDropdown.Item>
-                                                </LinkContainer>
-                                                <LinkContainer to='/admin/userlist'>
-                                                    <NavDropdown.Item>Quản lí tài khoản</NavDropdown.Item>
                                                 </LinkContainer>
                                                 <NavDropdown.Item onClick={logoutHandler}>
                                                     Đăng xuất

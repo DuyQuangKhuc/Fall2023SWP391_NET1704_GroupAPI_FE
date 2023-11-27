@@ -14,7 +14,7 @@ export const productsApiSlice = apiSlice.injectEndpoints({
 
         getProducts1: builder.query({
             query: (data) => ({
-                url: `/api/Product/List-Product-Paging?page=${data.page}&size=12`,
+                url: `/api/Product/List-Product-Paging?page=${data.page}&size=12&accountId=${data.accountId}`,
                 params: data,
             }),
             keepUnusedDataFor: 5,
@@ -24,7 +24,7 @@ export const productsApiSlice = apiSlice.injectEndpoints({
 
         getProducts2: builder.query({
             query: (data) => ({
-                url: `/api/Product/List-Product-Paging-Top?page=${data.page}&size=4`,
+                url: `/api/Product/List-Product-Paging-Top?page=${data.page}&size=4&accountId=${data.accountId}`,
                 params: data,
             }),
             keepUnusedDataFor: 5,
@@ -184,12 +184,11 @@ export const productsApiSlice = apiSlice.injectEndpoints({
 
         cancelProductOfUser: builder.mutation({
             query: (data) => ({
-                url: `/api/Product/Cancel-Product-Of-User?productId=${data.productId}`,
+                url: `/api/Product/Cancel-Product-Of-User?productId=${data.productId}&reason=${data.reason}`,
                 method: 'PUT',
-                body: data,
+               
             }),
-            providesTags: ['Product'],
-            refetchInterval: 1000,
+            
         }),
 
         acceptProductOfUserFromUser: builder.mutation({
@@ -292,6 +291,71 @@ export const productsApiSlice = apiSlice.injectEndpoints({
             }),
             refetchInterval: 1000,
         }),
+
+        searchProductByName : builder.query({
+            query: (keyword) => ({
+                url: `/api/Product/Search-Product-By-Name?name=${keyword.trim()}`,
+            }),
+            refetchInterval: 1000,
+        }),
+
+        searchProductSize: builder.query({
+            query: (keyword) => ({
+                url: `/api/Product/PagesNumberBySearch?size=12&name=${keyword.trim()}`,
+                params: keyword,
+            }),
+            keepUnusedDataFor: 5,
+            //providesTags: ['Products'],
+            refetchInterval: 1000,
+        }),
+
+        searchProduct: builder.query({
+            query: (data, keyword) => ({
+                url: `/api/Product/List-Product-Paging-By-Search?page=${data.page}&size=12&name=${keyword.trim()}`,
+                params: data, keyword
+            }),
+            keepUnusedDataFor: 5,
+            //providesTags: ['Products'],
+            refetchInterval: 1000,
+        }),
+
+        listProductCreatedByUserHaveReason : builder.query({
+            query: (accountId) => ({
+                url: `/api/Product/List-Product-Created-By-User-Have-Reason?AccountId=${accountId}`,
+                
+            }),
+            keepUnusedDataFor: 5,
+            refetchInterval: 1000,
+        }),
+
+        listProductOnlyUserHaveReason : builder.query({
+            query: (accountId) => ({
+                url: `/api/Product/List-Product-Only-User-Have-Reason`,
+
+            }),
+            keepUnusedDataFor: 5,
+            refetchInterval: 1000,
+        }),
+
+        listQuantityBoughtOfProductOnDate: builder.query({
+            query: (productId) => ({
+                url: `/api/Product/List-Quantity-Bought-Of-Product-On-Date?productId=${productId}`,
+
+            }),
+            keepUnusedDataFor: 5,
+            refetchInterval: 1000,
+        }),
+
+        listMoneyOnDate : builder.query({
+            query: (productId) => ({
+                url: `/api/Product/List-Money-On-Date`,
+
+            }),
+            keepUnusedDataFor: 5,
+            refetchInterval: 1000,
+        }),
+
+        
     }),
 });
 
@@ -330,5 +394,12 @@ export const {
     useAddComponentIntoProductCreatingMutation,
     useGetListComponentOfProductCreatingQuery,
     useDeleteAllComponentOfProductOfAdminMutation,
-    useAddProductQuantityMutation
+    useAddProductQuantityMutation,
+    useSearchProductByNameQuery,
+    useSearchProductSizeQuery,
+    useSearchProductQuery,
+    useListProductCreatedByUserHaveReasonQuery,
+    useListProductOnlyUserHaveReasonQuery,
+    useListQuantityBoughtOfProductOnDateQuery,
+    useListMoneyOnDateQuery
 } = productsApiSlice;

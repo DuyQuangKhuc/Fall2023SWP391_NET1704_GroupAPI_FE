@@ -21,7 +21,6 @@ const ProductEditScreen = () => {
     const [price, setPrice] = useState(0);
     const [imagePath1, setImage] = useState('');
     const [durability, setDurability] = useState('');
-    const [quantity, setQuantity] = useState(0);
     const [description, setDescription] = useState('');
 
     const {
@@ -49,7 +48,6 @@ const ProductEditScreen = () => {
                 imagePath1,
                 durability,
                 description,
-                quantity,
             }).unwrap(); // NOTE: here we need to unwrap the Promise to catch any rejection in our catch block
             toast.success('Sản phẩm đã cập nhập thành công');
             refetch();
@@ -65,7 +63,6 @@ const ProductEditScreen = () => {
             setPrice(product.price);
             setImage(product.imagePath1);
             setDurability(product.durability);
-            setQuantity(product.quantity);
             setDescription(product.description);
         }
     }, [product]);
@@ -132,18 +129,6 @@ const ProductEditScreen = () => {
                             {loadingUpload && <Loader />}
                         </Form.Group>
 
-
-
-                        <Form.Group controlId='quantity' className='my-3'>
-                            <Form.Label>Số lượng</Form.Label>
-                            <Form.Control
-                                type='number'
-                                placeholder='Enter quantity'
-                                min={1}
-                                value={quantity}
-                                onChange={(e) => setQuantity(e.target.value)}
-                            ></Form.Control>
-                        </Form.Group>
 
                         <Form.Group controlId='material' className='my-3'>
                             <Form.Label>Độ bền</Form.Label>

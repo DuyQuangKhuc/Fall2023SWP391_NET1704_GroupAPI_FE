@@ -428,12 +428,7 @@ function ProductListScreen(props) {
             }
         };
 
-        useEffect(() => {
-            if (product) {
-                setQuantity(product.quantity);
-            }
-        }, [product]);
-
+       
 
 
         return (
@@ -442,7 +437,7 @@ function ProductListScreen(props) {
                     <Row >
                         <Col >
                             <Form.Group controlId='quantity'>
-                                <Form.Label>Số lượng sản phẩm</Form.Label>
+                                <Form.Label>Cập nhập số lượng </Form.Label>
                                 <Form.Control
                                     type='number'
                                     placeholder='Enter quantity'

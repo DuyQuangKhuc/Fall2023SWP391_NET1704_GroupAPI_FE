@@ -37,10 +37,13 @@ const LoginScreen = () => {
             const res = await login({ email, password }).unwrap();
             dispatch(setCredentials({ ...res }));
             navigate(redirect);
+            window.location.reload();
         } catch (err) {
-            const errorMessage =  "Tài khoản không tồn tại" ;
-            toast.error(errorMessage);
-            console.log(errorMessage)
+            if (err.status === 404) {
+                toast.error("Tài khoản đã bị khóa do vi phạm");
+            } else {
+                toast.error("Email hoặc mật khẩu không đúng");
+            }
         }
     };
 
@@ -69,6 +72,13 @@ const LoginScreen = () => {
                             onChange={(e) => setPassword(e.target.value)}
                         ></Form.Control>
                     </Form.Group>
+                    <Row className='pb-3'>
+                        <Col>
+                            <Link to={'/resetpassword'}>
+                                Quên mật khẩu?
+                            </Link>
+                        </Col>
+                    </Row>
 
                     <Button disabled={isLoading} type='submit' variant='primary'>
                         Đăng nhập

@@ -1,0 +1,101 @@
+.insights-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(auto, 18rem));
+    grid-template-rows: auto;
+    justify-content: start;
+    gap: 2rem;
+    margin-right: 1rem;
+    margin-left: 0rem;
+    margin-bottom: 1rem;
+}
+
+.insight-container {
+    background-color: var(--bs-secondary-bg-subtle);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    gap: 0.5rem;
+    padding: 1rem;
+    width: 100%;
+
+}
+
+.insight-container img {
+    height: 6rem;
+    width: 6rem;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.insight-div {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    justify-content: center;
+    gap: 0.1rem;
+}
+
+.insight-div h6 {
+    font-weight: lighter;
+    color: #0f0e0e;
+}
+
+.insight-div p {
+    font-size: 1.3rem;
+    color: var(--bs-emphasis-color);
+    font-weight: 600;
+}
+
+.insight-div .percentage {
+    font-size: 0.7rem;
+    font-weight: lighter;
+    color: var(--bs-emphasis-color);
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+}
+
+.percentage span {
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+}
+
+.profit {
+    color: green;
+}
+
+.loss {
+    color: red;
+}
+
+.arrow {
+    font-size: 0.9rem;
+}
+
+@media screen and (max-width: 850px) and (orientation: portrait) {
+    .insights-container {
+        margin-left: 2rem;
+        grid-template-columns: minmax(auto, 1fr) minmax(auto, 1fr);
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .insight-container {
+        padding: 1rem 0.5rem;
+    }
+
+    .insight-container img {
+        height: 4rem;
+        width: 4rem;
+    }
+}
+
+@media screen and (max-width: 750px) {
+    .insights-container {
+        margin-left: 2rem;
+        grid-template-columns: minmax(auto, 1fr) minmax(auto, 1fr);
+        justify-content: center;
+    }
+}

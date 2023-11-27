@@ -16,17 +16,22 @@ import { toast } from 'react-toastify';
 import FormContainer from '../components/FormContainer';
 import Loader from '../components/Loader';
 import { Card, Select } from 'antd';
-import { ColorPicker, theme } from 'antd';
-import { Option } from 'antd/es/mentions';
 import { BlockPicker } from 'react-color';
-import { Box, ButtonBase, ButtonGroup, TableBody, TableCell, TableHead, TableRow, TextField } from '@material-ui/core';
-import { Autocomplete } from '@mui/lab';
+import { ButtonBase, ButtonGroup, Fab, TableBody, TableCell, TableHead, TableRow, TextField } from '@material-ui/core';
+import { Autocomplete, Timeline, TimelineConnector, TimelineContent, TimelineDot, TimelineItem, TimelineOppositeContent, TimelineSeparator } from '@mui/lab';
 import { createFilterOptions } from '@mui/base';
 import ComUpImg from '../components/Input/ComUpImg';
 import ComInput from '../components/Input/ComInput';
 import { firebaseImgs } from '../upImgFirebase/firebaseImgs';
 import { FaTrash } from 'react-icons/fa';
 import Message from '../components/Message';
+import { FiHelpCircle } from 'react-icons/fi';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Modal from '@mui/material/Modal';
+import { IoAddCircleSharp, IoPricetagOutline } from 'react-icons/io5';
+import { BiCartAdd } from 'react-icons/bi';
+
 
 const UserOrderScreen = () => {
 
@@ -39,6 +44,10 @@ const UserOrderScreen = () => {
     const navigate = useNavigate();
     const { userInfo } = useSelector((state) => state.auth);
     const [showPicker, setShowPicker] = React.useState(false);
+    const [open, setOpen] = React.useState(false);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
+    const [successAlert, setSuccessAlert] = useState(false);
 
     const handleTogglePicker = () => {
         setShowPicker(!showPicker);
@@ -70,8 +79,7 @@ const UserOrderScreen = () => {
                 console.log(color)
             }
         } catch (err) {
-            toast.error("Lỗi");
-
+            toast.error("Số lượng vượt quá yêu cầu");
         }
     };
     const [description1, setDescription1] = useState('không');
@@ -87,9 +95,10 @@ const UserOrderScreen = () => {
         console.log(imagePath);
         // setFileList(data);
     }
-    const [getCompleteProduct] = useGetCompleteProductMutation()
+    const [getCompleteProduct, {isLoading}] = useGetCompleteProductMutation()
 
     const Handler = async (e) => {
+        e.preventDefault();
         const requiredComponents = ['Cửa', 'Đáy', 'Khung', 'Móc treo'];
         const hasAllComponents = requiredComponents.every(component => listComponentData.map(item => item.name).includes(component));
 
@@ -97,14 +106,27 @@ const UserOrderScreen = () => {
             try {
                 const dataImg = await firebaseImgs(imagePath);
                 const encoded = encodeURIComponent(dataImg[0]);
-                const res = await getCompleteProduct({
+                const response = await getCompleteProduct({
                     accountId: userInfo?.accountId,
                     imagePath: encoded,
                     description: description1,
                 });
-                toast.success("Tạo thành công");
-                navigate('/');
-                console.log(encoded);
+                if (response?.error?.data?.status === 400) {
+                    setSuccessAlert(true);
+                    setTimeout(() => {
+                        setSuccessAlert("true");
+                    }, 1000);
+                    toast.error("Không đạt yêu cầu");
+                } else if (response?.error?.data?.status === undefined) {
+                    setSuccessAlert(true);
+                    setTimeout(() => {
+                        setSuccessAlert("true");
+                        toast.success("Tạo thành công");
+                        navigate('/');
+                    }, 1000);
+                    
+                }
+               
             } catch (error) {
                 toast.error('Hãy thêm ảnh');
             }
@@ -114,6 +136,7 @@ const UserOrderScreen = () => {
             toast.error(`Bạn chưa chọn ${missingComponentsString}`);
         }
     }
+
     const [listComponentData, setListComponentData] = useState([]);
     console.log("dâ", listComponentData.map(item => item.name));
     const { data: listComponent, refetch } = useGetListComponentOfProductUserCreatingQuery(userInfo?.accountId);
@@ -198,6 +221,18 @@ const UserOrderScreen = () => {
         }
     };
 
+    const style = {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 1300,
+        bgcolor: 'background.paper',
+        border: '2px solid #000',
+        boxShadow: 24,
+        p: 4,
+    };
+
     return (
         <div className=" max-w-full  bg-repeat" style={{
             backgroundImage: "url('https://img.rawpixel.com/s3fs-private/rawpixel_images/website_content/v1016-a-02-ksh6oqdp.jpg?w=800&dpr=1&fit=default&crop=default&q=65&vib=3&con=3&usm=15&bg=F4F4F3&ixlib=js-2.2.1&s=8bf67d33cc68e3f340e23db016c234dd')",
@@ -206,9 +241,110 @@ const UserOrderScreen = () => {
             backgroundRepeat: 'no-repeat',
 
         }}>
+
             <Container>
                 <Row className='py-3'>
                     <Col md={6}>
+                        <Box sx={{ '& > :not(style)': { m: 1 } }}>
+                            <Fab color="primary" aria-label="add" onClick={handleOpen}>
+                                <FiHelpCircle />
+                            </Fab>
+                        </Box>
+                        <Modal
+                            open={open}
+                            onClose={handleClose}
+                            aria-labelledby="modal-modal-title"
+                            aria-describedby="modal-modal-description"
+                        >
+                            <Box sx={style}>
+                                <Typography id="modal-modal-title" variant="h4" component="h3">
+                                    Điều khoản của đơn hàng đặt riêng
+                                </Typography>
+                                <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                                    <Row>
+                                        <Timeline position="alternate" >
+                                            <TimelineItem>
+                                                <TimelineOppositeContent
+                                                    sx={{ m: 'auto 0' }}
+                                                    align="right"
+                                                    variant="body2"
+                                                    color="text.secondary"
+                                                >
+                                                    <Typography>Nếu dùng loại chất liệu riêng theo yêu cầu thì mức giá sẽ được tính theo giá thị trường hiện nay</Typography>
+                                                </TimelineOppositeContent>
+                                                <TimelineSeparator>
+                                                    <TimelineConnector />
+                                                    <TimelineDot color="primary" >
+                                                        <IoPricetagOutline />
+                                                    </TimelineDot>
+                                                    <TimelineConnector />
+                                                </TimelineSeparator>
+                                                <TimelineContent sx={{ py: '12px', px: 2 }}>
+                                                    <Typography variant="h5" component="span">
+                                                        Giá vật liệu
+                                                    </Typography>
+                                                    <Typography>• Gỗ: 1.000.000 - 2.000.000  </Typography>
+                                                    <Typography>• Sắc: 200.000 - 500.000</Typography>
+                                                    <Typography>• Nhôm: 100.000 - 300.000</Typography>
+                                                </TimelineContent>
+                                            </TimelineItem>
+                                            <TimelineItem>
+                                                <TimelineOppositeContent
+                                                    sx={{ m: 'auto 0' }}
+                                                    align="right"
+                                                    variant="body2"
+                                                    color="text.secondary"
+                                                >
+                                                    <Typography variant="h5" component="span">
+                                                        Điều kiện đơn đặt riêng hợp lệ
+                                                    </Typography>
+                                                </TimelineOppositeContent>
+                                                <TimelineSeparator>
+                                                    <TimelineConnector />
+                                                    <TimelineDot color="success" >
+                                                        <BiCartAdd />
+                                                    </TimelineDot>
+                                                    <TimelineConnector />
+                                                </TimelineSeparator>
+                                                <TimelineContent sx={{ py: '12px', px: 2 }}>
+                                                    <Typography>Tổng số lượng "Cửa" lớn hơn hoặc bằng 1 và nhỏ hơn hoặc bằng 9 •</Typography>
+                                                    <Typography>Tổng số lượng "Đáy" lớn hơn hoặc bằng 1 và nhỏ hơn hoặc bằng 3 •</Typography>
+                                                    <Typography>Tổng số lượng "Khung" lớn hơn hoặc bằng 1 và nhỏ hơn hoặc bằng 3 •</Typography>
+                                                    <Typography>Tổng số lượng "cửa" nhỏ hơn hoặc bằng 3 tổng số lượng "Đáy" •</Typography>
+                                                    <Typography>Tổng số lượng "Đáy" phải bằng tổng số lượng "Khung" •</Typography>
+                                                    <Typography>Tổng số lượng "Móc treo" bằng 1 •</Typography>
+                                                </TimelineContent>
+                                            </TimelineItem>
+                                            <TimelineItem>
+                                                <TimelineOppositeContent
+                                                    sx={{ m: 'auto 0' }}
+                                                    align="right"
+                                                    variant="body2"
+                                                    color="text.secondary"
+                                                >
+                                                    <Typography variant="h5" component="span">
+                                                        Yêu cầu thêm
+                                                    </Typography>
+                                                </TimelineOppositeContent>
+                                                <TimelineSeparator>
+                                                    <TimelineConnector sx={{ bgcolor: 'secondary.main' }} />
+                                                    <TimelineDot color="secondary" >
+                                                        <IoAddCircleSharp />
+                                                    </TimelineDot>
+                                                    <TimelineConnector />
+                                                </TimelineSeparator>
+                                                <TimelineContent sx={{ py: '12px', px: 2 }}>
+                                                    <Typography>• Nếu khách hàng có nhu cầu thêm số nang là bao nhiêu và kích cỡ thì hãy viết thêm vào phần mô tả (còn không sẽ làm theo mặc định của shop)</Typography>
+                                                </TimelineContent>
+                                            </TimelineItem>
+
+                                        </Timeline>
+
+                                    </Row>
+
+                                </Typography>
+                            </Box>
+                        </Modal>
                         <FormContainer>
                             <Form onSubmit={submitHandler}>
                                 <Form.Group className='my-3' controlId='name'>
@@ -242,10 +378,7 @@ const UserOrderScreen = () => {
                                                 value: 'Móc treo',
                                                 label: <span>Móc treo <span style={{ color: 'red' }}>*</span></span>,
                                             },
-                                            {
-                                                value: 'Khay đựng',
-                                                label: 'Khay đựng',
-                                            },
+
 
 
                                         ]}
@@ -368,12 +501,12 @@ const UserOrderScreen = () => {
                     </Col>
                     <Col >
 
-                        <Card title=<span> Danh sách đã thêm (Yêu cầu phải tạo đủ những bộ phận có <span style={{ color: 'red' }}>*</span> )</span>
+                        <Card title=<span> Danh sách đã thêm (Yêu cầu phải tạo đủ những bộ phận có <span style={{ color: 'red' }}>*</span> ) </span>
 
                         >
                             <div >
-                                <Button onClick={Handler} >
-                                    Hoàn thiện đơn đặt riêng lồng chim
+                                <Button onClick={Handler} disabled={isLoading} >            
+                                    {isLoading && <Loader />} <span style={{ color: '#fafcfc' }}>Hoàn thiện đơn</span>
                                 </Button>
                                 <div className='mt-4' style={{ display: 'flex', }}>
                                     <Form.Group controlId='text-area'>
@@ -428,7 +561,7 @@ const UserOrderScreen = () => {
                                                             <TableCell>
                                                                 <div style={{
                                                                     backgroundColor: `${component.color}`,
-                                                                    
+
                                                                     height: 28,
                                                                     borderRadius: '5px',
                                                                     padding: '5px',
@@ -445,7 +578,7 @@ const UserOrderScreen = () => {
                                                                 >
                                                                     <FaTrash />
                                                                 </Button>
-                                                            
+
                                                             </TableCell>
                                                         </TableRow>
                                                     ))
@@ -502,6 +635,7 @@ const UserOrderScreen = () => {
                 </Row>
 
             </Container>
+
         </div>
     );
 };

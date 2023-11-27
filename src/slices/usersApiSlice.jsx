@@ -18,7 +18,7 @@ export const userApiSlice = apiSlice.injectEndpoints({
         }),
         logout: builder.mutation({
             query: () => ({
-                url: `/logout`,
+                url: `/api/Product/Logout-Account`,
                 method: 'POST',
             }),
         }),
@@ -78,8 +78,39 @@ export const userApiSlice = apiSlice.injectEndpoints({
                 method: 'PUT',
             }),
             invalidatesTags: ['User'],
-        })
+        }),
 
+        sendVerification: builder.mutation({
+            query: (data) => ({
+                url: `/api/Account/Send-Verification?email=${data.email}`,
+                method: 'POST',
+                body: data,
+            }),
+        }),
+
+        checkVerification: builder.mutation({
+            query: (code) => ({
+                url: `/api/Account/CheckVerification?code=${code}`,
+                method: 'POST',
+                body: code,
+            }),
+        }),
+
+        sendVerificationToChangePasssword: builder.mutation({
+            query: (data) => ({
+                url: `/api/Account/Send-Verification-To-Change-Password?email=${data.email}`,
+                method: 'POST',
+                body: data,
+            }),
+        }),
+
+        forgetPassword: builder.mutation({
+            query: (data) => ({
+                url: `/api/LoginAndRegister/ForgetPassword?email=${data.email}&newPassword=${data.newPassword}`,
+                method: 'PUT',
+            }),
+            invalidatesTags: ['User'],
+        }),
     }),
 });
 
@@ -94,5 +125,9 @@ export const {
     useGetUserDetailsQuery,
     useGetAccountByIdQuery,
     useUpdateChangeRoleMutation,
-    useUnBanUserMutation
+    useUnBanUserMutation,
+    useSendVerificationMutation,
+    useCheckVerificationMutation,
+    useSendVerificationToChangePassswordMutation,
+    useForgetPasswordMutation
 } = userApiSlice;
